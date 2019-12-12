@@ -1,0 +1,9 @@
+somnambulist:
+    cache_dir: '${SOMNAMBULIST_PROJECTS_CONFIG_DIR}/_cache'
+    projects_dir: 'Projects'
+
+    templates:
+        library: ~
+        web: ~
+        service: 'somnambulist/symfony-micro-service'
+        data: 'somnambulist/data-service'

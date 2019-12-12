@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+use Somnambulist\ProjectManager\Application;
+use Somnambulist\ProjectManager\Kernel;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+if (false === in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+    echo 'Warning: The console should be invoked via the CLI version of PHP, not the ' . \PHP_SAPI . ' SAPI' . \PHP_EOL;
+}
+
+set_time_limit(0);
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$input  = new ArgvInput();
+$output = new ConsoleOutput();
+$output->getFormatter()->setStyle('ok', new OutputFormatterStyle('white', 'green', ['bold']));
+$output->getFormatter()->setStyle('err', new OutputFormatterStyle('white', 'red', ['bold']));
+$output->getFormatter()->setStyle('step', new OutputFormatterStyle('white', 'blue', ['bold']));
+$output->getFormatter()->setStyle('q', new OutputFormatterStyle('white', 'cyan', ['bold']));
+$output->getFormatter()->setStyle('i', new OutputFormatterStyle('white', 'yellow', ['bold']));
+
+require dirname(__DIR__) . '/config/bootstrap.php';
+
+$kernel      = new Kernel($_SERVER['APP_ENV'], $_SERVER['APP_DEBUG']);
+$application = new Application($kernel);
+$application->run($input, $output);

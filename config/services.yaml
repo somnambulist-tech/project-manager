@@ -1,0 +1,22 @@
+
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    event_dispatcher:
+        class: Symfony\Component\EventDispatcher\EventDispatcher
+        public: true
+
+    Somnambulist\ProjectManager\Commands\:
+        resource: '../src/Commands'
+        tags: ['console.command']
+
+    Somnambulist\ProjectManager\Services\:
+        resource: '../src/Services'
+
+    Somnambulist\ProjectManager\Models\Config:
+        factory: Somnambulist\ProjectManager\Services\Config\Factory::create
+        public: true

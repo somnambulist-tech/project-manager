@@ -1,0 +1,30 @@
+somnambulist:
+    project:
+        name: 'somnambulist'
+        working_dir: '${HOME}/Projects/somnambulist'
+        repository: ~
+
+    docker:
+        compose_project_name: 'somnambulist'
+
+    libraries:
+        read-models:
+            repository: 'git@github.com:dave-redfern/somnambulist-read-models.git'
+            dirname: 'read-models'
+
+        cte-builder:
+            repository: 'git@github.com:dave-redfern/somnambulist-cte-builder.git'
+            dirname: 'cte-builder'
+
+    services:
+        cms-service:
+            repository: 'git@github.com:dave-redfern/cms-service.git'
+            dirname: 'cms-service'
+            app_container: 'cms-app'
+            dependencies: ['data']
+
+        data:
+            repository: 'git@github.com:dave-redfern/data-service.git'
+            dirname: 'data-service'
+            app_container: 'proxy'
+            dependencies: []

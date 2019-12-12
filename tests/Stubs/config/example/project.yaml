@@ -1,0 +1,17 @@
+somnambulist:
+    project:
+        name: 'example'
+        working_dir: '~/Projects/example'
+        libraries_dirname: 'libraries'
+        services_dirname: 'services'
+        repository: ~
+
+    docker:
+        compose_project_name: 'example_services'
+
+    libraries:
+        read-models:
+            repository: 'git@github.com:dave-redfern/somnambulist-read-models.git'
+            dirname: 'read-models'
+
+    services:
