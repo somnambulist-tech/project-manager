@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Somnambulist\ProjectManager\Commands;
+namespace Somnambulist\ProjectManager\Commands\Projects;
 
-use InvalidArgumentException;
+use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetProjectFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\UseEnvironmentTemplate;
 use Somnambulist\ProjectManager\Models\Config;
@@ -10,18 +10,16 @@ use Somnambulist\ProjectManager\Models\Project;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function file_exists;
 use function file_put_contents;
-use function mkdir;
 use const DIRECTORY_SEPARATOR;
 
 /**
  * Class SwitchProjectCommand
  *
- * @package    Somnambulist\ProjectManager\Commands
- * @subpackage Somnambulist\ProjectManager\Commands\SwitchProjectCommand
+ * @package    Somnambulist\ProjectManager\Commands\Projects
+ * @subpackage Somnambulist\ProjectManager\Commands\Projects\SwitchProjectCommand
  */
-class SwitchProjectCommand extends BaseCommand
+class SwitchProjectCommand extends AbstractCommand
 {
 
     use UseEnvironmentTemplate;

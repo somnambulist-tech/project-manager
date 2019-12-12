@@ -7,12 +7,12 @@ use Somnambulist\ProjectManager\Commands\Behaviours\UseConsoleHelper;
 use Symfony\Component\Console\Command\Command;
 
 /**
- * Class BaseCommand
+ * Class AbstractCommand
  *
- * @package Somnambulist\ProjectManager\Commands
- * @subpackage Somnambulist\ProjectManager\Commands\BaseCommand
+ * @package    Somnambulist\ProjectManager\Commands
+ * @subpackage Somnambulist\ProjectManager\Commands\AbstractCommand
  */
-abstract class BaseCommand extends Command
+abstract class AbstractCommand extends Command
 {
 
     use IsRunningInDebugMode;

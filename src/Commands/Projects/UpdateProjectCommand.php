@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Commands\Projects;
 
-use Somnambulist\ProjectManager\Commands\BaseCommand;
+use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetProjectFromInput;
 use Somnambulist\ProjectManager\Models\Config;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package    Somnambulist\ProjectManager\Commands\Projects
  * @subpackage Somnambulist\ProjectManager\Commands\Projects\UpdateProjectCommand
  */
-class UpdateProjectCommand extends BaseCommand
+class UpdateProjectCommand extends AbstractCommand
 {
 
     use GetProjectFromInput;
@@ -54,16 +54,16 @@ class UpdateProjectCommand extends BaseCommand
 
         $this->tools()->warning('updating project config from configured Git repo', $project);
 
-        if ($this->tools()->execute('git pull', $project->configPath())) {
-            $this->tools()->success('project successfully updated');
+        if (!$this->tools()->execute('git pull', $project->configPath())) {
+            $this->tools()->error('project update failed! Is this %s a git repository?', $project->configFile());
             $this->tools()->newline();
 
-            return 0;
+            return 1;
         }
 
-        $this->tools()->error('project update failed! Is this %s a git repository?', $project->configFile());
+        $this->tools()->success('project successfully updated');
         $this->tools()->newline();
 
-        return 1;
+        return 0;
     }
 }

@@ -1,0 +1,48 @@
+somnambulist:
+    steps:
+        max_files:
+            message: 'Setting max open files override (requires sudo)'
+            commands:
+                - { run: "echo '%s' | sudo tee /Library/LaunchDaemons/limit.maxfiles.plist", file: 'init.d/limit.maxfiles.plist' }
+
+        dns:
+            message: 'Setting up DNS resolver (requires sudo)'
+            commands:
+                - { run: 'sudo mkdir /etc/resolver' }
+                - { run: "echo '%s' | sudo tee /etc/resolver/somnambulist.dev", file: 'init.d/somnambulist.dev' }
+
+        install_cli_tools:
+            message: 'Installing OSX CLI Tools'
+            commands:
+                - { run: 'xcode-select --install' }
+                - { run: 'exit' }
+
+        install_brew:
+            message: 'Installing Homebrew'
+            commands:
+                - { run: '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"' }
+
+        install_dev:
+            message: 'Installing brew dev packages'
+            commands:
+                - { run: 'brew install curl readline git openssl sqlite php composer' }
+
+        install_mutagen:
+            message:  'Installing Mutagen'
+            commands:
+                - { run: 'brew install mutagen-io/mutagen/mutagen' }
+
+        install_syncit:
+            message: 'Installing SyncIt'
+            commands:
+                - { run: 'brew install dave-redfern/somnambulist/syncit' }
+
+        install_caskroom:
+            message: 'Installing additional brew resources'
+            commands:
+                - { run: 'brew tap homebrew/cask' }
+
+        install_casks:
+            message: 'Installing applications'
+            commands:
+                - { run: 'brew cask install jetbrains-toolbox tower postman docker postico firefox google-chrome' }

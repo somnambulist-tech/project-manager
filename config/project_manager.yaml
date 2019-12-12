@@ -3,7 +3,8 @@ somnambulist:
     projects_dir: 'Projects'
 
     templates:
-        library: ~
-        web: ~
-        service: 'somnambulist/symfony-micro-service'
+        bundle: ~
         data: 'somnambulist/data-service'
+        library: ~
+        service: 'somnambulist/symfony-micro-service'
+        web: ~

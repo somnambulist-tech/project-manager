@@ -21,7 +21,8 @@ $output->getFormatter()->setStyle('ok', new OutputFormatterStyle('white', 'green
 $output->getFormatter()->setStyle('err', new OutputFormatterStyle('white', 'red', ['bold']));
 $output->getFormatter()->setStyle('step', new OutputFormatterStyle('white', 'blue', ['bold']));
 $output->getFormatter()->setStyle('q', new OutputFormatterStyle('white', 'cyan', ['bold']));
-$output->getFormatter()->setStyle('i', new OutputFormatterStyle('white', 'yellow', ['bold']));
+$output->getFormatter()->setStyle('warn', new OutputFormatterStyle('white', 'yellow', ['bold']));
+$output->getFormatter()->setStyle('i', new OutputFormatterStyle('white', 'magenta', ['bold']));
 
 require dirname(__DIR__) . '/config/bootstrap.php';
 

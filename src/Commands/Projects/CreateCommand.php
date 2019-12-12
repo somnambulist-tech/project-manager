@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Commands\Projects;
 
-use Somnambulist\ProjectManager\Commands\BaseCommand;
+use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Models\Config;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +20,7 @@ use function sprintf;
  * @package    Somnambulist\ProjectManager\Commands\Projects
  * @subpackage Somnambulist\ProjectManager\Commands\Projects\CreateCommand
  */
-class CreateCommand extends BaseCommand
+class CreateCommand extends AbstractCommand
 {
 
     /**

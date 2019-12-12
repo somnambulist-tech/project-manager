@@ -1,0 +1,4 @@
+domain somnambulist.dev
+nameserver 127.0.0.1
+port 1034
+search_order 1000

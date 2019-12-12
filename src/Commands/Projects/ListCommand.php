@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Commands\Projects;
 
-use Somnambulist\ProjectManager\Commands\BaseCommand;
+use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Models\Config;
 use Somnambulist\ProjectManager\Models\Project;
 use Symfony\Component\Console\Helper\Table;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package Somnambulist\ProjectManager\Commands\Projects
  * @subpackage Somnambulist\ProjectManager\Commands\Projects\ListCommand
  */
-class ListCommand extends BaseCommand
+class ListCommand extends AbstractCommand
 {
 
     /**

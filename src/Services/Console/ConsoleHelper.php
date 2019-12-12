@@ -39,6 +39,11 @@ class ConsoleHelper
     private $helperSet;
 
     /**
+     * @var bool
+     */
+    private $noOutput = false;
+
+    /**
      * Constructor
      *
      * @param InputInterface  $input
@@ -55,6 +60,16 @@ class ConsoleHelper
             new ProcessHelper(),
             new QuestionHelper(),
         ]);
+    }
+
+    public function disableOutput(): void
+    {
+        $this->noOutput = true;
+    }
+
+    public function enableOutput(): void
+    {
+        $this->noOutput = false;
     }
 
     public function execute(string $command, string $cwd = null, array $env = null, $input = null, ?float $timeout = null): bool
@@ -99,36 +114,41 @@ class ConsoleHelper
 
     public function warning(string $message, ...$args): void
     {
-        $this->output->writeln(sprintf('<i> ▲ </i> ' . $message, ...$args));
+        $this->noOutput ?: $this->output->writeln(sprintf('<warn> ▲ </warn> ' . $message, ...$args));
+    }
+
+    public function info(string $message, ...$args): void
+    {
+        $this->noOutput ?: $this->output->writeln(sprintf('<i> ℹ︎ </i> ' . $message, ...$args));
     }
 
     public function success(string $message, ...$args): void
     {
-        $this->output->writeln(sprintf('<ok> ✔ </ok> ' . $message, ...$args));
+        $this->noOutput ?: $this->output->writeln(sprintf('<ok> ✔ </ok> ' . $message, ...$args));
     }
 
     public function error(string $message, ...$args): void
     {
-        $this->output->writeln(sprintf('<err> ✖ </err> ' . $message, ...$args));
+        $this->noOutput ?: $this->output->writeln(sprintf('<err> ✖ </err> ' . $message, ...$args));
     }
 
     public function step($step, string $message, ...$args): void
     {
-        $this->output->writeln(sprintf('<step> %s </step> ' . $message, $step, ...$args));
+        $this->noOutput ?: $this->output->writeln(sprintf('<step> %s </step> ' . $message, $step, ...$args));
     }
 
     public function question(string $message, ...$args): void
     {
-        $this->output->writeln(sprintf('<q> Q </q> ' . $message, ...$args));
+        $this->noOutput ?: $this->output->writeln(sprintf('<q> Q </q> ' . $message, ...$args));
     }
 
     public function message(string $message, ...$args): void
     {
-        $this->output->writeln(sprintf($message, ...$args));
+        $this->noOutput ?: $this->output->writeln(sprintf($message, ...$args));
     }
 
     public function newline(): void
     {
-        $this->output->writeln('');
+        $this->noOutput ?: $this->output->writeln('');
     }
 }

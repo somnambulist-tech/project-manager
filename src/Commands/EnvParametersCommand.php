@@ -14,7 +14,7 @@ use function is_array;
  * @package Somnambulist\ProjectManager\Commands
  * @subpackage Somnambulist\ProjectManager\Commands\EnvParametersCommand
  */
-class EnvParametersCommand extends BaseCommand
+class EnvParametersCommand extends AbstractCommand
 {
 
     /**

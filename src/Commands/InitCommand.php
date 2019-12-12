@@ -16,7 +16,7 @@ use const DIRECTORY_SEPARATOR;
  * @package Somnambulist\ProjectManager\Commands
  * @subpackage Somnambulist\ProjectManager\Commands\InitCommand
  */
-class InitCommand extends BaseCommand
+class InitCommand extends AbstractCommand
 {
 
     use UseEnvironmentTemplate;
