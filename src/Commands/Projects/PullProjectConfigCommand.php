@@ -10,12 +10,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class UpdateProjectCommand
+ * Class PullProjectConfigCommand
  *
  * @package    Somnambulist\ProjectManager\Commands\Projects
- * @subpackage Somnambulist\ProjectManager\Commands\Projects\UpdateProjectCommand
+ * @subpackage Somnambulist\ProjectManager\Commands\Projects\PullProjectConfigCommand
  */
-class UpdateProjectCommand extends AbstractCommand
+class PullProjectConfigCommand extends AbstractCommand
 {
 
     use GetProjectFromInput;
@@ -40,7 +40,7 @@ class UpdateProjectCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('project:update')
+            ->setName('project:pull')
             ->setDescription('Pull the latest configuration updates if using Git')
             ->addArgument('project', InputArgument::OPTIONAL, 'The project name')
         ;
