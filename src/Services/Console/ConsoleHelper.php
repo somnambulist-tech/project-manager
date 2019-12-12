@@ -2,11 +2,16 @@
 
 namespace Somnambulist\ProjectManager\Services\Console;
 
+use Symfony\Component\Console\Helper\DebugFormatterHelper;
+use Symfony\Component\Console\Helper\FormatterHelper;
+use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Process\Process;
 use function sprintf;
 
 /**
@@ -29,6 +34,11 @@ class ConsoleHelper
     private $output;
 
     /**
+     * @var HelperSet
+     */
+    private $helperSet;
+
+    /**
      * Constructor
      *
      * @param InputInterface  $input
@@ -38,17 +48,38 @@ class ConsoleHelper
     {
         $this->input  = $input;
         $this->output = $output;
+
+        $this->helperSet = new HelperSet([
+            new FormatterHelper(),
+            new DebugFormatterHelper(),
+            new ProcessHelper(),
+            new QuestionHelper(),
+        ]);
+    }
+
+    public function execute(string $command, string $cwd = null, array $env = null, $input = null, ?float $timeout = null): bool
+    {
+        $h = new ProcessHelper();
+        $h->setHelperSet($this->helperSet);
+
+        $proc = Process::fromShellCommandline($command, $cwd, $env, $input, $timeout);
+
+        $h->run($this->output, $proc);
+
+        return $proc->isSuccessful();
     }
 
     public function ask(string $question, bool $confirm = true)
     {
-        $q      = new QuestionHelper();
-        $result = $q->ask($this->input, $this->output, new Question('<q> Q </q> ' . $question));
+        $h      = new QuestionHelper();
+        $h->setHelperSet($this->helperSet);
+
+        $result = $h->ask($this->input, $this->output, new Question('<q> Q </q> ' . $question));
 
         if ($confirm) {
             $conf = new Question(sprintf('<i> ▲ </i> You provided "<info>%s</info>", is this correct? [y/n] ', $result));
 
-            if ('n' === $q->ask($this->input, $this->output, $conf)) {
+            if ('n' === $h->ask($this->input, $this->output, $conf)) {
                 return $this->ask($question, $confirm);
             }
         }
@@ -58,10 +89,12 @@ class ConsoleHelper
 
     public function choose(string $question, array $choices = [], $default = null)
     {
-        $q = new QuestionHelper();
+        $h = new QuestionHelper();
+        $h->setHelperSet($this->helperSet);
+
         $c = new ChoiceQuestion('<q> Q </q> ' . $question, $choices, $default);
 
-        return $q->ask($this->input, $this->output, $c);
+        return $h->ask($this->input, $this->output, $c);
     }
 
     public function warning(string $message, ...$args): void
@@ -87,6 +120,11 @@ class ConsoleHelper
     public function question(string $message, ...$args): void
     {
         $this->output->writeln(sprintf('<q> Q </q> ' . $message, ...$args));
+    }
+
+    public function message(string $message, ...$args): void
+    {
+        $this->output->writeln(sprintf($message, ...$args));
     }
 
     public function newline(): void

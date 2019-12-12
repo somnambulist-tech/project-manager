@@ -62,6 +62,7 @@ class ConfigParser
 
             $project = new Project(
                 $config->get('somnambulist.project.name'),
+                dirname($entry),
                 $config->get('somnambulist.project.working_dir'),
                 $config->get('somnambulist.project.services_dirname'),
                 $config->get('somnambulist.project.libraries_dirname'),

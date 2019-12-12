@@ -67,7 +67,7 @@ final class Service extends AbstractLibrary implements RunnableService
 
     public function installPath(): string
     {
-        return sprintf('%s/%s%s', getenv('PROJECT_DIR'), getenv('PROJECT_SERVICE_PREFIX') ?? '', $this->directoryName());
+        return sprintf('%s/%s%s', getenv('PROJECT_DIR'), getenv('PROJECT_SERVICE_PREFIX') ?: '', $this->directoryName());
     }
 
     public function appContainer(): string

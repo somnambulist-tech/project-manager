@@ -73,11 +73,13 @@ class SwitchProjectCommand extends BaseCommand
     {
         $file = $this->config->home() . DIRECTORY_SEPARATOR . '.env';
 
-        file_put_contents($file, $this->environmentTemplate(
-            $project->name(),
-            $project->path(),
-            $project->librariesName(),
-            $project->servicesName())
+        file_put_contents(
+            $file, $this->environmentTemplate(
+                $project->name(),
+                $project->workingPath(),
+                $project->librariesName() . '/',
+                $project->servicesName() . '/'
+            )
         );
     }
 }

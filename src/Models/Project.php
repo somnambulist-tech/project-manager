@@ -8,7 +8,7 @@ use function sprintf;
 /**
  * Class Project
  *
- * @package Somnambulist\ProjectManager\Models
+ * @package    Somnambulist\ProjectManager\Models
  * @subpackage Somnambulist\ProjectManager\Models\Project
  */
 final class Project
@@ -22,7 +22,12 @@ final class Project
     /**
      * @var string
      */
-    private $path;
+    private $configPath;
+
+    /**
+     * @var string
+     */
+    private $workingPath;
 
     /**
      * @var string|null
@@ -58,16 +63,18 @@ final class Project
      * Constructor
      *
      * @param string      $name
-     * @param string      $path
+     * @param string      $configPath
+     * @param string      $workingPath
      * @param string|null $servicesName
      * @param string|null $librariesName
      * @param string|null $repository
      * @param array       $docker
      */
-    public function __construct(string $name, string $path, ?string $servicesName, ?string $librariesName, ?string $repository, array $docker = [])
+    public function __construct(string $name, string $configPath, string $workingPath, ?string $servicesName, ?string $librariesName, ?string $repository, array $docker = [])
     {
         $this->name          = $name;
-        $this->path          = $path;
+        $this->configPath    = $configPath;
+        $this->workingPath   = $workingPath;
         $this->servicesName  = $servicesName;
         $this->librariesName = $librariesName;
         $this->repository    = $repository;
@@ -82,9 +89,14 @@ final class Project
         return $this->name;
     }
 
-    public function path(): string
+    public function configPath(): string
     {
-        return $this->path;
+        return $this->configPath;
+    }
+
+    public function workingPath(): string
+    {
+        return $this->workingPath;
     }
 
     public function servicesName(): ?string
@@ -119,7 +131,7 @@ final class Project
 
     public function getFileInProject($filename): string
     {
-        return sprintf('%s/%s', $this->path(), $filename);
+        return sprintf('%s/%s', $this->configPath(), $filename);
     }
 
     public function configFile(): string

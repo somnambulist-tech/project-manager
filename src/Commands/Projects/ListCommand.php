@@ -38,13 +38,15 @@ class ListCommand extends BaseCommand
     protected function configure()
     {
         $this
-            ->setName('projects:list')
+            ->setName('project:list')
             ->setDescription('Lists all available, configured projects on this machine')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->setupConsoleHelper($input, $output);
+
         $table = new Table($output);
         $table
             ->setHeaderTitle(sprintf('Projects (project: <fg=yellow;bg=white>%s</>)', $this->config->active() ?: '-'))
@@ -56,7 +58,7 @@ class ListCommand extends BaseCommand
         $this->config->projects()->list()->each(function (Project $project) use ($table) {
             $table->addRow([
                 $project->name(),
-                $project->path(),
+                $project->workingPath(),
                 $project->docker()->get('compose_project_name'),
                 $project->libraries()->count(),
                 $project->services()->count(),
@@ -64,6 +66,8 @@ class ListCommand extends BaseCommand
         });
 
         $table->render();
+
+        $this->tools()->newline();
 
         return 0;
     }
