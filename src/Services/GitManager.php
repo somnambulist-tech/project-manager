@@ -89,7 +89,7 @@ class GitManager
     {
         $proc = $this->exec('git status -s', $cwd);
 
-        return !empty(trim($proc->getOutput()));
+        return empty(trim($proc->getOutput()));
     }
 
     public function hasRemote(string $cwd): bool

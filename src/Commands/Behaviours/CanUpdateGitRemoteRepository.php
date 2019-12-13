@@ -18,6 +18,8 @@ trait CanUpdateGitRemoteRepository
 
     protected function changeGitOrigin(Project $project, $cwd, $repo): int
     {
+        $com = 'addRemote';
+
         if ($this->tools()->git()->hasRemote($cwd)) {
             $com = 'setRemote';
         }
