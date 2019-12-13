@@ -7,10 +7,13 @@ use RuntimeException;
 use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Models\Service;
 use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
+use Symfony\Component\Dotenv\Dotenv;
 use function array_combine;
+use function array_filter;
 use function count;
 use function exec;
 use function explode;
+use function file_get_contents;
 use function implode;
 use function sprintf;
 use function trim;
@@ -67,8 +70,11 @@ class DockerManager
 
     public function resolve(Service $service): void
     {
+        $env = (new Dotenv())->parse(file_get_contents($service->envFile()));
+        $name = implode('_', array_filter([$env['COMPOSE_PROJECT_NAME'] ?: '', $service->appContainer()]));
+
         try {
-            $command = sprintf('docker ps --no-trunc --format="{{.ID}}" --filter=name="%s"', $service->appContainer());
+            $command = sprintf('docker ps --no-trunc --format="{{.ID}}" --filter=name="%s"', $name);
 
             $success    = null;
             $containers = [];

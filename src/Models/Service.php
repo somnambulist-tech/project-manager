@@ -4,7 +4,6 @@ namespace Somnambulist\ProjectManager\Models;
 
 use Somnambulist\Collection\FrozenCollection;
 use Somnambulist\ProjectManager\Contracts\RunnableService;
-use function getenv;
 use function sprintf;
 
 /**

@@ -4,6 +4,7 @@ namespace Somnambulist\ProjectManager\Models;
 
 use Somnambulist\ProjectManager\Contracts\InstallableResource;
 use function file_exists;
+use function sprintf;
 
 /**
  * Class AbstractLibrary
@@ -58,10 +59,25 @@ abstract class AbstractLibrary implements InstallableResource
         return $this->repository;
     }
 
+    public function setRepository(string $repository): void
+    {
+        $this->repository = $repository;
+    }
+
     abstract public function installPath(): string;
 
     public function isInstalled(): bool
     {
         return file_exists($this->installPath());
+    }
+
+    public function getFileInProject($filename): string
+    {
+        return sprintf('%s/%s', $this->installPath(), $filename);
+    }
+
+    public function envFile(): string
+    {
+        return $this->getFileInProject('.env');
     }
 }

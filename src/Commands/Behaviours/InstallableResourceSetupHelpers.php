@@ -8,9 +8,7 @@ use Somnambulist\ProjectManager\Exceptions\ResourceAlreadyInstalled;
 use Somnambulist\ProjectManager\Exceptions\ResourceIsNotConfigured;
 use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
 use function file_exists;
-use function getenv;
 use function mkdir;
-use function sprintf;
 
 /**
  * Trait InstallableResourceSetupHelpers
@@ -62,9 +60,8 @@ trait InstallableResourceSetupHelpers
         $this->tools()->warning('cloning project from <info>%s</info> to <info>%s</info>', $resource->repository(), $resource->installPath());
 
         $cwd = $_SERVER['PROJECT_DIR'];
-        $env = ['APP_ENV' => false, 'SYMFONY_DOTENV_VARS' => false];
 
-        if (!$this->tools()->execute(sprintf('git clone %s %s', $resource->repository(), $resource->installPath()), $cwd, $env)) {
+        if (!$this->tools()->git()->clone($cwd, $resource->repository(), $resource->installPath())) {
             $this->tools()->error('project setup failed to clone repository');
             $this->tools()->question('do you have access to the project and is Git SSH access configured?');
 

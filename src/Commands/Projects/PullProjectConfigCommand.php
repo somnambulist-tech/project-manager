@@ -3,11 +3,9 @@
 namespace Somnambulist\ProjectManager\Commands\Projects;
 
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
-use Somnambulist\ProjectManager\Commands\Behaviours\GetProjectFromInput;
+use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
-use Somnambulist\ProjectManager\Models\Config;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -20,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PullProjectConfigCommand extends AbstractCommand implements ProjectConfigAwareInterface
 {
 
-    use GetProjectFromInput;
+    use GetCurrentActiveProject;
     use ProjectConfigAwareCommand;
 
     protected function configure()
@@ -28,7 +26,6 @@ class PullProjectConfigCommand extends AbstractCommand implements ProjectConfigA
         $this
             ->setName('project:pull')
             ->setDescription('Pull the latest configuration updates if using Git')
-            ->addArgument('project', InputArgument::OPTIONAL, 'The project name')
         ;
     }
 
@@ -36,11 +33,12 @@ class PullProjectConfigCommand extends AbstractCommand implements ProjectConfigA
     {
         $this->setupConsoleHelper($input, $output);
 
-        $project = $this->getProjectFrom($input);
+        $project = $this->getActiveProject();
 
+        $this->tools()->info('working on <i>%s</i>', $project->name());
         $this->tools()->warning('updating project config from configured Git repo', $project);
 
-        if (!$this->tools()->execute('git pull', $project->configPath())) {
+        if (!$this->tools()->git()->pull($project->configPath())) {
             $this->tools()->error('project update failed! Is this %s a git repository?', $project->configFile());
             $this->tools()->newline();
 

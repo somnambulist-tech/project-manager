@@ -6,8 +6,12 @@ use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
+use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
+use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function array_key_exists;
@@ -27,11 +31,12 @@ use const PHP_URL_HOST;
  * @package Somnambulist\ProjectManager\Commands\Services
  * @subpackage Somnambulist\ProjectManager\Commands\Services\StatusCommand
  */
-class StatusCommand extends AbstractCommand implements DockerAwareInterface
+class StatusCommand extends AbstractCommand implements DockerAwareInterface, ProjectConfigAwareInterface
 {
 
     use GetCurrentActiveProject;
     use DockerAwareCommand;
+    use ProjectConfigAwareCommand;
 
     protected function configure()
     {
@@ -44,7 +49,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $project = $this->getActiveProject();
-        $data    = $this->docker->status($prefix = getenv('COMPOSE_PROJECT_NAME'));
+        $data    = $this->docker->status($prefix = $project->docker()->get('compose_project_name'));
 
         $data->sortUsing(function ($r1, $r2) {
             if ($r1['name'] == $r2['name']) {
@@ -54,7 +59,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface
             return $r1['name'] > $r2['name'];
         });
 
-        $output->writeln('');
+        $this->tools()->newline();
 
         $table = new Table($output);
         $table
@@ -77,9 +82,16 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface
             ]);
         });
 
+        if (0 === $data->count()) {
+            $table->addRows([
+                new TableSeparator(),
+                [new TableCell('There are no running services for this project. Start a service using: <comment>services:start</comment>', ['colspan' => 5])],
+            ]);
+        }
+
         $table->render();
 
-        $output->writeln('');
+        $this->tools()->newline();
 
         return 0;
     }

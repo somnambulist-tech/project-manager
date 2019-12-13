@@ -3,14 +3,11 @@
 namespace Somnambulist\ProjectManager\Commands\Projects;
 
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
-use Somnambulist\ProjectManager\Commands\Behaviours\GetProjectFromInput;
+use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
-use function trim;
 
 /**
  * Class PushProjectConfigCommand
@@ -21,7 +18,7 @@ use function trim;
 class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigAwareInterface
 {
 
-    use GetProjectFromInput;
+    use GetCurrentActiveProject;
     use ProjectConfigAwareCommand;
 
     protected function configure()
@@ -29,7 +26,6 @@ class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigA
         $this
             ->setName('project:push')
             ->setDescription('Commit any configuration changes and push to the git repository')
-            ->addArgument('project', InputArgument::OPTIONAL, 'The project name')
         ;
     }
 
@@ -37,23 +33,22 @@ class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigA
     {
         $this->setupConsoleHelper($input, $output);
 
-        $project = $this->getProjectFrom($input);
+        $project = $this->getActiveProject();
 
+        $this->tools()->info('working on <info>%s</info>', $project->name());
         $this->tools()->warning('storing all outstanding configuration changes', $project);
 
         $cwd = $project->configPath();
 
-        $proc = Process::fromShellCommandline('git status -s', $cwd);
-        $proc->run();
-        if (!$res = trim($proc->getOutput())) {
+        if ($this->tools()->git()->isClean($cwd)) {
             $this->tools()->info('there are no changes detected to the configuration files');
             $this->tools()->newline();
 
             return 0;
         }
 
-        $ok = $this->tools()->execute('git add -A', $cwd);
-        $ok = $ok && $this->tools()->execute('git commit -m \'updating configuration files\'', $cwd);
+        $ok = $this->tools()->git()->add($cwd);
+        $ok = $ok && $this->tools()->git()->commit($cwd, 'updating configuration files');
 
         if ($ok) {
             $this->tools()->success('changed files committed to git\'d');
@@ -65,13 +60,11 @@ class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigA
             return 1;
         }
 
-        $proc = Process::fromShellCommandline('git remote -v', $cwd);
-        $proc->run();
-        if (!$res = trim($proc->getOutput())) {
+        if (!$this->tools()->git()->hasRemote($cwd)) {
             return $this->success();
         }
 
-        if (!$this->tools()->execute('git push origin master', $cwd)) {
+        if (!$this->tools()->git()->push($cwd)) {
             $this->tools()->error('failed to push changes, is a remote configured?');
             $this->tools()->info('You may not have write access to the repository, or are out of sync');
             $this->tools()->newline();

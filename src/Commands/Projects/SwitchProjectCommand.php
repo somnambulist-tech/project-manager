@@ -7,7 +7,6 @@ use Somnambulist\ProjectManager\Commands\Behaviours\GetProjectFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\UseEnvironmentTemplate;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
-use Somnambulist\ProjectManager\Models\Config;
 use Somnambulist\ProjectManager\Models\Project;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

@@ -2,6 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Services\Console;
 
+use Somnambulist\ProjectManager\Services\GitManager;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -75,6 +76,11 @@ class ConsoleHelper
     public function input(): InputInterface
     {
         return $this->input;
+    }
+
+    public function git(): GitManager
+    {
+        return new GitManager($this->helperSet->get('process'), $this->output);
     }
 
     public function execute(string $command, string $cwd = null, array $env = null, $input = null, ?float $timeout = null): bool

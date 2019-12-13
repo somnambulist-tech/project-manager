@@ -151,4 +151,9 @@ final class Project
     {
         return $this->getFileInProject('project.yaml');
     }
+
+    public function setRepository(string $repository): void
+    {
+        $this->repository = $repository;
+    }
 }

@@ -110,7 +110,7 @@ CFG;
     {
         $this->tools()->warning('cloning git repository from <comment>%s</comment> to <comment>%s</comment>', $git, $cwd);
 
-        if (!$this->tools()->execute(sprintf('git clone %s %s', $git, $cwd), dirname($cwd))) {
+        if (!$this->tools()->git()->clone(dirname($cwd), $git, $cwd)) {
             $this->tools()->error('failed to checkout project! run again with -vvv to get debugging');
 
             return 1;
