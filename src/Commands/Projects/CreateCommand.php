@@ -32,6 +32,7 @@ class CreateCommand extends AbstractCommand implements ProjectConfigAwareInterfa
     {
         $this
             ->setName('project:create')
+            ->setAliases(['create'])
             ->setDescription('Create a new micro-services project and configuration')
             ->addArgument('name', InputArgument::OPTIONAL, 'Project name, must be unique')
             ->addArgument('docker', InputArgument::OPTIONAL, 'Project Docker compose project name, must be unique')

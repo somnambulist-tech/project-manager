@@ -47,6 +47,8 @@ class InitCommand extends AbstractCommand
             $this->tools()->warning('Configuration at <comment>%s</comment> already exists', $dir);
         }
 
+        $this->tools()->newline();
+
         return 0;
     }
 

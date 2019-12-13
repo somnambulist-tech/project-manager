@@ -6,7 +6,6 @@ use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
-use Somnambulist\ProjectManager\Models\Config;
 use Somnambulist\ProjectManager\Models\Library;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;

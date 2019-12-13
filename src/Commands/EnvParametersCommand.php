@@ -23,6 +23,7 @@ class EnvParametersCommand extends AbstractCommand implements ProjectConfigAware
     {
         $this
             ->setName('params')
+            ->setAliases(['env'])
             ->setDescription('Display all available environment substitutions')
         ;
     }

@@ -2,8 +2,8 @@
 
 namespace Somnambulist\ProjectManager\Commands\Services;
 
-use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\Collection\MutableCollection;
+use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
@@ -16,7 +16,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function array_key_exists;
 use function explode;
-use function getenv;
 use function implode;
 use function parse_url;
 use function sprintf;
@@ -42,12 +41,15 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
     {
         $this
             ->setName('services:status')
+            ->setAliases(['status'])
             ->setDescription('Displays information about the currently running services')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->setupConsoleHelper($input, $output);
+
         $project = $this->getActiveProject();
         $data    = $this->docker->status($prefix = $project->docker()->get('compose_project_name'));
 

@@ -3,13 +3,13 @@
 namespace Somnambulist\ProjectManager\Commands\Services;
 
 use LogicException;
+use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetServicesFromInput;
 use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
 use Somnambulist\ProjectManager\Models\Service;
-use Somnambulist\Collection\MutableCollection;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

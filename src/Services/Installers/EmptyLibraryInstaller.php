@@ -5,7 +5,6 @@ namespace Somnambulist\ProjectManager\Services\Installers;
 use IlluminateAgnostic\Str\Support\Str;
 use Somnambulist\ProjectManager\Models\Project;
 use function file_put_contents;
-use function touch;
 use const DIRECTORY_SEPARATOR;
 
 /**

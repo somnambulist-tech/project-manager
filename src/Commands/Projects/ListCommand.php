@@ -5,7 +5,6 @@ namespace Somnambulist\ProjectManager\Commands\Projects;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
-use Somnambulist\ProjectManager\Models\Config;
 use Somnambulist\ProjectManager\Models\Project;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
@@ -28,6 +27,7 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
     {
         $this
             ->setName('project:list')
+            ->setAliases(['projects'])
             ->setDescription('Lists all available, configured projects on this machine')
         ;
     }

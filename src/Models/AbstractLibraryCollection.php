@@ -2,9 +2,11 @@
 
 namespace Somnambulist\ProjectManager\Models;
 
-use Countable;use IteratorAggregate;use Somnambulist\ProjectManager\Contracts\InstallableResource;
-use Somnambulist\ProjectManager\Contracts\InstallableResourcesCollection;
+use Countable;
+use IteratorAggregate;
 use Somnambulist\Collection\MutableCollection;
+use Somnambulist\ProjectManager\Contracts\InstallableResource;
+use Somnambulist\ProjectManager\Contracts\InstallableResourcesCollection;
 
 /**
 * Class AbstractLibraryCollection

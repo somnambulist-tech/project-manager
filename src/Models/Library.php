@@ -2,8 +2,6 @@
 
 namespace Somnambulist\ProjectManager\Models;
 
-use function getenv;
-
 /**
  * Class Library
  *

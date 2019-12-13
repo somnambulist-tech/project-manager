@@ -33,6 +33,7 @@ class SwitchProjectCommand extends AbstractCommand implements ProjectConfigAware
     {
         $this
             ->setName('use')
+            ->setAliases(['switch',])
             ->setDescription('Switch the current project to the one specified')
             ->addArgument('project', InputArgument::OPTIONAL, 'The project name')
         ;
