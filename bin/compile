@@ -4,9 +4,13 @@
 $cwd = getcwd();
 chdir(__DIR__ . '/../');
 
+putenv('APP_ENV=prod');
+
 shell_exec('composer config autoloader-suffix SomnambulistProjectManager' . time());
 shell_exec('composer install -q --no-dev');
 shell_exec('composer config autoloader-suffix --unset');
+shell_exec('rm -rf var/cache/* var/logs/*');
+shell_exec('bin/console');
 
 chdir($cwd);
 require __DIR__ . '/../vendor/autoload.php';
@@ -27,6 +31,7 @@ try {
     $compiler->compile($file);
 
     $output->writeln(sprintf('Created: <comment>%s</comment> <info>successfully</info>', $file));
+    $output->writeln(sprintf('SHA-256: <comment>%s</comment>', hash_file('sha256', $file)));
     $output->writeln(sprintf('SHA-384: <comment>%s</comment>', hash_file('sha384', $file)));
 } catch (\Exception $e) {
     echo 'Failed to compile phar: [' . get_class($e) . '] ' . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine() . PHP_EOL;
