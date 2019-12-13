@@ -4,6 +4,8 @@ namespace Somnambulist\ProjectManager\Commands\Projects;
 
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetProjectFromInput;
+use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
+use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Models\Config;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,27 +17,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package    Somnambulist\ProjectManager\Commands\Projects
  * @subpackage Somnambulist\ProjectManager\Commands\Projects\PushProjectConfigCommand
  */
-class PushProjectConfigCommand extends AbstractCommand
+class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigAwareInterface
 {
 
     use GetProjectFromInput;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * Constructor
-     *
-     * @param Config $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-
-        parent::__construct();
-    }
+    use ProjectConfigAwareCommand;
 
     protected function configure()
     {

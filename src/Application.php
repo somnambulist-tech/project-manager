@@ -2,6 +2,11 @@
 
 namespace Somnambulist\ProjectManager;
 
+use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
+use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
+use Somnambulist\ProjectManager\Models\Config;
+use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
+use Somnambulist\ProjectManager\Services\DockerManager;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\ListCommand;
@@ -85,6 +90,17 @@ class Application extends BaseApplication
      */
     protected function doRunCommand(Command $command, InputInterface $input, OutputInterface $output)
     {
+        if ($command instanceof DockerAwareInterface) {
+            $docker = $this->kernel->getContainer()->get(DockerManager::class);
+            $docker->bindConsoleHelper(new ConsoleHelper($input, $output));
+
+            $command->bindDockerManager($docker);
+        }
+
+        if ($command instanceof ProjectConfigAwareInterface) {
+            $command->bindConfiguration($this->kernel->getContainer()->get(Config::class));
+        }
+
         if (!$command instanceof ListCommand) {
             if ($this->registrationErrors) {
                 $this->renderRegistrationErrors($input, $output);

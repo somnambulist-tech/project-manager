@@ -7,6 +7,11 @@ somnambulist:
     docker:
         compose_project_name: 'somnambulist'
 
+    templates:
+        library:
+            package: ~
+            api-client: ~
+
     libraries:
         read-models:
             repository: 'git@github.com:dave-redfern/somnambulist-read-models.git'

@@ -7,6 +7,7 @@ use Somnambulist\ProjectManager\Models\Config;
 use Somnambulist\ProjectManager\Models\Library;
 use Somnambulist\ProjectManager\Models\Project;
 use Somnambulist\ProjectManager\Models\Service;
+use Somnambulist\ProjectManager\Models\Template;
 use Symfony\Component\Yaml\Yaml;
 use function array_combine;
 use function array_merge;
@@ -39,9 +40,15 @@ class ConfigParser
      */
     public function parse(string $file): Config
     {
-        $file = Yaml::parse($this->readFile($file));
+        $config = MutableCollection::create(Yaml::parse($this->readFile($file))['somnambulist']);
 
-        $spm = new Config($file['somnambulist'], $this->getEnvParameters());
+        $spm = new Config($config->except('templates')->toArray(), $this->getEnvParameters());
+
+        $config->value('templates', new MutableCollection())->each(function ($templates, $type) use ($spm) {
+            foreach ($templates as $name => $source) {
+                $spm->templates()->add(new Template($name, $type, $source));
+            }
+        });
 
         $this->locateProjects($spm);
 
@@ -72,6 +79,7 @@ class ConfigParser
 
             $this->createLibraries($project, $config);
             $this->createServices($project, $config);
+            $this->createTemplates($project, $config);
 
             $spm->projects()->add($project);
         }
@@ -102,6 +110,15 @@ class ConfigParser
                     $service['dependencies'] ?? [],
                 )
             );
+        });
+    }
+
+    private function createTemplates(Project $project, MutableCollection $config): void
+    {
+        $config->value('somnambulist.templates', new MutableCollection())->each(function ($templates, $type) use ($project) {
+            foreach ($templates as $name => $source) {
+                $project->templates()->add(new Template($name, $type, $source));
+            }
         });
     }
 

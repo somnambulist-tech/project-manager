@@ -4,13 +4,17 @@ namespace Somnambulist\ProjectManager\Commands\Projects;
 
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetProjectFromInput;
+use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\UseEnvironmentTemplate;
+use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Models\Config;
 use Somnambulist\ProjectManager\Models\Project;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function array_filter;
 use function file_put_contents;
+use function implode;
 use const DIRECTORY_SEPARATOR;
 
 /**
@@ -19,28 +23,12 @@ use const DIRECTORY_SEPARATOR;
  * @package    Somnambulist\ProjectManager\Commands\Projects
  * @subpackage Somnambulist\ProjectManager\Commands\Projects\SwitchProjectCommand
  */
-class SwitchProjectCommand extends AbstractCommand
+class SwitchProjectCommand extends AbstractCommand implements ProjectConfigAwareInterface
 {
 
     use UseEnvironmentTemplate;
     use GetProjectFromInput;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * Constructor
-     *
-     * @param Config $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-
-        parent::__construct();
-    }
+    use ProjectConfigAwareCommand;
 
     protected function configure()
     {
@@ -75,9 +63,14 @@ class SwitchProjectCommand extends AbstractCommand
             $file, $this->environmentTemplate(
                 $project->name(),
                 $project->workingPath(),
-                $project->librariesName() . '/',
-                $project->servicesName() . '/'
+                $this->makePath($project->workingPath(), $project->librariesName()),
+                $this->makePath($project->workingPath(), $project->servicesName())
             )
         );
+    }
+
+    private function makePath(?string ...$args): string
+    {
+        return implode(DIRECTORY_SEPARATOR, array_filter($args));
     }
 }

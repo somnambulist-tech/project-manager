@@ -3,7 +3,12 @@ somnambulist:
     projects_dir: 'Projects'
 
     templates:
-        library: ~
-        web: ~
-        service: 'somnambulist/symfony-micro-service'
-        data: 'somnambulist/data-service'
+        library:
+            bundle: 'bundle-skeleton'
+            client: 'git:git@github.com:dave-redfern/cms-service.git'
+            library: ~
+
+        service:
+            data: 'composer:somnambulist/data-service'
+            service: 'composer:somnambulist/symfony-micro-service'
+            web: 'composer:symfony/skeleton'

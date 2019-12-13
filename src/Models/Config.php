@@ -3,6 +3,8 @@
 namespace Somnambulist\ProjectManager\Models;
 
 use Somnambulist\Collection\FrozenCollection;
+use function array_unique;
+use function sort;
 
 /**
  * Class Config
@@ -29,6 +31,11 @@ class Config
     private $projects;
 
     /**
+     * @var Templates
+     */
+    private $templates;
+
+    /**
      * Constructor
      *
      * @param array $config
@@ -39,6 +46,7 @@ class Config
         $this->config     = new FrozenCollection($config);
         $this->parameters = new FrozenCollection($parameters);
         $this->projects   = new Projects();
+        $this->templates  = new Templates();
     }
 
     public function home(): string
@@ -69,5 +77,22 @@ class Config
     public function projects(): Projects
     {
         return $this->projects;
+    }
+
+    public function templates(): Templates
+    {
+        return $this->templates;
+    }
+
+    public function availableTemplates(string $type): array
+    {
+        $templates = array_unique(array_merge(
+            $this->templates->for($type),
+            $this->projects->active()->templates()->for($type)
+        ));
+
+        sort($templates);
+
+        return $templates;
     }
 }

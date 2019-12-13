@@ -6,6 +6,7 @@ use Somnambulist\ProjectManager\Commands\Behaviours\UseEnvironmentTemplate;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function file_exists;
+use function file_get_contents;
 use function file_put_contents;
 use function mkdir;
 use const DIRECTORY_SEPARATOR;
@@ -51,16 +52,6 @@ class InitCommand extends AbstractCommand
 
     private function config()
     {
-        return <<<CFG
-somnambulist:
-    cache_dir: '\${SOMNAMBULIST_PROJECTS_CONFIG_DIR}/_cache'
-
-    templates:
-        library: ~
-        web: ~
-        service: 'somnambulist/symfony-micro-service'
-        data: 'somnambulist/data-service'
-
-CFG;
+        return file_get_contents(dirname(__DIR__, 2) . '/config/project_manager.yaml');
     }
 }

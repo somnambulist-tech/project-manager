@@ -2,11 +2,11 @@
 
 namespace Somnambulist\ProjectManager\Commands;
 
-use Somnambulist\ProjectManager\Models\Config;
+use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
+use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function is_array;
 
 /**
  * Class EnvParametersCommand
@@ -14,25 +14,10 @@ use function is_array;
  * @package Somnambulist\ProjectManager\Commands
  * @subpackage Somnambulist\ProjectManager\Commands\EnvParametersCommand
  */
-class EnvParametersCommand extends AbstractCommand
+class EnvParametersCommand extends AbstractCommand implements ProjectConfigAwareInterface
 {
 
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * Constructor
-     *
-     * @param Config $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-
-        parent::__construct();
-    }
+    use ProjectConfigAwareCommand;
 
     protected function configure()
     {

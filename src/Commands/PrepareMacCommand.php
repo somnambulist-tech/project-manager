@@ -4,15 +4,12 @@ namespace Somnambulist\ProjectManager\Commands;
 
 use RuntimeException;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
-use Somnambulist\ProjectManager\Models\Config;
+use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
+use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Models\Project;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 use function file_exists;
 use function file_get_contents;
@@ -24,27 +21,11 @@ use function sprintf;
  * @package Somnambulist\ProjectManager\Commands
  * @subpackage Somnambulist\ProjectManager\Commands\PrepareMacCommand
  */
-class PrepareMacCommand extends AbstractCommand
+class PrepareMacCommand extends AbstractCommand implements ProjectConfigAwareInterface
 {
 
     use GetCurrentActiveProject;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * Constructor
-     *
-     * @param Config $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-
-        parent::__construct();
-    }
+    use ProjectConfigAwareCommand;
 
     protected function configure()
     {

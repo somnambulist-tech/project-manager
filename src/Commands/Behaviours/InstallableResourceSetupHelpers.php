@@ -44,7 +44,7 @@ trait InstallableResourceSetupHelpers
     protected function createProjectDirIfNotExists(InstallableResource $resource): int
     {
         if (!file_exists($resource->installPath())) {
-            $this->tools()->warning('Creating project directory at: <info>%s</info>', $resource->installPath());
+            $this->tools()->warning('creating project directory at: <info>%s</info>', $resource->installPath());
 
             if (!mkdir($resource->installPath(), 0775, true)) {
                 $this->tools()->error('failed to create folder <comment>%s</comment>', $resource->installPath());
@@ -59,14 +59,14 @@ trait InstallableResourceSetupHelpers
 
     protected function createCloneOfRepository(InstallableResource $resource): int
     {
-        $this->tools()->warning('Cloning project from <info>%s</info> to <info>%s</info>', $resource->repository(), $resource->installPath());
+        $this->tools()->warning('cloning project from <info>%s</info> to <info>%s</info>', $resource->repository(), $resource->installPath());
 
         $cwd = getenv('PROJECT_DIR');
         $env = ['APP_ENV' => false, 'SYMFONY_DOTENV_VARS' => false];
 
         if (!$this->tools()->execute(sprintf('git clone %s %s', $resource->repository(), $resource->installPath()), $cwd, $env)) {
             $this->tools()->error('project setup failed to clone repository');
-            $this->tools()->question('Do you have access to the project and is Github SSH access configured?');
+            $this->tools()->question('do you have access to the project and is Git SSH access configured?');
 
             $this->tools()->newline();
 

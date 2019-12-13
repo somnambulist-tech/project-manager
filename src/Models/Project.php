@@ -60,6 +60,11 @@ final class Project
     private $services;
 
     /**
+     * @var Templates
+     */
+    private $templates;
+
+    /**
      * Constructor
      *
      * @param string      $name
@@ -82,6 +87,7 @@ final class Project
 
         $this->libraries = new Libraries();
         $this->services  = new Services();
+        $this->templates = new Templates();
     }
 
     public function name(): string
@@ -124,10 +130,17 @@ final class Project
         return $this->services;
     }
 
+    public function templates(): Templates
+    {
+        return $this->templates;
+    }
+
     public function docker(): FrozenCollection
     {
         return $this->docker;
     }
+
+
 
     public function getFileInProject($filename): string
     {

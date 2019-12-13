@@ -17,6 +17,6 @@ final class Library extends AbstractLibrary
 
     public function installPath(): string
     {
-        return sprintf('%s/%s%s', getenv('PROJECT_DIR'), getenv('PROJECT_LIBRARY_PREFIX') ?: '', $this->directoryName());
+        return sprintf('%s/%s', $_SERVER['PROJECT_LIBRARIES_DIR'], $this->directoryName());
     }
 }

@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Somnambulist\ProjectManager\Commands\Projects;
+namespace Somnambulist\ProjectManager\Commands\Libraries;
 
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
+use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Models\Config;
-use Somnambulist\ProjectManager\Models\Project;
+use Somnambulist\ProjectManager\Models\Library;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -16,19 +17,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class ListCommand
  *
- * @package Somnambulist\ProjectManager\Commands\Projects
- * @subpackage Somnambulist\ProjectManager\Commands\Projects\ListCommand
+ * @package Somnambulist\ProjectManager\Commands\Libraries
+ * @subpackage Somnambulist\ProjectManager\Commands\Libraries\ListCommand
  */
 class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
 {
 
+    use GetCurrentActiveProject;
     use ProjectConfigAwareCommand;
 
     protected function configure()
     {
         $this
-            ->setName('project:list')
-            ->setDescription('Lists all available, configured projects on this machine')
+            ->setName('libraries:list')
+            ->setDescription('List configured libraries')
         ;
     }
 
@@ -36,27 +38,27 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
     {
         $this->setupConsoleHelper($input, $output);
 
+        $project = $this->getActiveProject();
+
         $table = new Table($output);
         $table
-            ->setHeaderTitle(sprintf('Projects (project: <fg=yellow;bg=white>%s</>)', $this->config->active() ?: '-'))
+            ->setHeaderTitle(sprintf('Libraries (project: <fg=yellow;bg=white>%s</>)', $project->name()))
             ->setHeaders([
-                'Name', 'Directory', 'Docker Name', '# Libraries', '# Services',
+                'Service', 'Project Directory', 'Installed?',
             ])
         ;
 
-        $this->config->projects()->list()->each(function (Project $project) use ($table) {
+        $project->libraries()->list()->each(function (Library $service) use ($table) {
             $table->addRow([
-                $project->name(),
-                $project->workingPath(),
-                $project->docker()->get('compose_project_name'),
-                $project->libraries()->count(),
-                $project->services()->count(),
+                $service->name(),
+                $service->installPath(),
+                $service->isInstalled() ? 'yes' : 'no',
             ]);
         });
 
         $table->addRows([
             new TableSeparator(),
-            [new TableCell('Create a new project using: <comment>project:create</comment>', ['colspan' => 5])]
+            [new TableCell('Create a new library using: <comment>libraries:create</comment>', ['colspan' => 3])]
         ]);
 
         $table->render();

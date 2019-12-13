@@ -5,7 +5,6 @@ namespace Somnambulist\ProjectManager\Commands\Behaviours;
 use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Models\Config;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use function strtolower;
 use function trim;
 
@@ -20,12 +19,12 @@ use function trim;
 trait GetLibrariesFromInput
 {
 
-    protected function getLibrariesFrom(InputInterface $input, OutputInterface $output, string $message): MutableCollection
+    protected function getLibrariesFrom(InputInterface $input, string $message): MutableCollection
     {
         $libraries = $input->getArgument('library');
 
         if (strtolower(trim($libraries[0])) === 'all') {
-            $output->writeln($message);
+            $this->tools()->info($message);
 
             return $this->config->projects()->active()->libraries()->list()->keys();
         }

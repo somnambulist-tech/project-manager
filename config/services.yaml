@@ -17,6 +17,9 @@ services:
     Somnambulist\ProjectManager\Services\:
         resource: '../src/Services'
 
+    Somnambulist\ProjectManager\Services\DockerManager:
+        public: true
+
     Somnambulist\ProjectManager\Models\Config:
         factory: Somnambulist\ProjectManager\Services\Config\Factory::create
         public: true

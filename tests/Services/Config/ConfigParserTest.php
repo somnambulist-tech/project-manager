@@ -3,6 +3,7 @@
 namespace Somnambulist\ProjectManager\Tests\Services\Config;
 
 use Somnambulist\ProjectManager\Models\Project;
+use Somnambulist\ProjectManager\Models\Template;
 use Somnambulist\ProjectManager\Services\Config\ConfigLocator;
 use Somnambulist\ProjectManager\Services\Config\ConfigParser;
 use PHPUnit\Framework\TestCase;
@@ -31,8 +32,7 @@ class ConfigParserTest extends TestCase
 
         $this->assertCount(2, $config->projects());
         $this->assertEquals($tmp . '/_cache', $config->config()->get('cache_dir'));
-        $this->assertEquals('somnambulist/symfony-micro-service', $config->config()->get('templates.service'));
-        $this->assertEquals('somnambulist/data-service', $config->config()->get('templates.data'));
+        $this->assertNull($config->config()->get('templates'));
 
         $project = $config->projects()->get('example');
 
@@ -40,5 +40,17 @@ class ConfigParserTest extends TestCase
         $this->assertEquals('example', $project->name());
         $this->assertCount(0, $project->services());
         $this->assertCount(1, $project->libraries());
+
+        $templates = $config->templates();
+
+        $this->assertCount(6, $templates);
+
+        $template = $templates->get('data');
+
+        $this->assertInstanceOf(Template::class, $template);
+        $this->assertEquals('data', $template->name());
+        $this->assertEquals('service', $template->type());
+        $this->assertEquals('composer:somnambulist/data-service', $template->source());
+        $this->assertTrue($template->isComposerResource());
     }
 }
