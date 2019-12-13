@@ -6,6 +6,9 @@ use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
+use Somnambulist\ProjectManager\Models\Library;
+use Somnambulist\ProjectManager\Models\Service;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -27,6 +30,7 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
             ->setName('current')
             ->setAliases(['cur', 'curr'])
             ->setDescription('Displays the current active project')
+            ->addArgument('list', InputArgument::OPTIONAL, 'List services and libraries')
         ;
     }
 
@@ -46,6 +50,23 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
         $this->tools()->info('config dir is <info>%s</info>', $project->configPath());
         $this->tools()->info('docker prefix is <info>%s</info>', $project->docker()->get('compose_project_name'));
         $this->tools()->newline();
+
+        if ($input->getArgument('list')) {
+            $i = 0;
+            $this->tools()->info('available libraries');
+            $project->libraries()->list()->each(function (Library $lib, $key) use (&$i) {
+                $this->tools()->step(++$i, $lib->name());
+            });
+            $this->tools()->newline();
+
+            $i = 0;
+            $this->tools()->info('available services');
+
+            $project->services()->list()->each(function (Service $lib, $key) use (&$i) {
+                $this->tools()->step(++$i, $lib->name());
+            });
+            $this->tools()->newline();
+        }
 
         return 0;
     }
