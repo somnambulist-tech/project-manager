@@ -31,7 +31,7 @@ class InstallLibraryCommand extends AbstractCommand implements ProjectConfigAwar
 
     protected function configure()
     {
-        $default = getenv('PROJECT_LIBRARIES_DIR');
+        $default = $_SERVER['PROJECT_LIBRARIES_DIR'];
 
         $this
             ->setName('libraries:install')
@@ -65,7 +65,7 @@ HLP
         $this->setupConsoleHelper($input, $output);
 
         $project   = $this->getActiveProject();
-        $libraries = $this->getLibrariesFrom($input, 'setting up all libraries, this might take a while...');
+        $libraries = $this->getLibrariesFrom($input, 'installing all libraries, this might take a while...');
 
         foreach ($libraries as $name) {
             try {

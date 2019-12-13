@@ -61,7 +61,7 @@ trait InstallableResourceSetupHelpers
     {
         $this->tools()->warning('cloning project from <info>%s</info> to <info>%s</info>', $resource->repository(), $resource->installPath());
 
-        $cwd = getenv('PROJECT_DIR');
+        $cwd = $_SERVER['PROJECT_DIR'];
         $env = ['APP_ENV' => false, 'SYMFONY_DOTENV_VARS' => false];
 
         if (!$this->tools()->execute(sprintf('git clone %s %s', $resource->repository(), $resource->installPath()), $cwd, $env)) {

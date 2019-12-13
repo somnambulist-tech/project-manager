@@ -72,6 +72,11 @@ class ConsoleHelper
         $this->noOutput = false;
     }
 
+    public function input(): InputInterface
+    {
+        return $this->input;
+    }
+
     public function execute(string $command, string $cwd = null, array $env = null, $input = null, ?float $timeout = null): bool
     {
         $h = new ProcessHelper();
@@ -84,17 +89,17 @@ class ConsoleHelper
         return $proc->isSuccessful();
     }
 
-    public function ask(string $question, bool $confirm = true)
+    public function ask(string $question, bool $confirm = true, string ...$args)
     {
         $h      = new QuestionHelper();
         $h->setHelperSet($this->helperSet);
 
-        $result = $h->ask($this->input, $this->output, new Question('<q> Q </q> ' . $question));
+        $result = $h->ask($this->input, $this->output, new Question('<q> Q </q> ' . sprintf($question, ...$args)));
 
         if ($confirm) {
             $conf = new Question(sprintf('<i> ▲ </i> You provided "<info>%s</info>", is this correct? [y/n] ', $result));
 
-            if ('n' === $h->ask($this->input, $this->output, $conf)) {
+            if ('y' !== $h->ask($this->input, $this->output, $conf)) {
                 return $this->ask($question, $confirm);
             }
         }
