@@ -15,7 +15,7 @@ use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
 trait CanInitialiseGitRepository
 {
 
-    private function initialiseGitRepositoryAt(string $cwd): int
+    protected function initialiseGitRepositoryAt(string $cwd): int
     {
         $ok = $this->tools()->execute('git init', $cwd);
         $ok = $ok && $this->tools()->execute('git add -A', $cwd);

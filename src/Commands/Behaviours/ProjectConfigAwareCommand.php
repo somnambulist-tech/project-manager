@@ -16,7 +16,7 @@ trait ProjectConfigAwareCommand
     /**
      * @var Config
      */
-    private $config;
+    protected $config;
 
     public function bindConfiguration(Config $config): void
     {

@@ -16,7 +16,7 @@ trait DockerAwareCommand
     /**
      * @var DockerManager
      */
-    private $docker;
+    protected $docker;
 
     public function bindDockerManager(DockerManager $docker): void
     {
