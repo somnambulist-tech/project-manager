@@ -49,7 +49,7 @@ class DeleteProjectConfigCommand extends AbstractCommand implements ProjectConfi
         $cwd = $project->configPath();
 
         if (!$this->tools()->execute(sprintf('rm -rf %s', $cwd))) {
-            $this->tools()->error('there was an error removing <comment>%s</comment>', $cwd);
+            $this->tools()->error('there was an error removing <info>%s</info>', $cwd);
             $this->tools()->newline();
 
             return 1;

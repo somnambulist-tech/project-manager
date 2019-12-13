@@ -42,9 +42,9 @@ class InitCommand extends AbstractCommand
             file_put_contents($dir . DIRECTORY_SEPARATOR . 'project_manager.yaml', $this->config());
             file_put_contents($dir . DIRECTORY_SEPARATOR . '.env', $this->environmentTemplate());
 
-            $this->tools()->success('Configuration created at <comment>%s</comment>', $dir);
+            $this->tools()->success('Configuration created at <info>%s</info>', $dir);
         } else {
-            $this->tools()->warning('Configuration at <comment>%s</comment> already exists', $dir);
+            $this->tools()->warning('Configuration at <info>%s</info> already exists', $dir);
         }
 
         $this->tools()->newline();

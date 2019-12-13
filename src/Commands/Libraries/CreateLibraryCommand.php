@@ -69,7 +69,7 @@ HLP
         $name     = $input->getArgument('name');
         $template = $input->getArgument('template');
 
-        $this->tools()->warning('Creating new library for <comment>%s</comment>', $project->name());
+        $this->tools()->warning('Creating new library for <info>%s</info>', $project->name());
 
         if (!$name) {
             $name = $this->tools()->ask('What will your library be called? This is the local folder name: ');

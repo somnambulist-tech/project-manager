@@ -6,7 +6,9 @@ use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetServicesFromInput;
+use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
+use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Models\Service;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,12 +23,13 @@ use function trim;
  * @package Somnambulist\ProjectManager\Commands\Services
  * @subpackage Somnambulist\ProjectManager\Commands\Services\StartCommand
  */
-class StartCommand extends AbstractCommand implements DockerAwareInterface
+class StartCommand extends AbstractCommand implements DockerAwareInterface, ProjectConfigAwareInterface
 {
 
     use GetServicesFromInput;
     use GetCurrentActiveProject;
     use DockerAwareCommand;
+    use ProjectConfigAwareCommand;
 
     protected function configure()
     {
@@ -37,7 +40,7 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface
             ->addOption('rebuild', 'b', InputOption::VALUE_NONE, 'Re-build the containers before starting')
             ->addOption('refresh', 'r', InputOption::VALUE_NONE, 'Refresh the containers before starting; pulls all new images')
             ->addOption('with-deps', 'd', InputOption::VALUE_NONE, 'Start all dependencies without prompting for confirmation')
-            ->addOption('without-deps', 'w', InputOption::VALUE_NONE, 'Ignore all dependencies')
+            ->addOption('without-deps', 'D', InputOption::VALUE_NONE, 'Ignore all dependencies')
         ;
     }
 
@@ -46,7 +49,11 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface
         $this->setIsDebugging($input);
         $this->setupConsoleHelper($input, $output);
 
-        $services = $this->getServicesFrom($input, 'Starting all services, this might take a while...');
+        $project = $this->getActiveProject();
+
+        $this->tools()->warning('starting service(s) in <info>%s</info>', $project->name());
+
+        $services = $this->getServicesFrom($input, 'starting all services, this might take a while...');
 
         foreach ($services as $name) {
             $this->startService($name);
@@ -59,9 +66,9 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface
     {
         $project = $this->getActiveProject();
 
-        /** @var Service $service */
         if (null === $service = $project->services()->get($service)) {
-            $this->tools()->error('service <comment>%s</comment> not found!', $service);
+            /** @var Service $service */
+            $this->tools()->error('service <info>%s</info> not found!', $service);
             return;
         }
 
@@ -71,7 +78,7 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface
             if ($this->tools()->input()->getOption('with-deps')) {
                 $deps = 'y';
             }
-            if (!$this->tools()->input()->getOption('without-deps')) {
+            if ($this->tools()->input()->getOption('without-deps')) {
                 $deps = 'n';
             }
             if (!$deps) {
@@ -89,18 +96,19 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface
 
         switch ($command):
             case 'refresh':
-                $this->isDebug() ?: $this->tools()->info('attempting to <info>refresh</info> service <comment>%s</comment> ', $service->name());
+                $this->tools()->info('attempting to <info>refresh</info> service <info>%s</info> ', $service->name());
                 $this->docker->refresh($service);
                 $this->docker->start($service);
             break;
 
             case 'build':
-                $this->isDebug() ?: $this->tools()->info('attempting to <info>build</info> service <comment>%s</comment> ', $service->name());
+                $this->tools()->info('attempting to <info>build</info> service <info>%s</info> ', $service->name());
                 $this->docker->build($service);
                 $this->docker->start($service);
             break;
 
             case 'start' && !$service->isRunning():
+                $this->tools()->info('attempting to <info>start</info> service <info>%s</info> ', $service->name());
                 $this->docker->start($service);
         endswitch;
 

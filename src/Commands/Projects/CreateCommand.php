@@ -109,7 +109,7 @@ CFG;
      */
     protected function createFromGitRepo(string $git, string $cwd, string $file): int
     {
-        $this->tools()->warning('cloning git repository from <comment>%s</comment> to <comment>%s</comment>', $git, $cwd);
+        $this->tools()->warning('cloning git repository from <info>%s</info> to <comment>%s</comment>', $git, $cwd);
 
         if (!$this->tools()->git()->clone(dirname($cwd), $git, $cwd)) {
             $this->tools()->error('failed to checkout project! run again with -vvv to get debugging');
@@ -120,14 +120,14 @@ CFG;
         $this->tools()->success('project checked out successfully');
 
         if (!file_exists($file)) {
-            $this->tools()->error('no configuration was found in <comment>%s</comment>', $file);
+            $this->tools()->error('no configuration was found in <info>%s</info>', $file);
 
             return 1;
         }
 
         $name = Yaml::parseFile($file)['somnambulist']['project']['name'];
 
-        $this->tools()->success('enable the project by running: <comment>use %s</comment>', $name);
+        $this->tools()->success('enable the project by running: <info>use %s</info>', $name);
 
         return 0;
     }
@@ -144,28 +144,28 @@ CFG;
     protected function createNewLocalProject(string $cwd, string $file, string $name, string $docker, ?string $git): int
     {
         if (!mkdir($cwd, 0775)) {
-            $this->tools()->error('failed to create config folder <comment>%s</comment>', $cwd);
+            $this->tools()->error('failed to create config folder <info>%s</info>', $cwd);
 
             return 1;
         }
 
-        $this->tools()->warning('created configuration directory at <comment>%s</comment>', $cwd);
+        $this->tools()->warning('created configuration directory at <info>%s</info>', $cwd);
 
         if (false === file_put_contents($file, $this->config($this->config->projectsDir(), $name, $docker, $git))) {
-            $this->tools()->error('failed to create file at <comment>%s</comment>', $file);
+            $this->tools()->error('failed to create file at <info>%s</info>', $file);
 
             return 1;
         }
 
-        $this->tools()->warning('created configuration file at <comment>%s</comment>', $file);
-        $this->tools()->warning('creating git repository at <comment>%s</comment>', $cwd);
+        $this->tools()->warning('created configuration file at <info>%s</info>', $file);
+        $this->tools()->warning('creating git repository at <info>%s</info>', $cwd);
 
         if (0 !== $this->initialiseGitRepositoryAt($cwd)) {
             return 1;
         }
 
-        $this->tools()->success('created git repository at <comment>%s</comment>', $cwd);
-        $this->tools()->success('project created successfully, enable the project by running: <comment>use %s</comment>', $name);
+        $this->tools()->success('created git repository at <info>%s</info>', $cwd);
+        $this->tools()->success('project created successfully, enable the project by running: <info>use %s</info>', $name);
 
         return 0;
     }

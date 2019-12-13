@@ -63,8 +63,11 @@ HLP
     {
         $this->setupConsoleHelper($input, $output);
 
-        $services = $this->getServicesFrom($input, 'installing all services, this might take a while...');
         $project  = $this->getActiveProject();
+
+        $this->tools()->warning('installing service(s) in <info>%s</info>', $project->name());
+
+        $services = $this->getServicesFrom($input, 'installing all services, this might take a while...');
 
         foreach ($services as $name) {
             try {

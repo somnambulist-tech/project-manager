@@ -57,7 +57,7 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
 
         $table->addRows([
             new TableSeparator(),
-            [new TableCell('Create a new library using: <comment>libraries:create</comment>', ['colspan' => 3])]
+            [new TableCell('Create a new library using: <info>libraries:create</info>', ['colspan' => 3])]
         ]);
 
         $table->render();

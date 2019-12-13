@@ -22,7 +22,7 @@ trait CanInitialiseGitRepository
         $ok = $ok && $this->tools()->git()->commit($cwd, 'Initial commit');
 
         if (!$ok) {
-            $this->tools()->error('failed to initialise git repository at <comment>%s</comment>', $cwd);
+            $this->tools()->error('failed to initialise git repository at <info>%s</info>', $cwd);
 
             return 1;
         }

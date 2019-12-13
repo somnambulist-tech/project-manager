@@ -45,7 +45,7 @@ trait InstallableResourceSetupHelpers
             $this->tools()->warning('creating project directory at: <info>%s</info>', $resource->installPath());
 
             if (!mkdir($resource->installPath(), 0775, true)) {
-                $this->tools()->error('failed to create folder <comment>%s</comment>', $resource->installPath());
+                $this->tools()->error('failed to create folder <info>%s</info>', $resource->installPath());
                 $this->tools()->newline();
 
                 return 1;
@@ -70,7 +70,7 @@ trait InstallableResourceSetupHelpers
             return 1;
         }
 
-        $this->tools()->success('successfully cloned repository to <comment>%s</comment>', $resource->installPath());
+        $this->tools()->success('successfully cloned repository to <info>%s</info>', $resource->installPath());
 
         return 0;
     }

@@ -56,7 +56,7 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
 
         $table->addRows([
             new TableSeparator(),
-            [new TableCell('Create a new project using: <comment>project:create</comment>', ['colspan' => 5])]
+            [new TableCell('Create a new project using: <info>project:create</info>', ['colspan' => 5])]
         ]);
 
         $table->render();

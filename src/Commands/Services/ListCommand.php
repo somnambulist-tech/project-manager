@@ -65,7 +65,7 @@ class ListCommand extends AbstractCommand implements DockerAwareInterface, Proje
 
         $table->addRows([
             new TableSeparator(),
-            [new TableCell('Create a new service using: <comment>services:create</comment>', ['colspan' => 5])],
+            [new TableCell('Create a new service using: <info>services:create</info>', ['colspan' => 5])],
         ]);
 
         $table->render();

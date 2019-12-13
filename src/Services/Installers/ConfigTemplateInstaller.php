@@ -21,7 +21,7 @@ class ConfigTemplateInstaller extends AbstractInstaller
     {
         $step = 0;
 
-        $this->tools()->step(++$step, 'creating <info>%s</info> folder', $this->type);
+        $this->tools()->step(++$step, 'creating <info>%s</info> folder <info>%s</info>', $this->type, $cwd);
 
         if (0 !== $this->createLibraryFolder($cwd)) {
             return 1;
@@ -29,7 +29,7 @@ class ConfigTemplateInstaller extends AbstractInstaller
 
         $this->tools()->step(++$step, 'copying template files to %s', $this->type);
 
-        $source = $project->configPath() . DIRECTORY_SEPARATOR . $template->source();
+        $source = $project->configPath() . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $template->source();
 
         if (!is_dir($source)) {
             $this->tools()->error('template folder not found at <comment>%s</comment>', $source);
@@ -38,7 +38,7 @@ class ConfigTemplateInstaller extends AbstractInstaller
             return 1;
         }
 
-        $this->tools()->execute(sprintf('cp -R %s %s', $source, $cwd));
+        $this->tools()->execute(sprintf('cp -r %s %s', $source . DIRECTORY_SEPARATOR . '.', $cwd));
 
         $this->tools()->step(++$step, 'creating git repository');
 

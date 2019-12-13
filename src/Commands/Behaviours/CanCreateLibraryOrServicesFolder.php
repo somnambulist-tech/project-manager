@@ -19,7 +19,7 @@ trait CanCreateLibraryOrServicesFolder
     protected function createLibraryFolder(string $cwd): int
     {
         if (!mkdir($cwd, 0775, true)) {
-            $this->tools()->error('unable to create folder at <comment>%s</comment>', $cwd);
+            $this->tools()->error('unable to create folder at <info>%s</info>', $cwd);
             $this->tools()->newline();
 
             return 1;

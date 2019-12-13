@@ -87,7 +87,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
         if (0 === $data->count()) {
             $table->addRows([
                 new TableSeparator(),
-                [new TableCell('There are no running services for this project. Start a service using: <comment>services:start</comment>', ['colspan' => 5])],
+                [new TableCell('There are no running services for this project. Start a service using: <info>services:start</info>', ['colspan' => 5])],
             ]);
         }
 

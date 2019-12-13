@@ -27,7 +27,7 @@ trait GetTemplateFromProjectOrConfig
     {
         if (null === $temp = $this->config->projects()->active()->templates()->get($template)) {
             if (null === $temp = $this->config->templates()->get($template)) {
-                $this->tools()->error('there is no template <comment>%s</comment> in the project or the core', $template);
+                $this->tools()->error('there is no template <info>%s</info> in the project or the core', $template);
                 $this->tools()->newline();
 
                 return 1;

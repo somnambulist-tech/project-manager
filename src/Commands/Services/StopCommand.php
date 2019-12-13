@@ -8,7 +8,9 @@ use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetServicesFromInput;
+use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
+use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Models\Service;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,12 +24,13 @@ use function sprintf;
  * @package Somnambulist\ProjectManager\Commands\Services
  * @subpackage Somnambulist\ProjectManager\Commands\Services\StopCommand
  */
-class StopCommand extends AbstractCommand implements DockerAwareInterface
+class StopCommand extends AbstractCommand implements DockerAwareInterface, ProjectConfigAwareInterface
 {
 
     use GetServicesFromInput;
     use GetCurrentActiveProject;
     use DockerAwareCommand;
+    use ProjectConfigAwareCommand;
 
     protected function configure()
     {
@@ -43,8 +46,11 @@ class StopCommand extends AbstractCommand implements DockerAwareInterface
         $this->setupConsoleHelper($input, $output);
         $this->setIsDebugging($input);
 
-        $services = $this->getServicesFrom($input, 'stopping all services, this might take a while...');
         $project  = $this->getActiveProject();
+
+        $this->tools()->warning('stopping service(s) in <info>%s</info>', $project->name());
+
+        $services = $this->getServicesFrom($input, 'stopping all services, this might take a while...');
 
         $dependencyTree = $this->buildDependencyTree($project->services()->list());
         $mustStop       = $this->findDependentServices($services);
@@ -62,16 +68,16 @@ class StopCommand extends AbstractCommand implements DockerAwareInterface
 
     private function stopService(string $service): void
     {
-        /** @var Service $service */
         if (null !== $service = $this->getActiveProject()->services()->get($service)) {
-            $this->tools()->info('attempting to stop <comment>%s</comment>', $service->name());
+            /** @var Service $service */
+            $this->tools()->info('attempting to stop <info>%s</info>', $service->name());
             $this->docker->stop($service);
 
             $service->isRunning() ? $this->tools()->error('failed to stop service') : $this->tools()->success('successfully stopped service');
 
             $this->tools()->newline();
         } else {
-            $this->tools()->error('service <comment>%s</comment> not found!', $service);
+            $this->tools()->error('service <info>%s</info> not found!', $service);
         }
     }
 
@@ -116,7 +122,7 @@ class StopCommand extends AbstractCommand implements DockerAwareInterface
                 $resolved = true;
 
                 foreach ($service->dependencies() as $dep) {
-                    if (!is_null($test = $services->get($dep)) && $test->getDependencies()->contains($test)) {
+                    if (!is_null($test = $services->get($dep)) && $test->dependencies()->contains($test)) {
                         throw new LogicException(sprintf('Cyclical dependency detected for service "%s" and "%s"', $alias, $dep));
                     }
 

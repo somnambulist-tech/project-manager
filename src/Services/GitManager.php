@@ -5,7 +5,11 @@ namespace Somnambulist\ProjectManager\Services;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
+use function array_filter;
+use function explode;
+use function in_array;
 use function sprintf;
+use function str_replace;
 use function trim;
 
 /**
@@ -100,6 +104,26 @@ class GitManager
         $proc = $this->exec('git remote add %s %s', $cwd, $name, $remote);
 
         return $proc->isSuccessful();
+    }
+
+    public function getRemotes(string $cwd): array
+    {
+        $proc = $this->exec('git remote -v', $cwd);
+        $remotes = [];
+
+        if ($proc->isSuccessful()) {
+            foreach (array_filter(explode("\n", $proc->getOutput())) as $item) {
+                [$name, $repo] = explode("\t", $item);
+
+                $repo = trim(str_replace(['(fetch)', '(push)'], '', $repo));
+
+                if (!in_array($repo, $remotes)) {
+                    $remotes[] = $repo;
+                }
+            }
+        }
+
+        return $remotes;
     }
 
     public function setRemote(string $cwd, string $name, string $remote): bool

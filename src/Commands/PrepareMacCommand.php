@@ -80,7 +80,7 @@ class PrepareMacCommand extends AbstractCommand implements ProjectConfigAwareInt
                     if ('exit' === $toRun) {
                         if (!$bashMode) {
                             $this->tools()->info('init:mac must wait for the previous command');
-                            $this->tools()->info('resume using: <comment>init:mac -s %s</comment>', $i + 1);
+                            $this->tools()->info('resume using: <info>init:mac -s %s</info>', $i + 1);
                             $this->tools()->newline();
 
                             return 0;
@@ -112,7 +112,7 @@ class PrepareMacCommand extends AbstractCommand implements ProjectConfigAwareInt
         }
 
         $this->tools()->success('All steps completed');
-        $this->tools()->info('If you install Xcode you may wish to run: <comment>sudo xcodebuild -license accept</comment>');
+        $this->tools()->info('If you install Xcode you may wish to run: <info>sudo xcodebuild -license accept</info>');
         $this->tools()->newline();
 
         return 0;

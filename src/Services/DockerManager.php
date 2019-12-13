@@ -71,7 +71,7 @@ class DockerManager
     public function resolve(Service $service): void
     {
         $env = (new Dotenv())->parse(file_get_contents($service->envFile()));
-        $name = implode('_', array_filter([$env['COMPOSE_PROJECT_NAME'] ?: '', $service->appContainer()]));
+        $name = implode('_', array_filter([$env['COMPOSE_PROJECT_NAME'] ?? '', $service->appContainer()]));
 
         try {
             $command = sprintf('docker ps --no-trunc --format="{{.ID}}" --filter=name="%s"', $name);
