@@ -6,10 +6,11 @@ use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetProjectFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
-use Somnambulist\ProjectManager\Models\Config;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
+use function trim;
 
 /**
  * Class PushProjectConfigCommand
@@ -42,21 +43,50 @@ class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigA
 
         $cwd = $project->configPath();
 
-        $ok = $this->tools()->execute('git add -A', $cwd);
-        $ok = $ok && $this->tools()->execute('git commit -m \'updating configuration files\'', $cwd);
-        $ok = $ok && $this->tools()->execute('git push origin master', $cwd);
-
-        if ($ok) {
-            $this->tools()->success('project changes successfully sync\'d');
+        $proc = Process::fromShellCommandline('git status -s', $cwd);
+        $proc->run();
+        if (!$res = trim($proc->getOutput())) {
+            $this->tools()->info('there are no changes detected to the configuration files');
             $this->tools()->newline();
 
             return 0;
+        }
+
+        $ok = $this->tools()->execute('git add -A', $cwd);
+        $ok = $ok && $this->tools()->execute('git commit -m \'updating configuration files\'', $cwd);
+
+        if ($ok) {
+            $this->tools()->success('changed files committed to git\'d');
         } else {
-            $this->tools()->error('failed to update the git repository; did you have any changes? Re-run with -vvv to check');
+            $this->tools()->error('failed to commit changes to git, re-run with -vvv to debug');
+            $this->tools()->info('There may not have been any changed files');
+            $this->tools()->newline();
+
+            return 1;
+        }
+
+        $proc = Process::fromShellCommandline('git remote -v', $cwd);
+        $proc->run();
+        if (!$res = trim($proc->getOutput())) {
+            return $this->success();
+        }
+
+        if (!$this->tools()->execute('git push origin master', $cwd)) {
+            $this->tools()->error('failed to push changes, is a remote configured?');
             $this->tools()->info('You may not have write access to the repository, or are out of sync');
             $this->tools()->newline();
 
             return 1;
         }
+
+        return $this->success();
+    }
+
+    private function success(): int
+    {
+        $this->tools()->success('project changes pushed to remote successfully');
+        $this->tools()->newline();
+
+        return 0;
     }
 }

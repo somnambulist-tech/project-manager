@@ -35,7 +35,7 @@ final class Template
      * @param string      $type
      * @param string|null $source
      */
-    public function __construct(string $name, string $type, ?string $source)
+    public function __construct(string $name, string $type, string $source = null)
     {
         $this->name   = $name;
         $this->type   = $type;
@@ -57,13 +57,23 @@ final class Template
         return $this->source;
     }
 
+    public function hasResource(): bool
+    {
+        return null !== $this->source;
+    }
+
+    public function isConfig(): bool
+    {
+        return $this->hasResource() && (!$this->isComposerResource() && !$this->isGitResource());
+    }
+
     public function isComposerResource(): bool
     {
-        return $this->source && 0 === strpos($this->source, 'composer:');
+        return $this->hasResource() && 0 === strpos($this->source, 'composer:');
     }
 
     public function isGitResource(): bool
     {
-        return $this->source && 0 === strpos($this->source, 'git:');
+        return $this->hasResource() && 0 === strpos($this->source, 'git:');
     }
 }

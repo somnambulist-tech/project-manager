@@ -3,9 +3,9 @@
 namespace Somnambulist\ProjectManager\Commands\Projects;
 
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
+use Somnambulist\ProjectManager\Commands\Behaviours\CanInitialiseGitRepository;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
-use Somnambulist\ProjectManager\Models\Config;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,6 +26,7 @@ class CreateCommand extends AbstractCommand implements ProjectConfigAwareInterfa
 {
 
     use ProjectConfigAwareCommand;
+    use CanInitialiseGitRepository;
 
     protected function configure()
     {
@@ -158,13 +159,7 @@ CFG;
         $this->tools()->warning('created configuration file at <comment>%s</comment>', $file);
         $this->tools()->warning('creating git repository at <comment>%s</comment>', $cwd);
 
-        $ok = $this->tools()->execute('git init', $cwd);
-        $ok = $ok && $this->tools()->execute('git add -A', $cwd);
-        $ok = $ok && $this->tools()->execute('git commit -m \'Initial commit\'', $cwd);
-
-        if (!$ok) {
-            $this->tools()->error('failed to initialise git repository at <comment>%s</comment>', $cwd);
-
+        if (0 !== $this->initialiseGitRepositoryAt($cwd)) {
             return 1;
         }
 

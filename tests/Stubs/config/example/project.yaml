@@ -1,7 +1,7 @@
 somnambulist:
     project:
         name: 'example'
-        working_dir: '~/Projects/example'
+        working_dir: '${HOME}/Projects/example'
         libraries_dirname: 'libraries'
         services_dirname: 'services'
         repository: ~

@@ -26,6 +26,17 @@ class TemplateTest extends TestCase
         $this->assertEquals('bar', $ent->source());
     }
 
+    public function testRequiresSourceToHaveResource()
+    {
+        $ent = new Template('test', 'foo');
+
+        $this->assertFalse($ent->hasResource());
+
+        $ent = new Template('test', 'foo', 'bob');
+
+        $this->assertTrue($ent->hasResource());
+    }
+
     public function testIsGitResource()
     {
         $ent = new Template('test', 'foo', 'git:git@github.com:dave-redfern/cms-service.git');

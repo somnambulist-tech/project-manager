@@ -11,9 +11,11 @@ use Somnambulist\ProjectManager\Models\Template;
 use Symfony\Component\Yaml\Yaml;
 use function array_combine;
 use function array_merge;
+use function dirname;
 use function file_get_contents;
 use function getenv;
 use function glob;
+use function is_array;
 use function ksort;
 use function sprintf;
 use function strtoupper;
@@ -31,8 +33,8 @@ class ConfigParser
     /**
      * Converts a Yaml file into a Config object, replacing params
      *
-     * Config contains several sets of processed data objects, and handles merging
-     * common configuration into the defined tasks.
+     * Config contains several sets of processed data objects, and handles locating all
+     * project configurations on the current system.
      *
      * @param string $file
      *
@@ -45,14 +47,28 @@ class ConfigParser
         $spm = new Config($config->except('templates')->toArray(), $this->getEnvParameters());
 
         $config->value('templates', new MutableCollection())->each(function ($templates, $type) use ($spm) {
-            foreach ($templates as $name => $source) {
-                $spm->templates()->add(new Template($name, $type, $source));
+            if (is_array($templates)) {
+                foreach ($templates as $name => $source) {
+                    $spm->templates()->add(new Template($name, $type, $source));
+                }
             }
         });
 
         $this->locateProjects($spm);
 
         return $spm;
+    }
+
+    /**
+     * Converts a single project.yaml file into a Project object
+     *
+     * @param string $file
+     *
+     * @return Project
+     */
+    public function project(string $file): Project
+    {
+        return $this->createProject($file);
     }
 
     private function readFile(string $file): string
@@ -65,24 +81,29 @@ class ConfigParser
         $entries = glob($_SERVER['SOMNAMBULIST_PROJECTS_CONFIG_DIR'] . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . 'project.yaml');
 
         foreach ($entries as $entry) {
-            $config = MutableCollection::create(Yaml::parse($this->readFile($entry)));
-
-            $project = new Project(
-                $config->get('somnambulist.project.name'),
-                dirname($entry),
-                $config->get('somnambulist.project.working_dir'),
-                $config->get('somnambulist.project.services_dirname'),
-                $config->get('somnambulist.project.libraries_dirname'),
-                $config->get('somnambulist.project.repository'),
-                $config->get('somnambulist.docker', new MutableCollection())->toArray(),
-            );
-
-            $this->createLibraries($project, $config);
-            $this->createServices($project, $config);
-            $this->createTemplates($project, $config);
-
-            $spm->projects()->add($project);
+            $spm->projects()->add($this->createProject($entry));
         }
+    }
+
+    private function createProject(string $file): Project
+    {
+        $config = MutableCollection::create(Yaml::parse($this->readFile($file)));
+
+        $project = new Project(
+            $config->get('somnambulist.project.name'),
+            dirname($file),
+            $config->get('somnambulist.project.working_dir'),
+            $config->get('somnambulist.project.services_dirname'),
+            $config->get('somnambulist.project.libraries_dirname'),
+            $config->get('somnambulist.project.repository'),
+            $config->get('somnambulist.docker', new MutableCollection())->toArray(),
+        );
+
+        $this->createLibraries($project, $config);
+        $this->createServices($project, $config);
+        $this->createTemplates($project, $config);
+
+        return $project;
     }
 
     private function createLibraries(Project $project, MutableCollection $config): void
@@ -116,8 +137,10 @@ class ConfigParser
     private function createTemplates(Project $project, MutableCollection $config): void
     {
         $config->value('somnambulist.templates', new MutableCollection())->each(function ($templates, $type) use ($project) {
-            foreach ($templates as $name => $source) {
-                $project->templates()->add(new Template($name, $type, $source));
+            if (is_array($templates)) {
+                foreach ($templates as $name => $source) {
+                    $project->templates()->add(new Template($name, $type, $source));
+                }
             }
         });
     }

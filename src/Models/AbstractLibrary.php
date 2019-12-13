@@ -25,7 +25,7 @@ abstract class AbstractLibrary implements InstallableResource
     private $directoryName;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $repository;
 
@@ -36,7 +36,7 @@ abstract class AbstractLibrary implements InstallableResource
      * @param string $dirname
      * @param string $repository
      */
-    public function __construct(string $name, string $dirname, string $repository)
+    public function __construct(string $name, string $dirname, string $repository = null)
     {
         $this->name          = $name;
         $this->directoryName = $dirname;
@@ -53,7 +53,7 @@ abstract class AbstractLibrary implements InstallableResource
         return $this->directoryName;
     }
 
-    public function repository(): string
+    public function repository(): ?string
     {
         return $this->repository;
     }

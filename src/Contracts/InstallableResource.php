@@ -17,7 +17,7 @@ interface InstallableResource
 
     public function installPath(): string;
 
-    public function repository(): string;
+    public function repository(): ?string;
 
     public function isInstalled(): bool;
 }
