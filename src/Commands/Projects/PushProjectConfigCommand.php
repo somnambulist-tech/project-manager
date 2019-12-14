@@ -42,9 +42,7 @@ class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigA
 
         if ($this->tools()->git()->isClean($cwd)) {
             $this->tools()->info('there are no changes detected to the configuration files');
-            $this->tools()->newline();
-
-            return 0;
+            goto remote;
         }
 
         $ok = $this->tools()->git()->add($cwd);
@@ -60,6 +58,7 @@ class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigA
             return 1;
         }
 
+        remote:
         if (!$this->tools()->git()->hasRemote($cwd)) {
             return $this->success();
         }
