@@ -65,7 +65,9 @@ primary spm config folder. By default this is in `~/.spm_projects.d`. When you f
 it will prompt to run: `spm init` if this folder does not exist.
 
 The base folder can be changed by defining the env var: `SOMNAMBULIST_PROJECT_MANAGER_DIR`.
-Please note that spm expects all config to still be located within your home folder.
+Please note that spm expects all config to still be located within your home folder. Once
+running `SOMNAMBULIST_PROJECTS_CONFIG_DIR` is used as the fully qualified path to the spm
+configuration folder.
 
 By default projects are expected to be organised in `~/Projects/<project_name>`. The projects
 default folder can be changed by editing the `project_manager.yaml` file and changing the
@@ -94,6 +96,21 @@ somnambulist:
             web: 'composer:symfony/skeleton'
 
 ```
+
+### Terminal and IDE integration
+
+spm includes two helpers to make navigating a project easier: `open` and `goto`. `open` will
+open an IDE (default PhpStorm) with the specified library and `goto` will start a new terminal
+session at the library. If no library (library here being a library or a service) is specified,
+a list of all options for the project will be presented.
+
+In both cases the script / IDE can be configured by setting the following ENV vars in your
+`.bashrc` or `.zshrc` or shell init file:
+
+ * SOMNAMBULIST_EDITOR=XXXX - to override the PHP IDE. This should support a CLI command: e.g. atom
+ * SOMNAMBULIST_TERMINAL_SCRIPT - a script that can open a new terminal at a path
+
+By default, `goto` expects to work on macOS and uses osascript to launch a new terminal session.
 
 ### Project Configuration
 

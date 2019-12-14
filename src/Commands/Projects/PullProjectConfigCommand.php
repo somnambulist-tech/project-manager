@@ -36,7 +36,21 @@ class PullProjectConfigCommand extends AbstractCommand implements ProjectConfigA
         $project = $this->getActiveProject();
 
         $this->tools()->info('working on <i>%s</i>', $project->name());
+
+        if (!$this->tools()->git()->hasRemote($project->configPath())) {
+            $this->tools()->error('there is no configured remote repository for this project');
+            $this->tools()->newline();
+
+            return 1;
+        }
+
         $this->tools()->warning('updating project config from configured Git repo', $project);
+
+        if (!$this->tools()->git()->isClean($project->configPath())) {
+            $this->tools()->warning('config has local changes, committing', $project);
+            $this->tools()->git()->add($project->configPath());
+            $this->tools()->git()->commit($project->configPath());
+        }
 
         if (!$this->tools()->git()->pull($project->configPath())) {
             $this->tools()->error('project update failed! Is this %s a git repository?', $project->configFile());

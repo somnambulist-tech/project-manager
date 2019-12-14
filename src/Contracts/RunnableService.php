@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Contracts;
 
-use Somnambulist\Collection\FrozenCollection;
+use Somnambulist\Collection\MutableCollection;
 
 /**
  * Interface RunnableService
@@ -21,7 +21,7 @@ interface RunnableService
 
     public function runningContainerId(): ?string;
 
-    public function dependencies(): FrozenCollection;
+    public function dependencies(): MutableCollection;
 
     public function hasDependencies(): bool;
 

@@ -38,12 +38,7 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
     {
         $this->setupConsoleHelper($input, $output);
 
-        if (!$project = $this->getActiveProject()) {
-            $this->tools()->error('there is no project currently active');
-            $this->tools()->newline();
-
-            return 1;
-        }
+        $project = $this->getActiveProject();
 
         $this->tools()->info('active project is <info>%s</info>', $project->name());
         $this->tools()->info('working dir is <info>%s</info>', $project->workingPath());

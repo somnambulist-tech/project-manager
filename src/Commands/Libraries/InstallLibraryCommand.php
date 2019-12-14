@@ -65,7 +65,7 @@ HLP
 
         $project   = $this->getActiveProject();
 
-        $this->tools()->warning('installing libraries in <info>%s</info>', $project->name());
+        $this->tools()->info('installing libraries in <info>%s</info>', $project->name());
 
         $libraries = $this->getLibrariesFrom($input, 'installing all libraries, this might take a while...');
 

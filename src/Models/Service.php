@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Models;
 
-use Somnambulist\Collection\FrozenCollection;
+use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Contracts\RunnableService;
 use function sprintf;
 
@@ -21,7 +21,7 @@ final class Service extends AbstractLibrary implements RunnableService
     private $appContainer;
 
     /**
-     * @var FrozenCollection|string[]
+     * @var MutableCollection|string[]
      */
     private $dependencies = [];
 
@@ -49,7 +49,7 @@ final class Service extends AbstractLibrary implements RunnableService
         parent::__construct($name, $dirname, $repository);
 
         $this->appContainer = $appContainer;
-        $this->dependencies = new FrozenCollection($dependencies);
+        $this->dependencies = new MutableCollection($dependencies);
     }
 
     public function start(string $container): void
@@ -79,7 +79,7 @@ final class Service extends AbstractLibrary implements RunnableService
         return $this->runningContainerId;
     }
 
-    public function dependencies(): FrozenCollection
+    public function dependencies(): MutableCollection
     {
         return $this->dependencies;
     }
@@ -92,5 +92,10 @@ final class Service extends AbstractLibrary implements RunnableService
     public function isRunning(): bool
     {
         return $this->running;
+    }
+
+    public function setAppContainer(string $appContainer): void
+    {
+        $this->appContainer = $appContainer;
     }
 }

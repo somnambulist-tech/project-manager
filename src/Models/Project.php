@@ -3,6 +3,8 @@
 namespace Somnambulist\ProjectManager\Models;
 
 use Somnambulist\Collection\FrozenCollection;
+use Somnambulist\Collection\MutableCollection;
+use Somnambulist\ProjectManager\Contracts\InstallableResource;
 use function sprintf;
 
 /**
@@ -45,7 +47,7 @@ final class Project
     private $repository;
 
     /**
-     * @var FrozenCollection
+     * @var MutableCollection
      */
     private $docker;
 
@@ -83,7 +85,7 @@ final class Project
         $this->servicesName  = $servicesName;
         $this->librariesName = $librariesName;
         $this->repository    = $repository;
-        $this->docker        = new FrozenCollection($docker);
+        $this->docker        = new MutableCollection($docker);
 
         $this->libraries = new Libraries();
         $this->services  = new Services();
@@ -135,7 +137,7 @@ final class Project
         return $this->templates;
     }
 
-    public function docker(): FrozenCollection
+    public function docker(): MutableCollection
     {
         return $this->docker;
     }
@@ -150,6 +152,28 @@ final class Project
     public function configFile(): string
     {
         return $this->getFileInProject('project.yaml');
+    }
+
+    public function getListOfLibraries(): MutableCollection
+    {
+        return $this
+            ->libraries()->list()->keys()
+            ->map(function ($value) { return $value . ' (lib)';})
+            ->merge($this->services()->list()->keys()->map(function ($value) { return $value . ' (service)';}))
+            ->sortByValue()
+            ->values()
+        ;
+    }
+
+    public function getLibrary(string $library): ?InstallableResource
+    {
+        if (!$resource = $this->services()->get($library)) {
+            if (!$resource = $this->libraries()->get($library)) {
+                return null;
+            }
+        }
+
+        return $resource;
     }
 
     public function setRepository(string $repository): void

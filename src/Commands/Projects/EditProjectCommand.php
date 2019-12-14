@@ -34,14 +34,9 @@ class EditProjectCommand extends AbstractCommand implements ProjectConfigAwareIn
     {
         $this->setupConsoleHelper($input, $output);
 
-        if (!$project = $this->getActiveProject()) {
-            $this->tools()->error('there is no project currently active');
-            $this->tools()->newline();
+        $project = $this->getActiveProject();
 
-            return 1;
-        }
-
-        $this->tools()->warning('active project is <info>%s</info>', $project->name());
+        $this->tools()->info('active project is <info>%s</info>', $project->name());
 
         $this->tools()->info('opening project configuration in PhpStorm');
         $this->tools()->execute(sprintf('phpstorm %s', $project->configPath()), $project->configPath());

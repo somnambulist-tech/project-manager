@@ -11,12 +11,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class OpenLibraryCommand
+ * Class GotoLibraryCommand
  *
  * @package    Somnambulist\ProjectManager\Commands
- * @subpackage Somnambulist\ProjectManager\Commands\OpenLibraryCommand
+ * @subpackage Somnambulist\ProjectManager\Commands\GotoLibraryCommand
  */
-class OpenLibraryCommand extends AbstractCommand implements ProjectConfigAwareInterface
+class GotoLibraryCommand extends AbstractCommand implements ProjectConfigAwareInterface
 {
 
     use GetCurrentActiveProject;
@@ -26,8 +26,8 @@ class OpenLibraryCommand extends AbstractCommand implements ProjectConfigAwareIn
     protected function configure()
     {
         $this
-            ->setName('open')
-            ->setDescription('Open the specified library / service in PhpStorm')
+            ->setName('goto')
+            ->setDescription('Go to the folder containing the library / service in a terminal')
             ->addArgument('library', InputArgument::OPTIONAL, 'The name of the library or service')
         ;
     }
@@ -44,10 +44,11 @@ class OpenLibraryCommand extends AbstractCommand implements ProjectConfigAwareIn
             return 1;
         }
 
-        $program = $_SERVER['SOMNAMBULIST_EDITOR'] ?? 'phpstorm';
+        $script = 'osascript -e \'tell application "Terminal" to activate\' -e \'tell application "Terminal" to do script "cd %s"\'';
+        $script = $_SERVER['SOMNAMBULIST_TERMINAL_SCRIPT'] ?? $script;
 
-        $this->tools()->info('opening <info>%s</info> in PhpStorm', $resource->name());
-        $this->tools()->execute(sprintf('%s %s', $program, $resource->installPath()), $resource->installPath());
+        $this->tools()->info('opening <info>%s</info> in new terminal', $resource->name());
+        $this->tools()->execute(sprintf($script, $resource->installPath()), $resource->installPath());
         $this->tools()->newline();
 
         return 0;

@@ -51,7 +51,7 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
 
         $project = $this->getActiveProject();
 
-        $this->tools()->warning('starting service(s) in <info>%s</info>', $project->name());
+        $this->tools()->info('starting service(s) in <info>%s</info>', $project->name());
 
         $services = $this->getServicesFrom($input, 'starting all services, this might take a while...');
 

@@ -48,7 +48,7 @@ class StopCommand extends AbstractCommand implements DockerAwareInterface, Proje
 
         $project  = $this->getActiveProject();
 
-        $this->tools()->warning('stopping service(s) in <info>%s</info>', $project->name());
+        $this->tools()->info('stopping service(s) in <info>%s</info>', $project->name());
 
         $services = $this->getServicesFrom($input, 'stopping all services, this might take a while...');
 

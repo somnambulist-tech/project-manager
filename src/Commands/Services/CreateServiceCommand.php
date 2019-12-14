@@ -80,7 +80,7 @@ HLP
         $container    = $input->getOption('container');
         $dependencies = $input->getOption('depends');
 
-        $this->tools()->warning('creating new service for <info>%s</info>', $project->name());
+        $this->tools()->info('creating new service for <info>%s</info>', $project->name());
 
         if (!$name) {
             $name = $this->tools()->ask('What will your service be called? This is the local folder name: ');
