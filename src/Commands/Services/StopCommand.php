@@ -36,6 +36,7 @@ class StopCommand extends AbstractCommand implements DockerAwareInterface, Proje
     {
         $this
             ->setName('services:stop')
+            ->setAliases(['stop'])
             ->setDescription('Stop the specified service(s), will stop dependent services')
             ->addArgument('service', InputArgument::REQUIRED|InputArgument::IS_ARRAY, 'The service(s) to stop or "all"; see <info>services:list</info> for available services')
         ;

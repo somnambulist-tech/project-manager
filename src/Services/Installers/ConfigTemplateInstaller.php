@@ -4,6 +4,11 @@ namespace Somnambulist\ProjectManager\Services\Installers;
 
 use Somnambulist\ProjectManager\Models\Project;
 use Somnambulist\ProjectManager\Models\Template;
+use function array_map;
+use function escapeshellarg;
+use function file_exists;
+use function implode;
+use function is_array;
 use function is_dir;
 use function sprintf;
 use const DIRECTORY_SEPARATOR;
@@ -40,6 +45,10 @@ class ConfigTemplateInstaller extends AbstractInstaller
 
         $this->tools()->execute(sprintf('cp -r %s %s', $source . DIRECTORY_SEPARATOR . '.', $cwd));
 
+        if (file_exists($cwd . DIRECTORY_SEPARATOR . 'post_copy.php')) {
+            $this->postCopyAction($project, $template, $name, $cwd, $step);
+        }
+
         $this->tools()->step(++$step, 'creating git repository');
 
         if (0 !== $this->initialiseGitRepositoryAt($cwd)) {
@@ -49,5 +58,29 @@ class ConfigTemplateInstaller extends AbstractInstaller
         $this->updateProjectConfig($project, ++$step);
 
         return $this->success();
+    }
+
+    private function postCopyAction(Project $project, Template $template, string $name, string $cwd, &$step): void
+    {
+        $this->tools()->info('the template has a post copy action, preparing...');
+
+        $args = [];
+
+        if (file_exists($cwd . DIRECTORY_SEPARATOR . 'post_copy_args.php')) {
+            $this->tools()->warning('the post copy action requires input to run');
+
+            $tmp = include_once $cwd . DIRECTORY_SEPARATOR . 'post_copy_args.php';
+
+            if (!is_array($tmp)) {
+                return;
+            }
+
+            foreach ($tmp as $arg => $prompt) {
+                $args[] = $this->tools()->ask($prompt);
+            }
+        }
+
+        $this->tools()->step(++$step, 'running post copy action');
+        $this->tools()->execute('php post_copy.php ' . implode(' ', array_map('escapeshellarg', $args)), $cwd);
     }
 }

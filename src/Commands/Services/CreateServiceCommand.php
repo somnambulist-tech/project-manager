@@ -41,6 +41,7 @@ class CreateServiceCommand extends AbstractCommand implements ProjectConfigAware
 
         $this
             ->setName('services:create')
+            ->setAliases(['service:create', 'create:service', 'service:new', 'new:service'])
             ->setDescription('Creates a new service within the currently active project')
             ->addArgument('name', InputArgument::OPTIONAL, 'The name of the service to create or blank to use the wizard')
             ->addArgument('template', InputArgument::OPTIONAL, 'The name of the template to use for scaffolding the service')

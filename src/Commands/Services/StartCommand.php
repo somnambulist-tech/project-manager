@@ -35,6 +35,7 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
     {
         $this
             ->setName('services:start')
+            ->setAliases(['start'])
             ->setDescription('Starts the specified service(s)')
             ->addArgument('service', InputArgument::REQUIRED|InputArgument::IS_ARRAY, 'The services to start, or "all"; see <info>services:list</info> for available services')
             ->addOption('rebuild', 'b', InputOption::VALUE_NONE, 'Re-build the containers before starting')
