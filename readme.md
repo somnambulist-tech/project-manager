@@ -37,8 +37,8 @@ verify the SHA384 hash and copy the phar to `/usr/local/bin`, then symlink it to
 set up with verbose output.
 
 ```bash
-curl --silent --fail --location --retry 3 --output /tmp/somnambulist-project-manager.phar --url https://github.com/dave-redfern/somnambulist-project-manager/releases/download/0.1.0/somnambulist-project-manager.phar \
-  && echo "4a1d36eae4db14c49109b35e46c89ffac84e530c335d7dd70445799b8bdc8a42f2ed38ffab95d4930cca0ed745d366fc  /tmp/somnambulist-project-manager.phar" | shasum -a 384 -c \
+curl --silent --fail --location --retry 3 --output /tmp/somnambulist-project-manager.phar --url https://github.com/dave-redfern/somnambulist-project-manager/releases/download/0.2.0/somnambulist-project-manager.phar \
+  && echo "00a90b7e8e4ea8e929af5a3f190a2322b86827a1c5cbd3f0db3cc8f8fa15929a2df9f9be8079fa38f33d7cac84077f65  /tmp/somnambulist-project-manager.phar" | shasum -a 384 -c \
   && mv -v /tmp/somnambulist-project-manager /usr/local/bin/somnambulist-project-manager.phar \
   && chmod -v 755 /usr/local/bin/somnambulist-project-manager.phar \
   && ln -vf -s /usr/local/bin/somnambulist-project-manager.phar /usr/local/bin/spm \
