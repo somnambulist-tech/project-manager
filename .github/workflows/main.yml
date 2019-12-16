@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-    name: Build and Release Tagged Version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
