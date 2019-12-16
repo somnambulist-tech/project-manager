@@ -17,7 +17,7 @@ jobs:
         with:
           php-version: '7.3'
           extensions: mbstring, intl, posix
-          ini-values: post_max_size=256M, phar.readonly=0
+          ini-values: memory_limit=256M, max_execution_time=0, phar.readonly=0
           pecl: false
       - name: Build project
         run: |
