@@ -3,7 +3,7 @@
 namespace Somnambulist\ProjectManager\Models;
 
 use Somnambulist\Collection\MutableCollection;
-use Somnambulist\ProjectManager\Contracts\RunnableService;
+use Somnambulist\ProjectManager\Contracts\RunnableResource;
 use function sprintf;
 
 /**
@@ -12,7 +12,7 @@ use function sprintf;
  * @package Somnambulist\ProjectManager\Models
  * @subpackage Somnambulist\ProjectManager\Models\Service
  */
-final class Service extends AbstractLibrary implements RunnableService
+final class Service extends AbstractLibrary implements RunnableResource
 {
 
     /**

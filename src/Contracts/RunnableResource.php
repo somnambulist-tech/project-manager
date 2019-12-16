@@ -10,7 +10,7 @@ use Somnambulist\Collection\MutableCollection;
  * @package Somnambulist\ProjectManager\Contracts
  * @subpackage Somnambulist\ProjectManager\Contracts\RunnableService
  */
-interface RunnableService
+interface RunnableResource
 {
 
     public function start(string $container): void;

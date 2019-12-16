@@ -3,6 +3,7 @@
 namespace Somnambulist\ProjectManager\Models;
 
 use Somnambulist\Collection\FrozenCollection;
+use Somnambulist\ProjectManager\Contracts\TemplatableResource;
 use function array_unique;
 use function sort;
 
@@ -12,7 +13,7 @@ use function sort;
  * @package Somnambulist\ProjectManager\Models
  * @subpackage Somnambulist\ProjectManager\Models\Config
  */
-class Config
+class Config implements TemplatableResource
 {
 
     /**

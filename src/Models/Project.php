@@ -2,9 +2,9 @@
 
 namespace Somnambulist\ProjectManager\Models;
 
-use Somnambulist\Collection\FrozenCollection;
 use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Contracts\InstallableResource;
+use Somnambulist\ProjectManager\Contracts\TemplatableResource;
 use function sprintf;
 
 /**
@@ -13,7 +13,7 @@ use function sprintf;
  * @package    Somnambulist\ProjectManager\Models
  * @subpackage Somnambulist\ProjectManager\Models\Project
  */
-final class Project
+final class Project implements TemplatableResource
 {
 
     /**
