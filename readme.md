@@ -1,6 +1,6 @@
 # Somnambulist Project Manager
 
-![](https://github.com/dave-redfern/somnambulist-project-manager/workflows/.github/workflows/main.yml/badge.svg)
+![](https://github.com/dave-redfern/somnambulist-project-manager/workflows/main.yml/badge.svg)
 
 Project Manager is designed to help organise micro-services based PHP projects. It
 incorporates commands for creating new services, libraries, and managing them.
