@@ -6,7 +6,9 @@ use Phar;
 use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
+use function shell_exec;
 use function str_replace;
+use function strtr;
 
 /**
  * Compiler
@@ -110,9 +112,17 @@ class Compiler
     {
         $content = file_get_contents($this->basePath() . '/bin/console');
         $content = preg_replace('{^#!/usr/bin/env php\s*}', '', $content);
-        $content = str_replace('new Kernel($_SERVER[\'APP_ENV\'], (bool)$_SERVER[\'APP_DEBUG\']);', 'new Kernel(\'prod\', false);', $content);
+        $content = strtr($content, [
+            'new Kernel($_SERVER[\'APP_ENV\'], (bool)$_SERVER[\'APP_DEBUG\']);' => 'new Kernel(\'prod\', false);',
+            'new Application($kernel, \'1.0.0\')' => sprintf('new Application($kernel, \'%s\')', $this->getMostRecentTagFromRepository()),
+        ]);
 
         $phar->addFromString('bin/console', $content);
+    }
+
+    private function getMostRecentTagFromRepository()
+    {
+        return shell_exec('git describe --abbrev=0 --tags') ?? 'latest';
     }
 
     /**

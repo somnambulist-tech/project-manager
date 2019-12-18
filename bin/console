@@ -27,5 +27,5 @@ $output->getFormatter()->setStyle('i', new OutputFormatterStyle('white', 'magent
 require dirname(__DIR__) . '/config/bootstrap.php';
 
 $kernel      = new Kernel($_SERVER['APP_ENV'], (bool)$_SERVER['APP_DEBUG']);
-$application = new Application($kernel);
+$application = new Application($kernel, '1.0.0');
 $application->run($input, $output);

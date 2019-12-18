@@ -33,11 +33,11 @@ class Application extends BaseApplication
     private $commandsRegistered = false;
     private $registrationErrors = [];
 
-    public function __construct(KernelInterface $kernel)
+    public function __construct(KernelInterface $kernel, string $version)
     {
         $this->kernel = $kernel;
 
-        parent::__construct('Somnambulist Project Manager', Kernel::VERSION);
+        parent::__construct('Somnambulist Project Manager', $version);
     }
 
     public function getLongVersion()
