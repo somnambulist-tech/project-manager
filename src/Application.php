@@ -42,7 +42,7 @@ class Application extends BaseApplication
 
     public function getLongVersion()
     {
-        return parent::getLongVersion() . sprintf(' (project: <comment>%s</>)', $_SERVER['SOMNAMBULIST_ACTIVE_PROJECT'] ?: '-');
+        return trim(parent::getLongVersion()) . sprintf(' (project: <comment>%s</>)', $_SERVER['SOMNAMBULIST_ACTIVE_PROJECT'] ?: '-');
     }
 
     /**
