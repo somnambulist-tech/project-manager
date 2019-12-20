@@ -18,7 +18,7 @@ use function sprintf;
 /**
  * Class PrepareMacCommand
  *
- * @package Somnambulist\ProjectManager\Commands
+ * @package    Somnambulist\ProjectManager\Commands
  * @subpackage Somnambulist\ProjectManager\Commands\PrepareMacCommand
  */
 class PrepareMacCommand extends AbstractCommand implements ProjectConfigAwareInterface
@@ -49,7 +49,7 @@ class PrepareMacCommand extends AbstractCommand implements ProjectConfigAwareInt
         if ($bashMode) {
             $this->tools()->disableOutput();
         }
-        
+
         $this->tools()->warning('Starting macOS preparation');
         $this->tools()->warning('Please note: setup may require sudo for some steps');
 
@@ -68,7 +68,9 @@ class PrepareMacCommand extends AbstractCommand implements ProjectConfigAwareInt
         $skip = $input->getOption('step');
 
         foreach ($steps['steps'] as $step => $instructions) {
-            $this->tools()->step(++$i, sprintf('%s (<info>%d</info> commands)', $instructions['message'], count($instructions['commands'])));
+            $this->tools()
+                ->step(++$i, sprintf('%s (<info>%d</info> commands)', $instructions['message'], count($instructions['commands'])))
+            ;
 
             if ($i >= $skip) {
                 foreach ($instructions['commands'] as $command) {
@@ -126,6 +128,12 @@ class PrepareMacCommand extends AbstractCommand implements ProjectConfigAwareInt
             throw new RuntimeException(sprintf('The current project "%s" does not have an "init_mac.yaml" file', $project->name()));
         }
 
-        return Yaml::parseFile($file)['somnambulist'] ?? ['steps' => []];
+        $config = strtr(file_get_contents($file), [
+            '${CONFIG_DIR}' => $project->configPath(),
+            '${HOME}'       => $_SERVER['HOME'],
+            '${CWD}'        => $_SERVER['PWD'],
+        ]);
+
+        return Yaml::parse($config)['somnambulist'] ?? ['steps' => []];
     }
 }

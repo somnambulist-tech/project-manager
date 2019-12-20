@@ -360,6 +360,12 @@ that need to be run in this step. Steps can use sudo and can read files in via e
 must have a `run` property, and an optional `file` for the file source. This file must be
 located in the project config folder.
 
+The following environment variables can be used and will be replaced with the appropriate value:
+
+ * `${CONFIG_DIR}` - the project configuration folder, usually: `~/.spm_projects.d/<name>`
+ * `${HOME}` - the current users home folder, usually: `~/` (/Users/<name>)
+ * `${CWD}` - the current working directory from where spm was run (`_SERVER['PWD']`)
+
 If any step fails, the setup halts.
 
 The setup can be run in test mode `--test` or output all the expanded scripts by using `--bash`.
