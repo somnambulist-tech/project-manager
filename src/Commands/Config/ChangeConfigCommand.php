@@ -6,6 +6,7 @@ use Somnambulist\Collection\Contracts\Collection;
 use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\CanSelectLibraryFromInput;
+use Somnambulist\ProjectManager\Commands\Behaviours\CanUpdateGitRemoteRepository;
 use Somnambulist\ProjectManager\Commands\Behaviours\CanUpdateProjectConfiguration;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
@@ -32,6 +33,7 @@ class ChangeConfigCommand extends AbstractCommand implements ProjectConfigAwareI
 
     use ProjectConfigAwareCommand;
     use CanUpdateProjectConfiguration;
+    use CanUpdateGitRemoteRepository;
     use CanSelectLibraryFromInput;
     use GetCurrentActiveProject;
 
@@ -110,19 +112,26 @@ HLP
         return 0;
     }
 
-    private function setRepository(Project $project, string $library, array $values): bool
+    private function setGitRemoteRepository(Project $project, string $library, array $values): bool
     {
-        $resource = null;
+        $cwd = $resource = null;
 
         if ('project' === $library) {
             $resource = $project;
+            $cwd      = $project->configPath();
         }
 
         if (!$resource && null === $resource = $project->getLibrary($library)) {
             return false;
         }
 
+        if (!$cwd) {
+            $cwd = $resource->installPath();
+        }
+
         $resource->setRepository($values[0]);
+
+        $this->changeGitOrigin($resource, $cwd, $values[0]);
 
         return true;
     }
@@ -210,7 +219,7 @@ HLP
         return true;
     }
 
-    private const REPOSITORY_REMOTE         = 'repository:remote';
+    private const GIT_REMOTE                = 'git:remote';
     private const PROJECT_DOCKER_NAME       = 'docker:name';
     private const PROJECT_DOCKER_NETWORK    = 'docker:network';
     private const SERVICE_CONTAINER         = 'service:container:name';
@@ -220,7 +229,7 @@ HLP
     private const PROJECT_TEMPLATE_REMOVE   = 'template:remove';
 
     private $options = [
-        self::REPOSITORY_REMOTE         => 'Set the remote repository for the project/library/service',
+        self::GIT_REMOTE                => 'Set the remote repository for the project/library/service',
         self::PROJECT_DOCKER_NAME       => 'Set the docker compose project name',
         self::PROJECT_DOCKER_NETWORK    => 'Set the docker shared network name',
         self::SERVICE_CONTAINER         => 'Change the services container name',
@@ -231,7 +240,7 @@ HLP
     ];
 
     private $valueQuestion = [
-        self::REPOSITORY_REMOTE         => 'Enter the full remote git address in the form git://: ',
+        self::GIT_REMOTE                => 'Enter the full remote git address in the form git://: ',
         self::PROJECT_DOCKER_NAME       => 'Enter the name to be used as the project prefix: ',
         self::PROJECT_DOCKER_NETWORK    => 'Enter the network name that services communicate with: ',
         self::SERVICE_CONTAINER         => 'Enter the application containers name without prefix: ',
@@ -242,7 +251,7 @@ HLP
     ];
 
     private $services = [
-        self::REPOSITORY_REMOTE         => 'AllLibraries',
+        self::GIT_REMOTE                => 'AllLibraries',
         self::PROJECT_DOCKER_NAME       => 'Project',
         self::PROJECT_DOCKER_NETWORK    => 'Project',
         self::SERVICE_CONTAINER         => 'Project',
@@ -253,7 +262,7 @@ HLP
     ];
 
     private $actions = [
-        self::REPOSITORY_REMOTE         => 'setRepository',
+        self::GIT_REMOTE                => 'setGitRemoteRepository',
         self::PROJECT_DOCKER_NAME       => 'setDockerName',
         self::PROJECT_DOCKER_NETWORK    => 'setDockerNetwork',
         self::SERVICE_CONTAINER         => 'setServiceContainer',
