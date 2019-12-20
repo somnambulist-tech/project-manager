@@ -25,6 +25,7 @@ class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigA
     {
         $this
             ->setName('project:push')
+            ->setAliases(['push'])
             ->setDescription('Commit any configuration changes and push to the git repository')
         ;
     }
@@ -49,7 +50,7 @@ class PushProjectConfigCommand extends AbstractCommand implements ProjectConfigA
         $ok = $ok && $this->tools()->git()->commit($cwd, 'updating configuration files');
 
         if ($ok) {
-            $this->tools()->success('changed files committed to git\'d');
+            $this->tools()->success('changed files committed to git');
         } else {
             $this->tools()->error('failed to commit changes to git, re-run with -vvv to debug');
             $this->tools()->info('There may not have been any changed files');

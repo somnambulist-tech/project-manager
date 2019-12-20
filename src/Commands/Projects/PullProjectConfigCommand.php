@@ -25,6 +25,7 @@ class PullProjectConfigCommand extends AbstractCommand implements ProjectConfigA
     {
         $this
             ->setName('project:pull')
+            ->setAliases(['pull'])
             ->setDescription('Pull the latest configuration updates if using Git')
         ;
     }
