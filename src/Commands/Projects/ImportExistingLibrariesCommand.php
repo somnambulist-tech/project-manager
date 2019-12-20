@@ -39,6 +39,7 @@ class ImportExistingLibrariesCommand extends AbstractCommand implements ProjectC
     {
         $this
             ->setName('project:import')
+            ->setAliases(['import'])
             ->setDescription('Import and categorise any existing libraries / services in the project directory')
         ;
     }
