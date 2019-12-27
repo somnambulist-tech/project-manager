@@ -15,6 +15,7 @@ use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function array_key_exists;
+use function dump;
 use function explode;
 use function implode;
 use function parse_url;
@@ -150,8 +151,11 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
         $labels = new MutableCollection();
 
         foreach (explode(',', $string) as $label) {
-            [$key, $value] = explode('=', $label);
-            $labels->set($key, $value);
+            if (false !== strpos($label, '=')) {
+                [$key, $value] = explode('=', $label);
+
+                $labels->set($key, $value);
+            }
         }
 
         return $labels;
