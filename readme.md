@@ -20,9 +20,10 @@ and continue on. There is no special configuration needed in any project.
 ## Setup
 
 Grab the phar archive and copy it to `/usr/local/bin` or add it to your path.
-Symlink the phar to `spm` or a.n.other name.
+Symlink the phar to `spm` or a.n.other name. Be sure to verify the SHA checksum with
+the ones in the release checksums text file.
 
-Run: `spm init` to create the standard configurtion (see later).
+Run: `spm init` to create the standard configuration (see later).
 
 Or:
 
@@ -39,8 +40,8 @@ verify the SHA384 hash and copy the phar to `/usr/local/bin`, then symlink it to
 set up with verbose output.
 
 ```bash
-curl --silent --fail --location --retry 3 --output /tmp/somnambulist-project-manager.phar --url https://github.com/dave-redfern/somnambulist-project-manager/releases/download/0.3.0/somnambulist-project-manager.phar \
-  && echo "7a51d920a9ae6bc77eb8229ef4ebee78f5522c2a7344bee876c9ae9626f3f1acd903bd386740ff9ed8bd5cb3113ebe01  /tmp/somnambulist-project-manager.phar" | shasum -a 384 -c \
+curl --silent --fail --location --retry 3 --output /tmp/somnambulist-project-manager.phar --url https://github.com/dave-redfern/somnambulist-project-manager/releases/download/0.5.4/somnambulist-project-manager.phar \
+  && echo "647d442b0297963b3fc334f80fad49f0626564d36b52e97acb0b42fd40c47c883e7054ab739658154316505b7cb9064c  /tmp/somnambulist-project-manager.phar" | shasum -a 384 -c \
   && mv -v /tmp/somnambulist-project-manager /usr/local/bin/somnambulist-project-manager.phar \
   && chmod -v 755 /usr/local/bin/somnambulist-project-manager.phar \
   && ln -vf -s /usr/local/bin/somnambulist-project-manager.phar /usr/local/bin/spm \
@@ -249,7 +250,7 @@ services templates are pre-configured globally:
 
  * data - [Data Service](https://github.com/dave-redfern/data-service-skeleton)
  * service - [Symfony Micro Service](https://github.com/dave-redfern/micro-service-skeleton)
- * web - [Symfony Skeletong](https://github.com/symfony/skeleton)
+ * web - [Symfony Skeleton](https://github.com/symfony/skeleton)
 
 Templates are grouped by type: `library` and `service`. Only library types are displayed when
 making new libraries, and the same goes for services.
@@ -325,13 +326,27 @@ and dirname values.
 By default when using `project:create`, `libraries:create` or `services:create` a git repository
 is started, but no remote is set. You can set this after the fact by using:
 
- * config:<x>:repository
- 
-where X is project/library/service. This will either add or update the origin URL in the git
-repo.
+```shell script
+spm config git:remote <project_name> <repo>
+```
 
-__Note:__ this command will only operate on origin. If you used a different name, then you
-must manually set this and manually update the project config file.
+Several other config options can be changed using the `config` command:
+
+ * docker:name
+ * docker:network
+ * git:remote
+ * service:container:name
+ * service:dependency:add
+ * service:dependency:remove
+ * template:add
+ * template:remove
+
+If the option is not provided it will be prompted for; similarly if the project name is not
+specified, the current list of projects will be presented.
+
+__Note:__ when changing the remote repository, only a remote named `origin` will be modified.
+If you used a different name, you must manually change the remote and update the project config
+file yourself.
 
 ### Customising the development environment
 
