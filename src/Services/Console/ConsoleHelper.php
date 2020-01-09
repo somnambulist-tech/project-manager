@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Process\Process;
+use function is_callable;
 use function sprintf;
 
 /**
@@ -161,5 +162,31 @@ class ConsoleHelper
     public function newline(): void
     {
         $this->noOutput ?: $this->output->writeln('');
+    }
+
+    /**
+     * When the condition is true, display success, else display error
+     *
+     * Additional args can be passed after the failure message as values to be inserted into the
+     * message string. Success and failure are rendered using the success() / error() methods.
+     *
+     * Note: both success and failure messages should have the same number of parameters.
+     *
+     * @param bool|callable $condition
+     * @param string        $success
+     * @param string        $failure
+     * @param mixed         ...$args
+     */
+    public function when($condition, string $success, string $failure, ...$args): void
+    {
+        if (is_callable($condition)) {
+            $condition = $condition();
+        }
+
+        if ($condition) {
+            $this->success($success, ...$args);
+        } else {
+            $this->error($failure, ...$args);
+        }
     }
 }

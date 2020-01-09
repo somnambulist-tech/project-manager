@@ -41,7 +41,6 @@ class CopyToContainerCommand extends AbstractCommand implements DockerAwareInter
             ->setDescription('Copy a file to/from the services configured application container')
             ->addArgument('source', InputArgument::REQUIRED, 'The source, either local or the container (service:/path) or folder')
             ->addArgument('target', InputArgument::REQUIRED, 'Where the source should be copied (service:/path) or folder')
-            ->addOption('follow', 'f', InputOption::VALUE_NONE, 'Read the logs continuously')
             ->setHelp(<<<HLP
 
 Copies a file(s) to/from the application container specified by the service.

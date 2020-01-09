@@ -73,52 +73,70 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
             return;
         }
 
+        if (!$service->runningContainerId()) {
+            $this->docker->resolve($service);
+        }
+
+        if ($service->isRunning()) {
+            return;
+        }
+
         if ($service->hasDependencies()) {
-            $deps = null;
-
-            if ($this->tools()->input()->getOption('with-deps')) {
-                $deps = 'y';
-            }
-            if ($this->tools()->input()->getOption('without-deps')) {
-                $deps = 'n';
-            }
-            if (!$deps) {
-                $deps = $this->tools()->ask('Service %s has dependencies, do you want these to be started? (y/n) ', false, $service->name());
-            }
-
-            if (strtolower(trim($deps)) === 'y') {
-                $service->dependencies()->each(function ($name) {
-                    $this->startService($name);
-                });
-            }
+            $this->handleServiceDependencies($service);
         }
 
         $command = $this->tools()->input()->getOption('refresh') ? 'refresh' : ($this->tools()->input()->getOption('rebuild') ? 'build' : 'start');
 
-        switch ($command):
-            case 'refresh':
-                $this->tools()->info('attempting to <info>refresh</info> service <info>%s</info> ', $service->name());
-                $this->docker->refresh($service);
-                $this->docker->start($service);
-            break;
+        $this->{$command}($service);
 
-            case 'build':
-                $this->tools()->info('attempting to <info>build</info> service <info>%s</info> ', $service->name());
-                $this->docker->build($service);
-                $this->docker->start($service);
-            break;
-
-            case 'start' && !$service->isRunning():
-                $this->tools()->info('attempting to <info>start</info> service <info>%s</info> ', $service->name());
-                $this->docker->start($service);
-        endswitch;
-
-        $service->isRunning()
-            ?
-            $this->tools()->success('service started <info>successfully</info>')
-            :
-            $this->tools()->error('service did not start, re-run with <info>-vvv</info> or use <info>docker-compose</info>')
-        ;
+        $this->tools()->when(
+            $service->isRunning(),
+            'service started <info>successfully</info>',
+            'service did not start, re-run with <info>-vvv</info> or use <info>docker-compose</info>'
+        );
         $this->tools()->newline();
+    }
+
+    private function handleServiceDependencies(Service $service): void
+    {
+        $deps = null;
+
+        if ($this->tools()->input()->getOption('with-deps')) {
+            $deps = 'y';
+        }
+        if ($this->tools()->input()->getOption('without-deps')) {
+            $deps = 'n';
+        }
+        if (!$deps) {
+            $deps = $this->tools()->ask('Service %s has dependencies, do you want these to be started? (y/n) ', false, $service->name());
+
+            $this->tools()->input()->setOption('with-deps', $deps);
+        }
+
+        if (strtolower(trim($deps)) === 'y') {
+            $service->dependencies()->each(function ($name) {
+                $this->startService($name);
+            });
+        }
+    }
+
+    private function refresh(Service $service): void
+    {
+        $this->tools()->info('attempting to <info>refresh</info> service <info>%s</info> ', $service->name());
+        $this->docker->refresh($service);
+        $this->docker->start($service);
+    }
+
+    private function build(Service $service): void
+    {
+        $this->tools()->info('attempting to <info>build</info> service <info>%s</info> ', $service->name());
+        $this->docker->build($service);
+        $this->docker->start($service);
+    }
+
+    private function start(Service $service): void
+    {
+        $this->tools()->info('attempting to <info>start</info> service <info>%s</info> ', $service->name());
+        $this->docker->start($service);
     }
 }
