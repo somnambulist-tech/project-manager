@@ -25,6 +25,8 @@ trait CanUpdateGitRemoteRepository
         }
 
         if ($this->tools()->git()->{$com}($cwd, 'origin', $repo)) {
+            $this->tools()->git()->trackRemote($cwd, 'origin/master');
+
             $this->updateProjectConfig($project, 1);
 
             $this->tools()->success('successfully set <info>origin</info> to <info>%s</info>', $repo);

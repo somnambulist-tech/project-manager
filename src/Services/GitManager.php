@@ -106,6 +106,13 @@ class GitManager
         return $proc->isSuccessful();
     }
 
+    public function trackRemote(string $cwd, string $remote): bool
+    {
+        $proc = $this->exec('git branch -u %s', $cwd, $remote);
+
+        return $proc->isSuccessful();
+    }
+
     public function getRemotes(string $cwd): array
     {
         $proc = $this->exec('git remote -v', $cwd);

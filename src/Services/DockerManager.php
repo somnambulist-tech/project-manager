@@ -70,6 +70,10 @@ class DockerManager
 
     public function resolve(Service $service): void
     {
+        if (!$service->isInstalled()) {
+            return;
+        }
+
         $env = (new Dotenv())->parse(file_get_contents($service->envFile()));
         $name = implode('_', array_filter([$env['COMPOSE_PROJECT_NAME'] ?? '', $service->appContainer()]));
 

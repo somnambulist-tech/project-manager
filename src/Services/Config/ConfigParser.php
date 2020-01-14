@@ -42,7 +42,7 @@ class ConfigParser
      */
     public function parse(string $file): Config
     {
-        $config = MutableCollection::create(Yaml::parse($this->readFile($file))['somnambulist']);
+        $config = MutableCollection::create(Yaml::parse($this->readFile($file))['somnambulist'] ?? []);
 
         $spm = new Config($config->except('templates')->toArray(), $this->getEnvParameters());
 

@@ -8,6 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
+use function filesize;
 use function mkdir;
 use const DIRECTORY_SEPARATOR;
 
@@ -45,6 +46,12 @@ class InitCommand extends AbstractCommand
             $this->tools()->success('Configuration created at <info>%s</info>', $dir);
         } else {
             $this->tools()->warning('Configuration at <info>%s</info> already exists', $dir);
+        }
+
+        if (0 == filesize($dir . DIRECTORY_SEPARATOR . 'project_manager.yaml')) {
+            $this->tools()->warning('Configuration file is empty');
+            file_put_contents($dir . DIRECTORY_SEPARATOR . 'project_manager.yaml', $this->config());
+            $this->tools()->success('Configuration re-created at <info>%s</info>', $dir);
         }
 
         $this->tools()->newline();
