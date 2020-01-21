@@ -38,6 +38,7 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
             ->setAliases(['start'])
             ->setDescription('Starts the specified service(s)')
             ->addArgument('service', InputArgument::REQUIRED|InputArgument::IS_ARRAY, 'The services to start, or "all"; see <info>services:list</info> for available services')
+            ->addOption('install', 'i', InputOption::VALUE_NONE, 'Install missing dependencies before starting them, if they are not installed')
             ->addOption('rebuild', 'b', InputOption::VALUE_NONE, 'Re-build the containers before starting')
             ->addOption('refresh', 'r', InputOption::VALUE_NONE, 'Refresh the containers before starting; pulls all new images')
             ->addOption('with-deps', 'd', InputOption::VALUE_NONE, 'Start all dependencies without prompting for confirmation')
@@ -71,6 +72,24 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
             /** @var Service $service */
             $this->tools()->error('service <info>%s</info> not found!', $service);
             return;
+        }
+
+        if (!$service->isInstalled()) {
+            $install = $this->tools()->input()->getOption('install');
+
+            if (!$install) {
+                $install = $this->tools()->ask('service <info>%s</info> is not installed, would you like to install it? (y/n) ', false, $service->name());
+            }
+
+            if ($install) {
+                if (!$this->tools()->execute('spm services:install ' . $service->name(), $project->workingPath())) {
+                    $this->tools()->error('failed to install <info>%s</info>, re-run with -vvv to debug', $service->name());
+                    return;
+                }
+            } else {
+                $this->tools()->error('service <info>%s</info> is not installed and cannot be started', $service->name());
+                return;
+            }
         }
 
         if (!$service->runningContainerId()) {
