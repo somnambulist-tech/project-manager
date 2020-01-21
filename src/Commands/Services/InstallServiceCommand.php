@@ -7,7 +7,9 @@ use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetServicesFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\InstallableResourceSetupHelpers;
+use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
+use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Exceptions\ResourceAlreadyInstalled;
 use Somnambulist\ProjectManager\Exceptions\ResourceIsNotConfigured;
 use Somnambulist\ProjectManager\Models\Service;
@@ -21,13 +23,14 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package    Somnambulist\ProjectManager\Commands\Services
  * @subpackage Somnambulist\ProjectManager\Commands\Services\InstallServiceCommand
  */
-class InstallServiceCommand extends AbstractCommand implements DockerAwareInterface
+class InstallServiceCommand extends AbstractCommand implements DockerAwareInterface, ProjectConfigAwareInterface
 {
 
     use GetServicesFromInput;
     use GetCurrentActiveProject;
     use DockerAwareCommand;
     use InstallableResourceSetupHelpers;
+    use ProjectConfigAwareCommand;
 
     protected function configure()
     {
