@@ -5,6 +5,7 @@ namespace Somnambulist\ProjectManager\Services\Installers;
 use IlluminateAgnostic\Str\Support\Str;
 use Somnambulist\ProjectManager\Models\Project;
 use Somnambulist\ProjectManager\Models\Template;
+use function parse_str;
 use function sprintf;
 
 /**
@@ -23,11 +24,17 @@ class ComposerInstaller extends AbstractInstaller
         $this->tools()->step(++$step, 'creating <info>%s</info> from composer project', $this->type);
         $this->tools()->warning('installer scripts will not be run!');
 
+        $proj = $this->getProjectPackage($template);
+        $repo = $this->getAlternateRepository($template);
+        $ver  = $this->getProjectPackageVersion($template);
+
         $res = $this->tools()->execute(
             sprintf(
-                'composer create-project --no-scripts --remove-vcs %s %s',
-                Str::replaceFirst('composer:', '', $template->source()),
-                $cwd
+                'composer create-project --no-scripts --remove-vcs %s %s %s %s',
+                $repo ? '--repository=' . $repo : '',
+                $proj,
+                $cwd,
+                $ver
             ),
             dirname($cwd)
         );
@@ -48,5 +55,34 @@ class ComposerInstaller extends AbstractInstaller
         $this->updateProjectConfig($project, ++$step);
 
         return $this->success();
+    }
+
+    private function getProjectPackage(Template $template): string
+    {
+        return Str::before(Str::replaceFirst('composer:', '', $template->source()), '?');
+    }
+
+    private function getAlternateRepository(Template $template): ?string
+    {
+        $options = $this->parseTemplateOptions($template);
+
+        return $options['repository'] ?? null;
+    }
+
+    private function getProjectPackageVersion(Template $template): ?string
+    {
+        $options = $this->parseTemplateOptions($template);
+
+        return $options['version'] ?? null;
+    }
+
+    private function parseTemplateOptions(Template $template): array
+    {
+        $query   = Str::after($template->source(), '?');
+        $options = [];
+
+        parse_str($query, $options);
+
+        return $options;
     }
 }
