@@ -50,8 +50,10 @@ class Compiler
         $finder = new Finder();
         $finder->files()
             ->ignoreVCS(true)
-            ->name('*.php')
+            ->name(['*.php', '*.yaml', '*.yml', '*.md', '*.xml'])
             ->name('LICENSE')
+            ->name('dockerignore')
+            ->name('gitignore')
             ->exclude('Tests')
             ->exclude('tests')
             ->exclude('docs')
