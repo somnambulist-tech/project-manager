@@ -57,12 +57,12 @@ class Config implements TemplatableResource
 
     public function projectsDir(): string
     {
-        return $this->config->get('projects_dir');
+        return $this->config->value('projects_dir', 'Projects');
     }
 
     public function active(): string
     {
-        return $_SERVER['SOMNAMBULIST_ACTIVE_PROJECT'];
+        return $_SERVER['SOMNAMBULIST_ACTIVE_PROJECT'] ?? '';
     }
 
     public function config(): FrozenCollection

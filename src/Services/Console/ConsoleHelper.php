@@ -116,6 +116,10 @@ class ConsoleHelper
 
     public function choose(string $question, array $choices = [], $default = null)
     {
+        if (empty($choices)) {
+            return $default;
+        }
+
         $h = new QuestionHelper();
         $h->setHelperSet($this->helperSet);
 

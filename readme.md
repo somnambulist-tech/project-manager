@@ -100,6 +100,10 @@ somnambulist:
 
 ```
 
+You can check the current `spm` setup by using `spm check`. This will show you all the
+current configuration locations and if the configuration was initialised properly. Add
+`--debug` or `-d` to output the config and env file contents if they exist.
+
 ### Terminal and IDE integration
 
 spm includes two helpers to make navigating a project easier: `open` and `goto`. `open` will
