@@ -79,7 +79,7 @@ class CheckCommand extends AbstractCommand implements ProjectConfigAwareInterfac
         $table = new Table($output);
         $table->setHeaders(['Name', 'Type', 'Source']);
 
-        $this->config->templates()->list()->each(function (Template $template) use ($table) {
+        $this->templates()->each(function (Template $template) use ($table) {
             $table->addRow([$template->name(), $template->type(), $template->source() ?: '~']);
         });
 
@@ -87,5 +87,24 @@ class CheckCommand extends AbstractCommand implements ProjectConfigAwareInterfac
         $this->tools()->newline();
 
         return 0;
+    }
+
+    private function templates()
+    {
+        $items = $this->config->templates()->list();
+
+        if (null !== $project = $this->config->projects()->active()) {
+            $items->merge($project->templates()->list());
+        }
+
+        $items->sortUsing(function (Template $t1, Template $t2) {
+            if ($t1->name() === $t2->name()) {
+                return 0;
+            }
+
+            return ($t1->name() < $t2->name()) ? -1 : 1;
+        });
+
+        return $items;
     }
 }
