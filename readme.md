@@ -1,6 +1,6 @@
 # Somnambulist Project Manager
 
-[![GitHub Actions release Build Status](https://github.com/dave-redfern/somnambulist-project-manager/workflows/release/badge.svg)](https://github.com/dave-redfern/somnambulist-project-manager/actions?query=workflow%3Arelease)
+[![GitHub Actions release Build Status](https://github.com/somnambulist-tech/project-manager/workflows/release/badge.svg)](https://github.com/somnambulist-tech/project-manager/actions?query=workflow%3Arelease)
 
 Project Manager is designed to help organise micro-services based PHP projects. It
 incorporates commands for creating new services, libraries, and managing them.
@@ -27,7 +27,7 @@ Run: `spm init` to create the standard configuration (see later).
 
 Or:
 
-    $ brew install dave-redfern/somnambulist/spm
+    $ brew install somnambulist-tech/somnambulist/spm
 
 ### Lazy Install
 
@@ -40,7 +40,7 @@ verify the SHA384 hash and copy the phar to `/usr/local/bin`, then symlink it to
 set up with verbose output.
 
 ```bash
-curl --silent --fail --location --retry 3 --output /tmp/somnambulist-project-manager.phar --url https://github.com/dave-redfern/somnambulist-project-manager/releases/download/0.5.4/somnambulist-project-manager.phar \
+curl --silent --fail --location --retry 3 --output /tmp/somnambulist-project-manager.phar --url https://github.com/somnambulist-tech/project-manager/releases/download/0.5.4/somnambulist-project-manager.phar \
   && echo "647d442b0297963b3fc334f80fad49f0626564d36b52e97acb0b42fd40c47c883e7054ab739658154316505b7cb9064c  /tmp/somnambulist-project-manager.phar" | shasum -a 384 -c \
   && mv -v /tmp/somnambulist-project-manager /usr/local/bin/somnambulist-project-manager.phar \
   && chmod -v 755 /usr/local/bin/somnambulist-project-manager.phar \
@@ -52,7 +52,7 @@ If the hash check fails, remove the phar archive.
 
 ### Removing Project Manager
 
-If installed via brew: `brew remove dave-redfern/somnambulist/spm`
+If installed via brew: `brew remove somnambulist-tech/somnambulist/spm`
 
 Remove any symlinks you have and delete the phar file. Delete the configuration folder
 from `~/.spm_projects.d/`
@@ -94,7 +94,7 @@ somnambulist:
             library: ~
 
         service:
-            data: 'git:git@github.com:dave-redfern/data-service-skeleton.git'
+            data: 'git:git@github.com:somnambulist-tech/data-service-skeleton.git'
             service: 'composer:somnambulist/symfony-micro-service'
             web: 'composer:symfony/skeleton'
 
@@ -252,8 +252,8 @@ somnambulist:
 Templates allow for rapidly scaffolding new libraries / services. By default the following
 services templates are pre-configured globally:
 
- * data - [Data Service](https://github.com/dave-redfern/data-service-skeleton)
- * service - [Symfony Micro Service](https://github.com/dave-redfern/micro-service-skeleton)
+ * data - [Data Service](https://github.com/somnambulist-tech/data-service-skeleton)
+ * service - [Symfony Micro Service](https://github.com/somnambulist-tech/micro-service-skeleton)
  * web - [Symfony Skeleton](https://github.com/symfony/skeleton)
 
 Templates are grouped by type: `library` and `service`. Only library types are displayed when
@@ -500,6 +500,6 @@ file location / name.
 
 ## Issues / Questions
 
-Make an issue on the github repo: https://github.com/dave-redfern/somnambulist-project-manager/issues
+Make an issue on the github repo: https://github.com/somnambulist-tech/project-manager/issues
 
 Pull requests are welcome!
