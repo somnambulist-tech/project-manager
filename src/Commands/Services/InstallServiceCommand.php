@@ -39,7 +39,7 @@ class InstallServiceCommand extends AbstractCommand implements DockerAwareInterf
         $this
             ->setName('services:install')
             ->setDescription('Installs the specified services into the project folder from the repository')
-            ->addArgument('service', InputArgument::REQUIRED|InputArgument::IS_ARRAY, 'The service to install, or "all"; see <info>services:list</info> for available services')
+            ->addArgument('service', InputArgument::IS_ARRAY, 'The service to install, or "all"; see <info>services:list</info> for available services')
             ->setHelp(<<<HLP
 
 A service is a project that runs in Docker and provides assorted runtime services.
@@ -70,7 +70,7 @@ HLP
 
         $this->tools()->info('installing service(s) in <info>%s</info>', $project->name());
 
-        $services = $this->getServicesFrom($input, 'installing all services, this might take a while...');
+        $services = $this->getServicesFrom($input, 'installing all services, this might take a while...', 'Select the services to install: ');
 
         foreach ($services as $name) {
             try {

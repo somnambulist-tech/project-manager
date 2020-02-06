@@ -9,6 +9,6 @@ somnambulist:
             library: ~
 
         service:
-            data: 'git:git@github.com:dave-redfern/data-service-skeleton.git'
+            data: 'git:git@github.com:somnambulist-tech/data-service-skeleton.git'
             service: 'composer:somnambulist/symfony-micro-service'
             web: 'composer:symfony/skeleton'

@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use function getcwd;
 use function strtolower;
 use function trim;
 
@@ -37,12 +38,41 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
             ->setName('services:start')
             ->setAliases(['start'])
             ->setDescription('Starts the specified service(s)')
-            ->addArgument('service', InputArgument::REQUIRED|InputArgument::IS_ARRAY, 'The services to start, or "all"; see <info>services:list</info> for available services')
+            ->addArgument('service', InputArgument::IS_ARRAY, 'The services to start, or "all"; see <info>services:list</info> for available services')
             ->addOption('install', 'i', InputOption::VALUE_NONE, 'Install missing dependencies before starting them, if they are not installed')
             ->addOption('rebuild', 'b', InputOption::VALUE_NONE, 'Re-build the containers before starting')
             ->addOption('refresh', 'r', InputOption::VALUE_NONE, 'Refresh the containers before starting; pulls all new images')
             ->addOption('with-deps', 'd', InputOption::VALUE_NONE, 'Start all dependencies without prompting for confirmation')
             ->addOption('without-deps', 'D', InputOption::VALUE_NONE, 'Ignore all dependencies')
+            ->addOption('validate', null, InputOption::VALUE_NONE, 'After starting, validate if the primary services are running')
+            ->addOption('timeout', 't', InputOption::VALUE_OPTIONAL, 'The timeout value for validation in seconds, max: 180', 60)
+            ->setHelp(<<<HLP
+Start services from the currently active project from anywhere by specifying
+the service names to start. e.g.: <info>%command.full_name% service1 service2</info>
+
+If the command is run without any arguments and you are in a runnable service
+that service will be started, otherwise the available services will be listed.
+
+All services can be started by using: <info>%command.full_name% all</info>
+
+Services can have dependencies e.g. a database or other provider or maybe
+another service. By default, you will be prompted if you wish to start
+dependencies; however you can always start dependencies <info>-d</info> or not
+<info>-D</info> and avoid the prompt.
+
+If a dependent service is not installed, you can optionally pass <info>--install</info>
+to attempt to download and install those services before starting the
+one you specified.
+
+If you need to re-build the containers, add <info>--rebuild</info> or <info>-b</info>.
+This will force a re-build without using caches. This does not refresh any
+already cached images. If you need to get a newer container image use
+<info>--refresh</info> instead. This will cause the remote images to be updated.
+
+Both commands use <info>docker-compose build</info> under-the-hood and will stop
+any running containers.
+
+HLP)
         ;
     }
 
@@ -55,10 +85,21 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
 
         $this->tools()->info('starting service(s) in <info>%s</info>', $project->name());
 
-        $services = $this->getServicesFrom($input, 'starting all services, this might take a while...');
+        if ((null !== $service = $project->getServiceByPath(getcwd())) && !$input->getArgument('service')) {
+            $services = [$service->name()];
+            $this->tools()->info('auto-starting <info>%s</info>', $service->name());
+        } else {
+            $services = $this->getServicesFrom($input, 'starting all services, this might take a while...', 'Select the services to start: ');
+        }
 
         foreach ($services as $name) {
             $this->startService($name);
+        }
+
+        if ($input->getOption('validate')) {
+            foreach ($services as $name) {
+                $this->validate($name, (int)$input->getOption('timeout'));
+            }
         }
 
         return 0;
@@ -127,7 +168,7 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
             $deps = 'n';
         }
         if (!$deps) {
-            $deps = $this->tools()->ask('Service %s has dependencies, do you want these to be started? (y/n) ', false, $service->name());
+            $deps = $this->tools()->ask('Service <info>%s</info> has dependencies, do you want these to be started? (y/n) ', false, $service->name());
 
             $this->tools()->input()->setOption('with-deps', $deps);
         }
@@ -157,5 +198,33 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
     {
         $this->tools()->info('attempting to <info>start</info> service <info>%s</info> ', $service->name());
         $this->docker->start($service);
+    }
+
+    private function validate(string $service, int $timeout): void
+    {
+        $project = $this->getActiveProject();
+        $timeout = min(($timeout < 1 ? 60 : $timeout), 180);
+        $i       = 0;
+
+        /** @var Service $service */
+        if (null === $service = $project->services()->get($service)) {
+            /** @var Service $service */
+            $this->tools()->error('service <info>%s</info> not found!', $service);
+            return;
+        }
+
+        do {
+            $this->docker->resolve($service);
+
+            ++$i;
+            sleep(1);
+
+        } while (!$service->isRunning() && $i <= $timeout);
+
+        if (!$service->isRunning()) {
+            $this->tools()->error('failed to start <info>%s</info> after waiting <info>%s</info> seconds', $service->name(), $timeout);
+        }
+
+        return;
     }
 }

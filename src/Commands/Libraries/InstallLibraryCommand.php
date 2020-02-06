@@ -3,6 +3,7 @@
 namespace Somnambulist\ProjectManager\Commands\Libraries;
 
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
+use Somnambulist\ProjectManager\Commands\Behaviours\CanSelectLibraryFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetLibrariesFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\InstallableResourceSetupHelpers;
@@ -35,7 +36,7 @@ class InstallLibraryCommand extends AbstractCommand implements ProjectConfigAwar
         $this
             ->setName('libraries:install')
             ->setDescription('Installs the specified libraries into the project folder from the repository')
-            ->addArgument('library', InputArgument::REQUIRED|InputArgument::IS_ARRAY, 'The library to install, or "all"; see <info>libraries:list</info> for available libraries')
+            ->addArgument('library', InputArgument::IS_ARRAY, 'The library to install, or "all"; see <info>libraries:list</info> for available libraries')
             ->setHelp(<<<HLP
 
 A library project is a set of shared code used between services, or a project
@@ -63,12 +64,11 @@ HLP
     {
         $this->setupConsoleHelper($input, $output);
 
-        $project   = $this->getActiveProject();
+        $project = $this->getActiveProject();
 
         $this->tools()->info('installing libraries in <info>%s</info>', $project->name());
 
-        $libraries = $this->getLibrariesFrom($input, 'installing all libraries, this might take a while...');
-
+        $libraries = $this->getLibrariesFrom($input, 'installing all libraries, this might take a while...', 'Select the library to install: ');
 
         foreach ($libraries as $name) {
             try {

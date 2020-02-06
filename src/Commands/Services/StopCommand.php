@@ -15,6 +15,7 @@ use Somnambulist\ProjectManager\Models\Service;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function getcwd;
 use function is_null;
 use function sprintf;
 
@@ -38,7 +39,22 @@ class StopCommand extends AbstractCommand implements DockerAwareInterface, Proje
             ->setName('services:stop')
             ->setAliases(['stop'])
             ->setDescription('Stop the specified service(s), will stop dependent services')
-            ->addArgument('service', InputArgument::REQUIRED|InputArgument::IS_ARRAY, 'The service(s) to stop or "all"; see <info>services:list</info> for available services')
+            ->addArgument('service', InputArgument::IS_ARRAY, 'The service(s) to stop or "all"; see <info>services:list</info> for available services')
+            ->setHelp(<<<HLP
+Stop configured services from anywhere without needing to be in a specific
+service folder. Multiple services can be stopped at the same time and any
+dependent services will be calculated and added to the list to stop:
+
+    <info>%command.full_name% service1 service2 ...</info>
+
+All services can be stopped by using: <info>%command.full_name% all</info>
+
+If the command is run without arguments and you are in a runnable service
+for the current project, it will stop that service (and any dependent
+services), otherwise you will be given a list of services that can be
+stopped (or all).
+
+HLP)
         ;
     }
 
@@ -47,11 +63,16 @@ class StopCommand extends AbstractCommand implements DockerAwareInterface, Proje
         $this->setupConsoleHelper($input, $output);
         $this->setIsDebugging($input);
 
-        $project  = $this->getActiveProject();
+        $project = $this->getActiveProject();
 
         $this->tools()->info('stopping service(s) in <info>%s</info>', $project->name());
 
-        $services = $this->getServicesFrom($input, 'stopping all services, this might take a while...');
+        if ((null !== $service = $project->getServiceByPath(getcwd())) && !$input->getArgument('service')) {
+            $services = new MutableCollection($service->name());
+            $this->tools()->info('auto-stopping <info>%s</info>', $service->name());
+        } else {
+            $services = $this->getServicesFrom($input, 'stopping all services, this might take a while...', 'Select the services to stop: ');
+        }
 
         $dependencyTree = $this->buildDependencyTree($project->services()->list());
         $mustStop       = $this->findDependentServices($services);

@@ -165,6 +165,16 @@ final class Project implements TemplatableResource
         ;
     }
 
+    public function getServiceByPath($path): ?Service
+    {
+        return $this
+            ->services()->list()->filter(function (Service $service) use ($path) {
+                return $service->installPath() === $path;
+            })
+            ->first()
+        ;
+    }
+
     public function getLibrary(string $library): ?InstallableResource
     {
         if (!$resource = $this->services()->get($library)) {
