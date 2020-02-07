@@ -85,6 +85,20 @@ class GitManager
         return $proc->isSuccessful();
     }
 
+    public function stash(string $cwd): bool
+    {
+        $proc = $this->exec('git stash push --keep-index --include-untracked', $cwd);
+
+        return $proc->isSuccessful();
+    }
+
+    public function checkout(string $cwd, string $remote = 'origin', string $branch = 'master'): bool
+    {
+        $proc = $this->exec('git checkout -B %s --track %s/%s', $cwd, $branch, $remote, $branch);
+
+        return $proc->isSuccessful();
+    }
+
     public function isClean(string $cwd): bool
     {
         $proc = $this->exec('git status -s', $cwd);
