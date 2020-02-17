@@ -131,7 +131,7 @@ HLP
 
         $resource->setRepository($values[0]);
 
-        $this->changeGitOrigin($resource, $cwd, $values[0]);
+        $this->changeGitOrigin($project, $cwd, $values[0]);
 
         return true;
     }
