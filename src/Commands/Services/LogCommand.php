@@ -55,6 +55,7 @@ class LogCommand extends AbstractCommand implements DockerAwareInterface, Projec
 
         $h = $this->getHelper('process');
         $p = Process::fromShellCommandline(sprintf('docker-compose logs %s %s', $follow ? '-f' : '', $service->appContainer()), $service->installPath());
+        $p->setTimeout(null);
 
         $h->run($output, $p, null, function ($type, $data) use ($output) {
             if ('err' === $type) {
