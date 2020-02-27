@@ -20,6 +20,9 @@ services:
     Somnambulist\ProjectManager\Services\DockerManager:
         public: true
 
+    Somnambulist\ProjectManager\Services\SyncItManager:
+        public: true
+
     Somnambulist\ProjectManager\Models\Config:
         factory: Somnambulist\ProjectManager\Services\Config\Factory::create
         public: true

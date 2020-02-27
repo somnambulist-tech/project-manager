@@ -79,6 +79,11 @@ class ConsoleHelper
         return $this->input;
     }
 
+    public function isDebugEnabled(): bool
+    {
+        return (false !== $this->input->getOption('verbose'));
+    }
+
     public function git(): GitManager
     {
         return new GitManager($this->helperSet->get('process'), $this->output);

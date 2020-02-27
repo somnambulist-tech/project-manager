@@ -4,9 +4,11 @@ namespace Somnambulist\ProjectManager;
 
 use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
+use Somnambulist\ProjectManager\Contracts\SyncItAwareInterface;
 use Somnambulist\ProjectManager\Models\Config;
 use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
 use Somnambulist\ProjectManager\Services\DockerManager;
+use Somnambulist\ProjectManager\Services\SyncItManager;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\ListCommand;
@@ -90,11 +92,20 @@ class Application extends BaseApplication
      */
     protected function doRunCommand(Command $command, InputInterface $input, OutputInterface $output)
     {
+        $helper = new ConsoleHelper($input, $output);
+
         if ($command instanceof DockerAwareInterface) {
             $docker = $this->kernel->getContainer()->get(DockerManager::class);
-            $docker->bindConsoleHelper(new ConsoleHelper($input, $output));
+            $docker->bindConsoleHelper($helper);
 
             $command->bindDockerManager($docker);
+        }
+
+        if ($command instanceof SyncItAwareInterface) {
+            $syncit = $this->kernel->getContainer()->get(SyncItManager::class);
+            $syncit->bindConsoleHelper($helper);
+
+            $command->bindSyncItManager($syncit);
         }
 
         if ($command instanceof ProjectConfigAwareInterface) {

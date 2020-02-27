@@ -9,8 +9,10 @@ use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetServicesFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
+use Somnambulist\ProjectManager\Commands\Behaviours\SyncItAwareCommand;
 use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
+use Somnambulist\ProjectManager\Contracts\SyncItAwareInterface;
 use Somnambulist\ProjectManager\Models\Service;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,13 +27,14 @@ use function sprintf;
  * @package Somnambulist\ProjectManager\Commands\Services
  * @subpackage Somnambulist\ProjectManager\Commands\Services\StopCommand
  */
-class StopCommand extends AbstractCommand implements DockerAwareInterface, ProjectConfigAwareInterface
+class StopCommand extends AbstractCommand implements DockerAwareInterface, ProjectConfigAwareInterface, SyncItAwareInterface
 {
 
     use GetServicesFromInput;
     use GetCurrentActiveProject;
     use DockerAwareCommand;
     use ProjectConfigAwareCommand;
+    use SyncItAwareCommand;
 
     protected function configure()
     {
@@ -93,6 +96,8 @@ HLP)
         if (null !== $service = $this->getActiveProject()->services()->get($service)) {
             /** @var Service $service */
             $this->tools()->info('attempting to stop <info>%s</info>', $service->name());
+
+            $this->syncit->stop($service);
             $this->docker->stop($service);
 
             $service->isRunning() ? $this->tools()->error('failed to stop service') : $this->tools()->success('successfully stopped service');
