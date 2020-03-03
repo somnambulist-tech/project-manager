@@ -50,17 +50,27 @@ class ListCommand extends AbstractCommand implements DockerAwareInterface, Proje
             ])
         ;
 
-        $project->services()->list()->each(function (Service $service) use ($table) {
-            $service->appContainer() ? $this->docker->resolve($service) : null;
+        $project
+            ->services()
+            ->list()
+            ->sortUsing(function (Service $a, Service $b) {
+                if ($a->name() === $b->name()) {
+                    return 0;
+                }
 
-            $table->addRow([
-                $service->name(),
-                $service->installPath(),
-                $service->isInstalled() ? 'yes' : 'no',
-                $service->appContainer(),
-                $service->appContainer() ? $service->isRunning() ? 'running' : 'stopped' : '--',
-            ]);
-        })
+                return $a->name() > $b->name() ? 1 : -1;
+            })
+            ->each(function (Service $service) use ($table) {
+                $service->appContainer() ? $this->docker->resolve($service) : null;
+
+                $table->addRow([
+                    $service->name(),
+                    $service->installPath(),
+                    $service->isInstalled() ? 'yes' : 'no',
+                    $service->appContainer(),
+                    $service->appContainer() ? $service->isRunning() ? 'running' : 'stopped' : '--',
+                ]);
+            })
         ;
 
         $table->addRows([

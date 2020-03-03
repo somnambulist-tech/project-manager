@@ -47,13 +47,24 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
             ])
         ;
 
-        $project->libraries()->list()->each(function (Library $service) use ($table) {
-            $table->addRow([
-                $service->name(),
-                $service->installPath(),
-                $service->isInstalled() ? 'yes' : 'no',
-            ]);
-        });
+        $project
+            ->libraries()
+            ->list()
+            ->sortUsing(function (Library $a, Library $b) {
+                if ($a->name() === $b->name()) {
+                    return 0;
+                }
+
+                return $a->name() > $b->name() ? 1 : -1;
+            })
+            ->each(function (Library $service) use ($table) {
+                $table->addRow([
+                    $service->name(),
+                    $service->installPath(),
+                    $service->isInstalled() ? 'yes' : 'no',
+                ]);
+            })
+        ;
 
         $table->addRows([
             new TableSeparator(),
