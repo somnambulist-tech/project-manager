@@ -105,13 +105,13 @@ HLP)
         return 0;
     }
 
-    private function startService(string $service): void
+    private function startService(string $serviceName): void
     {
         $project = $this->getActiveProject();
 
-        if (null === $service = $project->services()->get($service)) {
+        if (null === $service = $project->services()->get($serviceName)) {
             /** @var Service $service */
-            $this->tools()->error('service <info>%s</info> not found!', $service);
+            $this->tools()->error('service <info>%s</info> not found!', $serviceName);
             return;
         }
 
@@ -200,16 +200,16 @@ HLP)
         $this->docker->start($service);
     }
 
-    private function validate(string $service, int $timeout): void
+    private function validate(string $serviceName, int $timeout): void
     {
         $project = $this->getActiveProject();
         $timeout = min(($timeout < 1 ? 60 : $timeout), 180);
         $i       = 0;
 
         /** @var Service $service */
-        if (null === $service = $project->services()->get($service)) {
+        if (null === $service = $project->services()->get($serviceName)) {
             /** @var Service $service */
-            $this->tools()->error('service <info>%s</info> not found!', $service);
+            $this->tools()->error('service <info>%s</info> not found!', $serviceName);
             return;
         }
 

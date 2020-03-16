@@ -172,6 +172,28 @@ class DockerManager
         return $this->runCommand($service, 'docker-compose up -d');
     }
 
+    public function restart(Service $service): bool
+    {
+        $this->resolve($service);
+
+        if (!$service->isRunning() || !$service->isInstalled()) {
+            return false;
+        }
+
+        try {
+            $com = sprintf('docker-compose restart %s', $service->appContainer());
+
+            if (true === $res = $this->helper->execute($com, $service->installPath(), $this->toRemove)) {
+                $this->resolve($service);
+            }
+
+            return $res;
+        } catch (Exception $e) {
+        }
+
+        return false;
+    }
+
     public function stop(Service $service): bool
     {
         return $this->runCommand($service, 'docker-compose down');

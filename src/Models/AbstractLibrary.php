@@ -44,6 +44,11 @@ abstract class AbstractLibrary implements InstallableResource
         $this->repository    = $repository;
     }
 
+    public function __toString()
+    {
+        return $this->name();
+    }
+
     public function name(): string
     {
         return $this->name;
