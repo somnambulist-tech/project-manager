@@ -40,8 +40,8 @@ verify the SHA384 hash and copy the phar to `/usr/local/bin`, then symlink it to
 set up with verbose output.
 
 ```bash
-curl --silent --fail --location --retry 3 --output /tmp/somnambulist-project-manager.phar --url https://github.com/somnambulist-tech/project-manager/releases/download/0.5.4/somnambulist-project-manager.phar \
-  && echo "647d442b0297963b3fc334f80fad49f0626564d36b52e97acb0b42fd40c47c883e7054ab739658154316505b7cb9064c  /tmp/somnambulist-project-manager.phar" | shasum -a 384 -c \
+curl --silent --fail --location --retry 3 --output /tmp/somnambulist-project-manager.phar --url https://github.com/somnambulist-tech/project-manager/releases/download/0.12.0/somnambulist-project-manager.phar \
+  && echo "36baf56311737f96681476cf9597c7faa99a73de132b93a10af861a7896434799c4c5698f4625c0768f3e904d34ef89a  /tmp/somnambulist-project-manager.phar" | shasum -a 384 -c \
   && mv -v /tmp/somnambulist-project-manager /usr/local/bin/somnambulist-project-manager.phar \
   && chmod -v 755 /usr/local/bin/somnambulist-project-manager.phar \
   && ln -vf -s /usr/local/bin/somnambulist-project-manager.phar /usr/local/bin/spm \
@@ -125,15 +125,16 @@ spm works with projects. A project is a collection of libraries and services. Th
 configuration defines what libraries and services make up the project and the repositories
 where they can be located.
 
-A library is a package / bundle that is used by multiple services. Typical libraries are
-things like API clients for the services.
+A library is a package / bundle that is used by multiple services. Typically libraries are
+things like API clients for the services but can include project skeletons or other repos.
 
 A service is an application that will be run within docker. Typically this will be a micro
 service, but it could be the data services, a web site etc. Essentially anything that will
 run in Docker.
 
 In the case of services; spm can provide an overview of what is currently running and what
-ports / domains have been exposed. This requires Docker be installed.
+ports / domains have been exposed. This requires Docker CLI be installed. Provided your Docker
+environment is correctly configured, spm will work with remote docker hosts.
 
 To create a new project run: `spm project:create` or `spm create`. You will be prompted for
 the name (basically the folder the config will be stored in) and then if you have a remote
@@ -253,6 +254,7 @@ Templates allow for rapidly scaffolding new libraries / services. By default the
 services templates are pre-configured globally:
 
  * data - [Data Service](https://github.com/somnambulist-tech/data-service-skeleton)
+ * logging - [Logging Service](https://github.com/somnambulist-tech/logging-service-skeleton)
  * service - [Symfony Micro Service](https://github.com/somnambulist-tech/micro-service-skeleton)
  * web - [Symfony Skeleton](https://github.com/symfony/skeleton)
 
