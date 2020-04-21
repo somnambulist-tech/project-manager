@@ -35,12 +35,6 @@ abstract class AbstractInstaller
      */
     protected $type;
 
-    /**
-     * Constructor
-     *
-     * @param ConsoleHelper $helper
-     * @param string        $type
-     */
     public function __construct(ConsoleHelper $helper, string $type)
     {
         $this->consoleHelper = $helper;

@@ -6,6 +6,7 @@ use IlluminateAgnostic\Str\Support\Str;
 use Somnambulist\ProjectManager\Models\Service;
 use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
 use function shell_exec;
+use function stripos;
 use function trim;
 
 /**
@@ -27,6 +28,18 @@ class SyncItManager
      */
     private $helper;
 
+    /**
+     * An array of ENV names that must not be passed through to other commands
+     *
+     * @var array
+     */
+    private $toRemove = [
+        'APP_ENV'              => false,
+        'COMPOSE_PROJECT_NAME' => false,
+        'PROJECT_DIR'          => false,
+        'SYMFONY_DOTENV_VARS'  => false,
+    ];
+
     public function __construct()
     {
         $this->available = $this->isSyncItInstalled();
@@ -37,7 +50,7 @@ class SyncItManager
         $this->helper = $helper;
     }
 
-    private function isSyncItInstalled()
+    private function isSyncItInstalled(): bool
     {
         if (null !== $ret = shell_exec('which syncit')) {
             return Str::endsWith(trim($ret), '/syncit');
@@ -56,15 +69,28 @@ class SyncItManager
             $command .= ' -vvv';
         }
 
-        return $this->helper->execute($command, $service->installPath());
+        return $this->helper->execute($command, $service->installPath(), $this->toRemove);
     }
 
-    public function start(Service $service)
+    public function isRunning(Service $service): ?string
+    {
+        if (!$this->available || !$service->isInstalled()) {
+            return null;
+        }
+
+        if (null === $output = $this->helper->run('syncit status', $service->installPath(), $this->toRemove)) {
+            return null;
+        }
+
+        return !is_null($output) && false !== stripos($output, 'connected') ? 'running' : 'stopped';
+    }
+
+    public function start(Service $service): bool
     {
         return $this->execute($service, 'syncit start all');
     }
 
-    public function stop(Service $service)
+    public function stop(Service $service): bool
     {
         return $this->execute($service, 'syncit stop all');
     }

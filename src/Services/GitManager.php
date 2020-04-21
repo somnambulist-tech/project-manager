@@ -31,12 +31,6 @@ class GitManager
      */
     private $output;
 
-    /**
-     * Constructor
-     *
-     * @param ProcessHelper|null   $helper
-     * @param OutputInterface|null $output
-     */
     public function __construct(ProcessHelper $helper = null, OutputInterface $output = null)
     {
         $this->helper = $helper;

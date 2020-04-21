@@ -2,6 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Models;
 
+use IlluminateAgnostic\Str\Support\Str;
 use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Contracts\InstallableResource;
 use Somnambulist\ProjectManager\Contracts\TemplatableResource;
@@ -66,17 +67,6 @@ final class Project implements TemplatableResource
      */
     private $templates;
 
-    /**
-     * Constructor
-     *
-     * @param string      $name
-     * @param string      $configPath
-     * @param string      $workingPath
-     * @param string|null $servicesName
-     * @param string|null $librariesName
-     * @param string|null $repository
-     * @param array       $docker
-     */
     public function __construct(string $name, string $configPath, string $workingPath, ?string $servicesName, ?string $librariesName, ?string $repository, array $docker = [])
     {
         $this->name          = $name;
@@ -144,7 +134,7 @@ final class Project implements TemplatableResource
 
 
 
-    public function getFileInProject($filename): string
+    public function getFileInProject(string $filename): string
     {
         return sprintf('%s/%s', $this->configPath(), $filename);
     }
@@ -165,11 +155,21 @@ final class Project implements TemplatableResource
         ;
     }
 
-    public function getServiceByPath($path): ?Service
+    public function getServiceByPath(string $path): ?Service
     {
         return $this
             ->services()->list()->filter(function (Service $service) use ($path) {
                 return $service->installPath() === $path;
+            })
+            ->first()
+        ;
+    }
+
+    public function getServiceByContainerName(string $container): ?Service
+    {
+        return $this
+            ->services()->list()->filter(function (Service $service) use ($container) {
+                return Str::contains($container, $service->appContainer());
             })
             ->first()
         ;

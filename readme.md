@@ -369,17 +369,36 @@ project config and display the information in a table. This information includes
  * the host if it has been set e.g. for traefik or the IP for the external DB connection
  * external port(s)
  * any volumes connected to the container
+ 
+The status output is in a CLI table by default, however it can also be generated as:
+
+ * CSV
+ * JSON
+ * pipe separated, plain text
+
+Add `--format=csv|json|plain` to get the desired output.
+
+If [SyncIt](https://github.com/somnambulist-tech/sync-it) is installed and setup on a
+service; the current status will be output with the `spm` status information. Note: this
+adds an amount of overhead and can take a few seconds to display for many running containers.
+To disable `syncit` checks, add `--no-syncit`.
 
 #### Stopping
 
 To stop a service use: `spm services:stop service1 service2` or `spm services:stop all` to stop
 all running services. Services that have dependencies will automatically cause dependent services
-to be stopped as well. For example: if you have a main data service that provides databases and
-your apps depend on this and you stop it, then all the dependent services will be stopped first.
-`services:stop` is aliased to `stop`.
+to be stopped as well. For example: if you have a main data service that provides databases, and
+your apps depend on this; when you stop the service, then all the dependent services will be
+stopped first. `services:stop` is aliased to `stop`.
+
+If `syncit` is installed and there are active sync sessions, they will be stopped before the
+container the service is stopped.
+
+#### Logs
 
 The docker logs can be viewed by running: `spm services:log service` or use the alias `log`. Add
-`-f` to follow the log and use Ctrl+C to stop.
+`-f` to follow the log and use Ctrl+C to stop. This is the same output that you can get from:
+`docker-compose log <container-name>`.
 
 #### Rebuilding / cleaning the docker containers
 

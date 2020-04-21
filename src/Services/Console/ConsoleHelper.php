@@ -45,12 +45,6 @@ class ConsoleHelper
      */
     private $noOutput = false;
 
-    /**
-     * Constructor
-     *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     */
     public function __construct(InputInterface $input, OutputInterface $output)
     {
         $this->input  = $input;
@@ -89,6 +83,17 @@ class ConsoleHelper
         return new GitManager($this->helperSet->get('process'), $this->output);
     }
 
+    /**
+     * Executes the command returning true if the command ran successfully
+     *
+     * @param string      $command
+     * @param string|null $cwd
+     * @param array|null  $env
+     * @param null        $input
+     * @param float|null  $timeout
+     *
+     * @return bool
+     */
     public function execute(string $command, string $cwd = null, array $env = null, $input = null, ?float $timeout = null): bool
     {
         $h = new ProcessHelper();
@@ -99,6 +104,29 @@ class ConsoleHelper
         $h->run($this->output, $proc);
 
         return $proc->isSuccessful();
+    }
+
+    /**
+     * Runs the command returning the command output, or null if the command failed
+     *
+     * @param string      $command
+     * @param string|null $cwd
+     * @param array|null  $env
+     * @param null        $input
+     * @param float|null  $timeout
+     *
+     * @return string|null
+     */
+    public function run(string $command, string $cwd = null, array $env = null, $input = null, ?float $timeout = null): ?string
+    {
+        $h = new ProcessHelper();
+        $h->setHelperSet($this->helperSet);
+
+        $proc = Process::fromShellCommandline($command, $cwd, $env, $input, $timeout);
+
+        $h->run($this->output, $proc);
+
+        return $proc->isSuccessful() ? $proc->getOutput() : null;
     }
 
     public function ask(string $question, bool $confirm = true, string ...$args)

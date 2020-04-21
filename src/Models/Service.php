@@ -35,15 +35,6 @@ final class Service extends AbstractLibrary implements RunnableResource
      */
     private $runningContainerId;
 
-    /**
-     * Constructor
-     *
-     * @param string $name
-     * @param string $dirname
-     * @param string $repository
-     * @param string $appContainer
-     * @param array  $dependencies
-     */
     public function __construct(string $name, string $dirname, ?string $repository, ?string $appContainer, array $dependencies = [])
     {
         parent::__construct($name, $dirname, $repository);

@@ -36,12 +36,6 @@ class Config implements TemplatableResource
      */
     private $templates;
 
-    /**
-     * Constructor
-     *
-     * @param array $config
-     * @param array $parameters
-     */
     public function __construct(array $config = [], array $parameters = [])
     {
         $this->config     = new FrozenCollection($config);

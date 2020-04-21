@@ -28,13 +28,6 @@ final class Template
      */
     private $source;
 
-    /**
-     * Constructor
-     *
-     * @param string      $name
-     * @param string      $type
-     * @param string|null $source
-     */
     public function __construct(string $name, string $type, string $source = null)
     {
         $this->name   = $name;

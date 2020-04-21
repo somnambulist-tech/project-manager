@@ -30,13 +30,6 @@ abstract class AbstractLibrary implements InstallableResource
      */
     private $repository;
 
-    /**
-     * Constructor
-     *
-     * @param string $name
-     * @param string $dirname
-     * @param string $repository
-     */
     public function __construct(string $name, string $dirname, string $repository = null)
     {
         $this->name          = $name;
