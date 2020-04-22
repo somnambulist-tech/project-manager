@@ -33,7 +33,7 @@ class LogCommand extends AbstractCommand implements DockerAwareInterface, Projec
     {
         $this
             ->setName('services:log')
-            ->setAliases(['log'])
+            ->setAliases(['log', 'logs'])
             ->setDescription('Fetch or tail the application containers log from docker')
             ->addArgument('service', InputArgument::OPTIONAL, 'The service to get the logs of')
             ->addOption('follow', 'f', InputOption::VALUE_NONE, 'Read the logs continuously')
