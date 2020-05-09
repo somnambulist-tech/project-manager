@@ -60,11 +60,16 @@ class CreateCommand extends AbstractCommand implements ProjectConfigAwareInterfa
 
         $cwd  = sprintf('%s/%s', $this->config->home(), $name);
         $file = sprintf('%s/%s/project.yaml', $this->config->home(), $name);
+        $dir  = sprintf('%s/%s/%s', $_SERVER['HOME'], $this->config->projectsDir(), $name);
 
         if ($git) {
             $ret = $this->createFromGitRepo($git, $cwd, $file);
         } else {
             $ret = $this->createNewLocalProject($cwd, $file, $name, $docker, $git);
+        }
+
+        if (!file_exists($dir)) {
+            @mkdir($dir, 0755, true);
         }
 
         $this->tools()->newline();
@@ -127,7 +132,7 @@ CFG;
 
         $name = Yaml::parseFile($file)['somnambulist']['project']['name'];
 
-        $this->tools()->success('enable the project by running: <info>use %s</info>', $name);
+        $this->tools()->success('enable the project by running: <info>spm use %s</info>', $name);
 
         return 0;
     }
@@ -165,7 +170,7 @@ CFG;
         }
 
         $this->tools()->success('created git repository at <info>%s</info>', $cwd);
-        $this->tools()->success('project created successfully, enable the project by running: <info>use %s</info>', $name);
+        $this->tools()->success('project created successfully, enable the project by running: <info>spm use %s</info>', $name);
 
         return 0;
     }
