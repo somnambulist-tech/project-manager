@@ -88,6 +88,7 @@ class Compiler
 
         // Stubs
         $phar->setStub($this->getStub());
+        $phar->compressFiles(Phar::GZ);
 
         $phar->stopBuffering();
 
