@@ -88,3 +88,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 /somnambulist-project-manager_checksums.txt
+
+
+# PhpStorm 2020.2+ now stores hardcoded paths in the CLI tool config
+/.idea/commandlinetools/Symfony*.xml

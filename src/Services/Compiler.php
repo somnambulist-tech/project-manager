@@ -65,6 +65,7 @@ class Compiler
             ->in($basePath . '/vendor/psr/')
             ->in($basePath . '/vendor/somnambulist/')
             ->in($basePath . '/vendor/symfony/')
+            ->in($basePath . '/vendor/voku/')
             ->sort($finderSort)
         ;
 

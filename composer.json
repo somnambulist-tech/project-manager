@@ -8,20 +8,20 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
-        "pragmarx/ia-str": "~5.8",
+        "pragmarx/ia-str": "~7.3",
         "somnambulist/collection": "~3.2",
-        "symfony/config": "4.4.*",
-        "symfony/console": "4.4.*",
-        "symfony/dependency-injection": "4.4.*",
-        "symfony/dotenv": "4.4.*",
-        "symfony/finder": "4.4.*",
-        "symfony/http-kernel": "4.4.*",
-        "symfony/process": "4.4.*",
-        "symfony/yaml": "4.4.*"
+        "symfony/config": "5.1.*",
+        "symfony/console": "5.1.*",
+        "symfony/dependency-injection": "5.1.*",
+        "symfony/dotenv": "5.1.*",
+        "symfony/finder": "5.1.*",
+        "symfony/http-kernel": "5.1.*",
+        "symfony/process": "5.1.*",
+        "symfony/yaml": "5.1.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "~8",
-        "symfony/var-dumper": "4.4.*"
+        "phpunit/phpunit": "~9",
+        "symfony/var-dumper": "5.1.*"
     },
     "config": {
         "preferred-install": {

@@ -113,7 +113,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
         $table = new Table($output);
         $table
             ->setHeaderTitle(sprintf('Services Status (project: <fg=yellow;bg=white>%s</>)', $project->name()))
-            ->setHeaders(['Running Container Name', 'Status', 'Host', 'Port', 'Mounts', 'SyncIt'])
+            ->setHeaders(['Running Container Name', 'Status', 'Host', 'Port', 'Mounts', 'Mutagen'])
             ->addRows($data->toArray())
         ;
 
@@ -209,16 +209,23 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
 
     private function getHostFromLabels(MutableCollection $labels): string
     {
-        $host = trim(str_replace('Host:', '', $labels->get('traefik.frontend.rule', '')));
-
-        if (strpos($labels->get('com.docker.compose.service'), 'db-') === 0) {
+        if (strpos($labels->get('com.docker.compose.service', ''), 'db-') === 0) {
             if (array_key_exists('DOCKER_HOST', $_SERVER)) {
-                $host = parse_url($_SERVER['DOCKER_HOST'], PHP_URL_HOST);
-            } else {
-                $host = 'localhost';
+                return parse_url($_SERVER['DOCKER_HOST'], PHP_URL_HOST);
             }
+
+            return 'localhost';
         }
 
-        return $host;
+        if (!$labels->has('traefik.enable') || !$labels->get('traefik.enable')) {
+            return '';
+        }
+
+        return
+            $labels
+                ->filter(function ($value, $key) { return false !== strpos($key, '.rule'); })
+                ->map(function ($value) { return trim(str_replace(['Host', 'host', ':', '(', '`', ')'], '', $value)); })
+                ->first() ?? ''
+            ;
     }
 }
