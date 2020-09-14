@@ -11,5 +11,7 @@ somnambulist:
         service:
             data: 'git:git@github.com:somnambulist-tech/data-service-skeleton.git'
             logging: 'git:git@github.com:somnambulist-tech/logging-service-skeleton.git'
-            service: 'composer:somnambulist/symfony-micro-service'
+            api: 'git:git@github.com:somnambulist-tech/web-api-skeleton.git'
+            app: 'git:git@github.com:somnambulist-tech/web-app-skeleton.git'
             web: 'composer:symfony/skeleton'
+            symfony: 'composer:symfony/skeleton'

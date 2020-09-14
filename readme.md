@@ -29,33 +29,12 @@ Or:
 
     $ brew install somnambulist-tech/somnambulist/spm
 
-### Lazy Install
-
-__Caution:__ you use the following at your own risk! No responsibility is taken
-if the script causes bad things to happen. You have been warned.
-
-The following will download the current (at the time of writing) phar archive,
-verify the SHA384 hash and copy the phar to `/usr/local/bin`, then symlink it to
-`spm` and verify it runs by calling `spm --version`. The script has been
-set up with verbose output.
-
-```bash
-curl --silent --fail --location --retry 3 --output /tmp/somnambulist-project-manager.phar --url https://github.com/somnambulist-tech/project-manager/releases/download/0.12.0/somnambulist-project-manager.phar \
-  && echo "36baf56311737f96681476cf9597c7faa99a73de132b93a10af861a7896434799c4c5698f4625c0768f3e904d34ef89a  /tmp/somnambulist-project-manager.phar" | shasum -a 384 -c \
-  && mv -v /tmp/somnambulist-project-manager /usr/local/bin/somnambulist-project-manager.phar \
-  && chmod -v 755 /usr/local/bin/somnambulist-project-manager.phar \
-  && ln -vf -s /usr/local/bin/somnambulist-project-manager.phar /usr/local/bin/spm \
-  && spm --ansi --version --no-interaction
-```
-
-If the hash check fails, remove the phar archive.
-
 ### Removing Project Manager
 
 If installed via brew: `brew remove somnambulist-tech/somnambulist/spm`
 
 Remove any symlinks you have and delete the phar file. Delete the configuration folder
-from `~/.spm_projects.d/`
+from `~/.config/spm_projects.d/` or `~/.spm_projects.d/`
 
 ```bash
 unlink /usr/local/bin/spm && rm -v /usr/local/bin/somnambulist-project-manager.phar
@@ -64,8 +43,12 @@ unlink /usr/local/bin/spm && rm -v /usr/local/bin/somnambulist-project-manager.p
 ## Getting Started
 
 Project Manager (spm from here), works through a set of config files that are stored in the
-primary spm config folder. By default this is in `~/.spm_projects.d`. When you first run spm
-it will prompt to run: `spm init` if this folder does not exist.
+primary spm config folder. By default this is in `~/.config/spm_projects.d`. When you first
+run spm it will prompt to run: `spm init` if this folder does not exist.
+
+Note: spm will use `XDG_CONFIG_HOME` if defined, otherwise will default to `~/.config` as per
+the XDG Base Directory spec. You can update existing configurations by moving the folder to
+`~/.config/spm_projects.d`. The older `~/.spm_projects.d` is still supported.
 
 The base folder can be changed by defining the env var: `SOMNAMBULIST_PROJECT_MANAGER_DIR`.
 Please note that spm expects all config to still be located within your home folder. Once
@@ -95,9 +78,11 @@ somnambulist:
 
         service:
             data: 'git:git@github.com:somnambulist-tech/data-service-skeleton.git'
-            service: 'composer:somnambulist/symfony-micro-service'
+            logging: 'git:git@github.com:somnambulist-tech/logging-service-skeleton.git'
+            api: 'git:git@github.com:somnambulist-tech/web-api-skeleton.git'
+            app: 'git:git@github.com:somnambulist-tech/web-app-skeleton.git'
             web: 'composer:symfony/skeleton'
-
+            symfony: 'composer:symfony/skeleton'
 ```
 
 You can check the current `spm` setup by using `spm check`. This will show you all the

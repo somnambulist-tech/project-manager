@@ -4,9 +4,17 @@ use Symfony\Component\Dotenv\Dotenv;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-$envFile = sprintf('%s/%s/.env', $_SERVER['HOME'], $_SERVER['SOMNAMBULIST_PROJECT_MANAGER_DIR'] ?? '.spm_projects.d');
+$confDir = $_SERVER['SOMNAMBULIST_PROJECT_MANAGER_DIR'] ?? 'spm_projects.d';
+$homeDir = $_SERVER['XDG_CONFIG_HOME'] ?? $_SERVER['HOME'];
+$envFile = null;
 
-if (file_exists($envFile)) {
+foreach ([$confDir, 'spm_projects.d', '.config/spm_projects.d', '.spm_projects.d'] as $test) {
+    if (file_exists($envFile = sprintf('%s/%s/.env', $homeDir, $test))) {
+        break;
+    }
+}
+
+if (!is_null($envFile)) {
     // load all the .env files
     (new Dotenv(false))->loadEnv($envFile);
 } else {

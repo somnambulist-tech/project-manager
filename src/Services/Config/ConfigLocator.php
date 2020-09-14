@@ -5,7 +5,6 @@ namespace Somnambulist\ProjectManager\Services\Config;
 use function dirname;
 use function getenv;
 use function realpath;
-use const DIRECTORY_SEPARATOR;
 
 /**
  * Class ConfigLocator
@@ -31,12 +30,15 @@ class ConfigLocator
     private function tryLocations()
     {
         if (getenv(static::ENV_NAME)) {
-            return realpath(getenv(static::ENV_NAME) . DIRECTORY_SEPARATOR . static::FILE_NAME);
+            return realpath(sprintf('%s/%s', getenv(static::ENV_NAME), static::FILE_NAME));
         }
         if (isset($_SERVER[static::ENV_NAME])) {
-            return realpath($_SERVER[static::ENV_NAME] . DIRECTORY_SEPARATOR . static::FILE_NAME);
+            return realpath(sprintf('%s/%s', $_SERVER[static::ENV_NAME], static::FILE_NAME));
+        }
+        if (isset($_SERVER['XDG_CONFIG_HOME'])) {
+            return realpath(sprintf('%s/spm_projects.d/%s', $_SERVER['XDG_CONFIG_HOME'], static::FILE_NAME));
         }
 
-        return realpath($_SERVER['HOME'] . DIRECTORY_SEPARATOR . '.spm_projects.d' . DIRECTORY_SEPARATOR . static::FILE_NAME);
+        return realpath(sprintf('%s/.spm_projects.d/%s', $_SERVER['HOME'], static::FILE_NAME));
     }
 }
