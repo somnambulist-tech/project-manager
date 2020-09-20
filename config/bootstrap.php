@@ -9,7 +9,10 @@ $homeDir = $_SERVER['XDG_CONFIG_HOME'] ?? $_SERVER['HOME'];
 $envFile = null;
 
 foreach ([$confDir, 'spm_projects.d', '.config/spm_projects.d', '.spm_projects.d'] as $test) {
-    if (file_exists($envFile = sprintf('%s/%s/.env', $homeDir, $test))) {
+    $test = sprintf('%s/%s/.env', $homeDir, $test);
+    
+    if (file_exists($test)) {
+        $envFile = $test;
         break;
     }
 }
