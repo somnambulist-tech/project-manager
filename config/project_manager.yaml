@@ -9,9 +9,11 @@ somnambulist:
             library: ~
 
         service:
+            accounts: 'git:git@github.com:somnambulist-tech/accounts-service-skeleton.git'
             data: 'git:git@github.com:somnambulist-tech/data-service-skeleton.git'
+            events: 'git:git@github.com:somnambulist-tech/events-service-skeleton.git'
             logging: 'git:git@github.com:somnambulist-tech/logging-service-skeleton.git'
             api: 'git:git@github.com:somnambulist-tech/web-api-skeleton.git'
             app: 'git:git@github.com:somnambulist-tech/web-app-skeleton.git'
-            web: 'composer:symfony/skeleton'
             symfony: 'composer:symfony/skeleton'
+            laravel: 'composer:laravel/laravel'

@@ -2,21 +2,39 @@ version: '3.5'
 
 services:
   example-app:
-    image: php:7.3-fpm-alpine
+    image: somnambulist/php-fpm:7.4-latest
+# requires config files to setup fpm and configure the build steps
+#    build:
+#      context:    .
+#      dockerfile: config/docker/dev/app/Dockerfile
     networks:
-      - example_network
+      - mycompany_network_backend
+# expose a custom port for xdebug debugging <3.0
+#    ports:
+#      - 9005:9005
+
+  example-web:
+    image: nginx:alpine
+#    requires config files to link nginx to fpm
+#    build:
+#      context: .
+#      dockerfile: config/docker/dev/web/Dockerfile
+    depends_on:
+      - example-app
+    networks:
+      - mycompany_network_backend
     labels:
-      traefik.port: 9000
-      traefik.frontend.rule: "Host:app.example.dev"
+      traefik.enable: true
+      traefik.http.routers.example-web.rule: "Host(`service.example.dev`)"
+      traefik.http.routers.example-web.tls: true
+      traefik.http.services.example-web.loadbalancer.server.port: 8080
+      # note: the container reference needs changing if you change the name above
 
   example-redis:
     image: redis:alpine
     networks:
-      - example_network
-    labels:
-      traefik.enable: "false"
+      - mycompany_network_backend
 
 networks:
-  example_network:
+  mycompany_network_backend:
     external: true
-

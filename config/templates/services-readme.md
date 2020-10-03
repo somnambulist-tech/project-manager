@@ -122,8 +122,7 @@ Sometimes the build process does not work correctly and the containers may need 
  * `docker-compose down`
  * rm -rf vendor
  * rm -f bin/doctrine* bin/phpunit
- * `docker-clean images`
- * `docker-clean`
+ * `docker system prune`
  * `docker-compose up -d --build --force-recreate`
 
 ## Test Suite
