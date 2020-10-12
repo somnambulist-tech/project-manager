@@ -27,7 +27,7 @@ class OpenLibraryCommand extends AbstractCommand implements ProjectConfigAwareIn
     {
         $this
             ->setName('open')
-            ->setDescription('Open the specified library / service in PhpStorm')
+            ->setDescription('Open the specified library / service in the configured IDE')
             ->addArgument('library', InputArgument::OPTIONAL, 'The name of the library or service')
         ;
     }
@@ -46,7 +46,7 @@ class OpenLibraryCommand extends AbstractCommand implements ProjectConfigAwareIn
 
         $program = $_SERVER['SOMNAMBULIST_EDITOR'] ?? 'phpstorm';
 
-        $this->tools()->info('opening <info>%s</info> in PhpStorm', $resource->name());
+        $this->tools()->info('opening <info>%s</info> in <info>%s</info>', $resource->name(), $program);
         $this->tools()->execute(sprintf('%s %s', $program, $resource->installPath()), $resource->installPath());
         $this->tools()->newline();
 

@@ -62,6 +62,11 @@ abstract class AbstractLibrary implements InstallableResource
         $this->repository = $repository;
     }
 
+    public function rename(string $name): void
+    {
+        $this->name = $name;
+    }
+
     abstract public function installPath(): string;
 
     public function isInstalled(): bool

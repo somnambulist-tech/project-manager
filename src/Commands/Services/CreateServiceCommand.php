@@ -90,7 +90,7 @@ HLP
             $template = $this->tools()->choose('Which template would you like to use?', $this->config->availableTemplates('service'));
         }
         if (!$container) {
-            $container = $this->tools()->ask('What will be the name of your application container? [e.g: example-app] ');
+            $container = $this->tools()->ask('What will be the name of your application container? [e.g: proxy, kibana, example-app] ');
         }
         if (1 === $template = $this->getTemplate($template)) {
             return 1;

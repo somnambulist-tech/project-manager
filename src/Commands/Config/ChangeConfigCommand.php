@@ -195,6 +195,24 @@ HLP
         return true;
     }
 
+    private function renameService(Project $project, string $library, array $values): bool
+    {
+        if (!isset($values[0]) || empty($values[0])) {
+            return false;
+        }
+
+        /** @var Service $service */
+        $service = $project->services()->get($library);
+
+        $project->services()->list()->unset($library);
+
+        $service->rename($values[0]);
+
+        $project->services()->add($service);
+
+        return true;
+    }
+
     private function addTemplate(Project $project, string $library, array $values): bool
     {
         foreach ($values as $template) {
@@ -225,6 +243,7 @@ HLP
     private const SERVICE_CONTAINER         = 'service:container:name';
     private const SERVICE_DEPENDENCY_ADD    = 'service:dependency:add';
     private const SERVICE_DEPENDENCY_REMOVE = 'service:dependency:remove';
+    private const SERVICE_RENAME            = 'service:rename';
     private const PROJECT_TEMPLATE_ADD      = 'template:add';
     private const PROJECT_TEMPLATE_REMOVE   = 'template:remove';
 
@@ -232,9 +251,10 @@ HLP
         self::GIT_REMOTE                => 'Set the remote repository for the project/library/service',
         self::PROJECT_DOCKER_NAME       => 'Set the docker compose project name',
         self::PROJECT_DOCKER_NETWORK    => 'Set the docker shared network name',
-        self::SERVICE_CONTAINER         => 'Change the services container name',
+        self::SERVICE_CONTAINER         => 'Change the name of the services main container (used for detection)',
         self::SERVICE_DEPENDENCY_ADD    => 'Add a dependency to the service',
         self::SERVICE_DEPENDENCY_REMOVE => 'Remove a dependency from the service',
+        self::SERVICE_RENAME            => 'Rename an existing services alias',
         self::PROJECT_TEMPLATE_ADD      => 'Change a project template source (specify as type:name:source)',
         self::PROJECT_TEMPLATE_REMOVE   => 'Remove a project template',
     ];
@@ -243,9 +263,10 @@ HLP
         self::GIT_REMOTE                => 'Enter the full remote git address in the form git://: ',
         self::PROJECT_DOCKER_NAME       => 'Enter the name to be used as the project prefix: ',
         self::PROJECT_DOCKER_NETWORK    => 'Enter the network name that services communicate with: ',
-        self::SERVICE_CONTAINER         => 'Enter the application containers name without prefix: ',
-        self::SERVICE_DEPENDENCY_ADD    => 'Specify dependencies as a comma separated string: ',
-        self::SERVICE_DEPENDENCY_REMOVE => 'Remove the services (separate with a comma): ',
+        self::SERVICE_CONTAINER         => 'Enter the name of the main container. This must be a valid docker-compose container name: ',
+        self::SERVICE_DEPENDENCY_ADD    => 'Specify dependencies to add as a comma separated string: ',
+        self::SERVICE_DEPENDENCY_REMOVE => 'Specify dependencies to remove as a comma separated string: ',
+        self::SERVICE_RENAME            => 'Enter the new service alias (this is only the name used in spm): ',
         self::PROJECT_TEMPLATE_ADD      => 'Add or set the template source ([library|service]:name:source) : ',
         self::PROJECT_TEMPLATE_REMOVE   => 'Remove templates (separate with a comma) from the project: ',
     ];
@@ -254,9 +275,10 @@ HLP
         self::GIT_REMOTE                => 'AllLibraries',
         self::PROJECT_DOCKER_NAME       => 'Project',
         self::PROJECT_DOCKER_NETWORK    => 'Project',
-        self::SERVICE_CONTAINER         => 'Project',
+        self::SERVICE_CONTAINER         => 'Services',
         self::SERVICE_DEPENDENCY_ADD    => 'Services',
         self::SERVICE_DEPENDENCY_REMOVE => 'Services',
+        self::SERVICE_RENAME            => 'Services',
         self::PROJECT_TEMPLATE_ADD      => 'Project',
         self::PROJECT_TEMPLATE_REMOVE   => 'Project',
     ];
@@ -268,6 +290,7 @@ HLP
         self::SERVICE_CONTAINER         => 'setServiceContainer',
         self::SERVICE_DEPENDENCY_ADD    => 'addServiceDependency',
         self::SERVICE_DEPENDENCY_REMOVE => 'removeServiceDependency',
+        self::SERVICE_RENAME            => 'renameService',
         self::PROJECT_TEMPLATE_ADD      => 'addTemplate',
         self::PROJECT_TEMPLATE_REMOVE   => 'removeTemplate',
     ];
@@ -297,7 +320,7 @@ HLP
             })
             ->sortByValue()
             ->values()
-            ;
+        ;
     }
 
     private function getServices(Project $project): MutableCollection
@@ -309,7 +332,7 @@ HLP
             })
             ->sortByValue()
             ->values()
-            ;
+        ;
     }
 
     private function getAllLibraries(Project $project): MutableCollection
@@ -318,6 +341,6 @@ HLP
             ->getLibraries($project)
             ->merge($this->getServices($project))
             ->prepend('project')
-            ;
+        ;
     }
 }

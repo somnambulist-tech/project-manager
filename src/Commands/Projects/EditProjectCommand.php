@@ -26,7 +26,7 @@ class EditProjectCommand extends AbstractCommand implements ProjectConfigAwareIn
         $this
             ->setName('project:edit')
             ->setAliases(['edit'])
-            ->setDescription('Open the config folder with PhpStorm for the current project')
+            ->setDescription('Open the config folder with the configured editor for the current project')
         ;
     }
 
@@ -38,8 +38,10 @@ class EditProjectCommand extends AbstractCommand implements ProjectConfigAwareIn
 
         $this->tools()->info('active project is <info>%s</info>', $project->name());
 
-        $this->tools()->info('opening project configuration in PhpStorm');
-        $this->tools()->execute(sprintf('phpstorm %s', $project->configPath()), $project->configPath());
+        $program = $_SERVER['SOMNAMBULIST_EDITOR'] ?? 'phpstorm';
+
+        $this->tools()->info('opening project configuration in <info>%s</info>', $program);
+        $this->tools()->execute(sprintf('%s %s', $program, $project->configPath()), $project->configPath());
         $this->tools()->newline();
 
         return 0;
