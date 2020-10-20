@@ -449,10 +449,10 @@ file yourself.
 
 ### Customising the development environment
 
-spm includes an `init:mac` command that will read a YAML file with various setup instructions
+spm includes a `setup:env` command that will read a YAML file with various setup instructions
 intended to get a new user up and running very quickly with the project. This file can include
 any number of shell commands to set various aspects on the machine. The file must be named:
-`init_mac.yaml`.
+`init_[mac|linux|windows].yaml`. This command is aliased to: `init:mac`, `init:linux` and `init:windows`.
 
 For example: you can create steps that install brew, and additional packages; or that creates
 overrides / default config files in various places.

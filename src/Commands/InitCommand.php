@@ -4,6 +4,7 @@ namespace Somnambulist\ProjectManager\Commands;
 
 use Somnambulist\ProjectManager\Commands\Behaviours\UseEnvironmentTemplate;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use function file_exists;
 use function file_get_contents;
@@ -28,6 +29,7 @@ class InitCommand extends AbstractCommand
         $this
             ->setName('init')
             ->setDescription('Initialise the Project Manager config folder')
+            ->addOption('update', 'u', InputOption::VALUE_NONE, 'Update the main spm config file with the latest defaults')
         ;
     }
 
@@ -52,6 +54,11 @@ class InitCommand extends AbstractCommand
             $this->tools()->warning('Configuration file is empty');
             file_put_contents($dir . DIRECTORY_SEPARATOR . 'project_manager.yaml', $this->config());
             $this->tools()->success('Configuration re-created at <info>%s</info>', $dir);
+        }
+
+        if ($input->getOption('update')) {
+            $this->tools()->warning('Updating configuration file latest <info>spm</info> default');
+            file_put_contents($dir . DIRECTORY_SEPARATOR . 'project_manager.yaml', $this->config());
         }
 
         $this->tools()->newline();
