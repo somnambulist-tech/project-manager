@@ -6,6 +6,7 @@ use Phar;
 use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
+use function file_exists;
 use function shell_exec;
 use function str_replace;
 use function strtr;
@@ -73,6 +74,10 @@ class Compiler
             $this->addFile($phar, $file);
         }
 
+        $testFor = [
+            'include_paths.php', 'platform_check.php', 'installed.php', 'InstalledVersions.php', 'installed.json',
+        ];
+
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/autoload.php'));
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_namespaces.php'));
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_psr4.php'));
@@ -80,10 +85,13 @@ class Compiler
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_files.php'));
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_real.php'));
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_static.php'));
-        if (file_exists($basePath . '/vendor/composer/include_paths.php')) {
-            $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/include_paths.php'));
-        }
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/ClassLoader.php'));
+
+        foreach ($testFor as $test) {
+            if (file_exists($basePath . '/vendor/composer/' . $test)) {
+                $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/' . $test));
+            }
+        }
 
         $this->addBin($phar);
 
