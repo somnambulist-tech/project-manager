@@ -24,7 +24,7 @@ trait GetProjectFromInput
     protected function getProjectFrom(InputInterface $input): Project
     {
         if (null === $name = $input->getArgument('project')) {
-            $name = $this->tools()->choose('Which project do you want to switch to?', $this->config->projects()->names());
+            $name = $this->tools()->choose('Which project do you want to work with?', $this->config->projects()->names());
         }
 
         if (null === $project = $this->config->projects()->get($name)) {
