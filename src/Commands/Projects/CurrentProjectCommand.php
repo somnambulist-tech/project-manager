@@ -53,11 +53,7 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
                 ->libraries()
                 ->list()
                 ->sortUsing(function (Library $a, Library $b) {
-                    if ($a->name() === $b->name()) {
-                        return 0;
-                    }
-
-                    return $a->name() > $b->name() ? 1 : -1;
+                    return $a->name() <=> $b->name();
                 })->each(function (Library $lib, $key) use (&$i) {
                     $this->tools()->step(++$i, $lib->name());
                 })
@@ -71,11 +67,7 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
                 ->services()
                 ->list()
                 ->sortUsing(function (Service $a, Service $b) {
-                    if ($a->name() === $b->name()) {
-                        return 0;
-                    }
-
-                    return $a->name() > $b->name() ? 1 : -1;
+                    return $a->name() <=> $b->name();
                 })
                 ->each(function (Service $lib, $key) use (&$i) {
                     $this->tools()->step(++$i, $lib->name());

@@ -51,11 +51,7 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
             ->libraries()
             ->list()
             ->sortUsing(function (Library $a, Library $b) {
-                if ($a->name() === $b->name()) {
-                    return 0;
-                }
-
-                return $a->name() > $b->name() ? 1 : -1;
+                return $a->name() <=> $b->name();
             })
             ->each(function (Library $service) use ($table) {
                 $table->addRow([

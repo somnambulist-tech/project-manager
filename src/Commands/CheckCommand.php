@@ -98,11 +98,7 @@ class CheckCommand extends AbstractCommand implements ProjectConfigAwareInterfac
         }
 
         $items->sortUsing(function (Template $t1, Template $t2) {
-            if ($t1->name() === $t2->name()) {
-                return 0;
-            }
-
-            return ($t1->name() < $t2->name()) ? -1 : 1;
+            return $t1->name() <=> $t2->name();
         });
 
         return $items;
