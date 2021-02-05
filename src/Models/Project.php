@@ -150,7 +150,7 @@ final class Project implements TemplatableResource
             ->libraries()->list()->keys()
             ->map(function ($value) { return $value . ' (lib)';})
             ->merge($this->services()->list()->keys()->map(function ($value) { return $value . ' (service)';}))
-            ->sortByValue()
+            ->sortBy('value')
             ->values()
         ;
     }

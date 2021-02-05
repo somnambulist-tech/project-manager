@@ -18,6 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Throwable;
 
 /**
  * Class Application
@@ -72,7 +73,7 @@ class Application extends BaseApplication
      * @param OutputInterface $output
      *
      * @return int 0 if everything went fine, or an error code
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
@@ -196,7 +197,7 @@ class Application extends BaseApplication
                 if (!isset($lazyCommandIds[$id])) {
                     try {
                         $this->add($container->get($id));
-                    } catch (\Throwable $e) {
+                    } catch (Throwable $e) {
                         $this->registrationErrors[] = $e;
                     }
                 }

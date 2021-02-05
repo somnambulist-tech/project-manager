@@ -89,15 +89,12 @@ HLP
         switch (true):
             case $template->isGitResource():
                 return (new GitInstaller($this->tools(), 'library'))->installInto($project, $template, $name, $cwd);
-                break;
 
             case $template->isComposerResource():
                 return (new ComposerInstaller($this->tools(), 'library'))->installInto($project, $template, $name, $cwd);
-                break;
 
             case $template->hasResource():
                 return (new ConfigTemplateInstaller($this->tools(), 'library'))->installInto($project, $template, $name, $cwd);
-                break;
 
             default:
                 return (new EmptyLibraryInstaller($this->tools(), 'library'))->installInto($project, $name, $cwd);

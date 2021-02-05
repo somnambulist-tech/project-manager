@@ -76,7 +76,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
         $this
             ->docker
             ->status($project->docker()->get('compose_project_name'))
-            ->sortUsing(function ($r1, $r2) {
+            ->sort(function ($r1, $r2) {
                 return $r1['name'] <=> $r2['name'];
             })
             ->each(function (array $row) use ($data, $project, $disableSyncit) {

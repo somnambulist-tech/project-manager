@@ -97,7 +97,7 @@ class CheckCommand extends AbstractCommand implements ProjectConfigAwareInterfac
             $items->merge($project->templates()->list());
         }
 
-        $items->sortUsing(function (Template $t1, Template $t2) {
+        $items->sort(function (Template $t1, Template $t2) {
             return $t1->name() <=> $t2->name();
         });
 

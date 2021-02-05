@@ -49,15 +49,6 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
         if ($input->getArgument('list')) {
             $i = 0;
             $this->tools()->info('available libraries');
-            $project
-                ->libraries()
-                ->list()
-                ->sortUsing(function (Library $a, Library $b) {
-                    return $a->name() <=> $b->name();
-                })->each(function (Library $lib, $key) use (&$i) {
-                    $this->tools()->step(++$i, $lib->name());
-                })
-            ;
             $this->tools()->newline();
 
             $i = 0;
@@ -66,10 +57,20 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
             $project
                 ->services()
                 ->list()
-                ->sortUsing(function (Service $a, Service $b) {
+                ->sort(function (Service $a, Service $b) {
                     return $a->name() <=> $b->name();
                 })
                 ->each(function (Service $lib, $key) use (&$i) {
+                    $this->tools()->step(++$i, $lib->name());
+                })
+            ;
+            $project
+                ->libraries()
+                ->list()
+                ->sort(function (Library $a, Library $b) {
+                    return $a->name() <=> $b->name();
+                })
+                ->each(function (Library $lib, $key) use (&$i) {
                     $this->tools()->step(++$i, $lib->name());
                 })
             ;

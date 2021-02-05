@@ -27,7 +27,7 @@ trait GetServicesFromInput
         $services = $input->getArgument('service');
 
         if (empty($services)) {
-            $libs = $this->config->projects()->active()->services()->list()->sortByKey()->keys()->add('all');
+            $libs = $this->config->projects()->active()->services()->list()->sortBy('key')->keys()->add('all');
 
             $services = [$this->tools()->choose($chooseMessage, $libs->toArray())];
         }
@@ -35,7 +35,7 @@ trait GetServicesFromInput
         if (strtolower(trim($services[0])) === 'all') {
             $this->tools()->info($allMessage);
 
-            return $this->config->projects()->active()->services()->list()->sortByKey()->keys();
+            return $this->config->projects()->active()->services()->list()->sortBy('key')->keys();
         }
 
         return new MutableCollection($services);

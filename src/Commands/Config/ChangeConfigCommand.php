@@ -318,7 +318,7 @@ HLP
             ->map(function ($value) {
                 return $value . ' (lib)';
             })
-            ->sortByValue()
+            ->sortBy('value')
             ->values()
         ;
     }
@@ -330,7 +330,7 @@ HLP
             ->map(function ($value) {
                 return $value . ' (service)';
             })
-            ->sortByValue()
+            ->sortBy('value')
             ->values()
         ;
     }

@@ -224,7 +224,5 @@ HLP)
         if (!$service->isRunning()) {
             $this->tools()->error('failed to start <info>%s</info> after waiting <info>%s</info> seconds', $service->name(), $timeout);
         }
-
-        return;
     }
 }

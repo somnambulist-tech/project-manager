@@ -79,10 +79,10 @@ class Compiler
         ];
 
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/autoload.php'));
-        $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_namespaces.php'));
-        $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_psr4.php'));
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_classmap.php'));
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_files.php'));
+        $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_namespaces.php'));
+        $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_psr4.php'));
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_real.php'));
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/autoload_static.php'));
         $this->addFile($phar, new SplFileInfo($basePath . '/vendor/composer/ClassLoader.php'));

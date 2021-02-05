@@ -10,6 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
+use function dirname;
 
 /**
  * Class Kernel
@@ -29,7 +30,7 @@ class Kernel extends BaseKernel
 
     public function getProjectDir(): string
     {
-        return \dirname(__DIR__);
+        return dirname(__DIR__);
     }
 
     public function getLogDir()
