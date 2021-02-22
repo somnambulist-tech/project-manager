@@ -2,18 +2,24 @@
 
 namespace Somnambulist\ProjectManager\Commands\Projects;
 
+use Exception;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
+use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
+use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetProjectFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\UseEnvironmentTemplate;
+use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Models\Project;
+use Somnambulist\ProjectManager\Models\Service;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function array_filter;
 use function file_put_contents;
 use function implode;
+use function strtolower;
 use const DIRECTORY_SEPARATOR;
 
 /**
@@ -22,10 +28,12 @@ use const DIRECTORY_SEPARATOR;
  * @package    Somnambulist\ProjectManager\Commands\Projects
  * @subpackage Somnambulist\ProjectManager\Commands\Projects\SwitchProjectCommand
  */
-class SwitchProjectCommand extends AbstractCommand implements ProjectConfigAwareInterface
+class SwitchProjectCommand extends AbstractCommand implements DockerAwareInterface, ProjectConfigAwareInterface
 {
 
     use UseEnvironmentTemplate;
+    use DockerAwareCommand;
+    use GetCurrentActiveProject;
     use GetProjectFromInput;
     use ProjectConfigAwareCommand;
 
@@ -42,6 +50,8 @@ class SwitchProjectCommand extends AbstractCommand implements ProjectConfigAware
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->setupConsoleHelper($input, $output);
+
+        $this->checkCurrentProjectIsRunning();
 
         $project = $this->getProjectFrom($input);
 
@@ -72,5 +82,30 @@ class SwitchProjectCommand extends AbstractCommand implements ProjectConfigAware
     private function makePath(?string ...$args): string
     {
         return implode(DIRECTORY_SEPARATOR, array_filter($args));
+    }
+
+    private function checkCurrentProjectIsRunning(): void
+    {
+        try {
+            $project = $this->getActiveProject();
+            $cnt     = $project->services()->list()
+                ->each(function (Service $s) {
+                    $this->docker->resolve($s);
+                })
+                ->filter(function (Service $s) {
+                    return $s->isRunning();
+                })
+                ->count()
+            ;
+
+            if ($cnt > 0) {
+                if ('y' == strtolower($this->tools()->ask('Project <info>%s</info> has running services. Should these be stopped? [y/n] ', false, $project->name()))) {
+                    $this->tools()->info('stopping running services in <info>%s</info>', $project->name());
+                    $this->tools()->run('spm stop all');
+                }
+            }
+        } catch (Exception $e) {
+
+        }
     }
 }
