@@ -21,7 +21,7 @@ trait CanSelectServiceFromInput
     protected function getServiceSelectionFromInput(InputInterface $input, Project $project): ?RunnableResource
     {
         if (null === $service = $input->getArgument('service')) {
-            $libs = $project->services()->list()->sortByKey()->keys();
+            $libs = $project->services()->list()->sortBy('key')->keys();
 
             $service = $this->tools()->choose('Select the service to work with: ', $libs->toArray());
         }
