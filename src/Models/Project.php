@@ -48,6 +48,11 @@ final class Project implements TemplatableResource
     private $repository;
 
     /**
+     * @var string|null
+     */
+    private $branch;
+
+    /**
      * @var MutableCollection
      */
     private $docker;
@@ -67,7 +72,7 @@ final class Project implements TemplatableResource
      */
     private $templates;
 
-    public function __construct(string $name, string $configPath, string $workingPath, ?string $servicesName, ?string $librariesName, ?string $repository, array $docker = [])
+    public function __construct(string $name, string $configPath, string $workingPath, ?string $servicesName, ?string $librariesName, ?string $repository, ?string $branch, array $docker = [])
     {
         $this->name          = $name;
         $this->configPath    = $configPath;
@@ -75,6 +80,7 @@ final class Project implements TemplatableResource
         $this->servicesName  = $servicesName;
         $this->librariesName = $librariesName;
         $this->repository    = $repository;
+        $this->branch        = $branch;
         $this->docker        = new MutableCollection($docker);
 
         $this->libraries = new Libraries();
@@ -110,6 +116,11 @@ final class Project implements TemplatableResource
     public function repository(): ?string
     {
         return $this->repository;
+    }
+
+    public function branch(): ?string
+    {
+        return $this->branch;
     }
 
     public function libraries(): Libraries
@@ -189,5 +200,10 @@ final class Project implements TemplatableResource
     public function setRepository(string $repository): void
     {
         $this->repository = $repository;
+    }
+
+    public function setBranch(?string $branch): void
+    {
+        $this->branch = $branch;
     }
 }

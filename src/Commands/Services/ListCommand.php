@@ -31,6 +31,7 @@ class ListCommand extends AbstractCommand implements DockerAwareInterface, Proje
     protected function configure()
     {
         $this
+            ->setAliases(['services'])
             ->setName('services:list')
             ->setDescription('List configured services')
         ;

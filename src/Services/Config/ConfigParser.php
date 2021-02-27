@@ -96,6 +96,7 @@ class ConfigParser
             $config->get('somnambulist.project.services_dirname'),
             $config->get('somnambulist.project.libraries_dirname'),
             $config->get('somnambulist.project.repository'),
+            $config->get('somnambulist.project.branch'),
             $config->get('somnambulist.docker', new MutableCollection())->toArray(),
         );
 
@@ -113,7 +114,8 @@ class ConfigParser
                 new Library(
                     $name,
                     $library['dirname'],
-                    $library['repository']
+                    $library['repository'],
+                    $library['branch'] ?? null
                 )
             );
         });
@@ -127,6 +129,7 @@ class ConfigParser
                     $name,
                     $service['dirname'],
                     $service['repository'],
+                    $service['branch'] ?? null,
                     $service['app_container'],
                     $service['dependencies'] ?? [],
                 )

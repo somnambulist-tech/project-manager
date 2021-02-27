@@ -136,6 +136,24 @@ HLP
         return true;
     }
 
+    private function setGitDefaultBranch(Project $project, string $library, array $values): bool
+    {
+        $cwd = $resource = null;
+
+        if ('project' === $library) {
+            $resource = $project;
+            $cwd      = $project->configPath();
+        }
+
+        if (!$resource && null === $resource = $project->getLibrary($library)) {
+            return false;
+        }
+
+        $resource->setBranch($values[0]);
+
+        return true;
+    }
+
     private function setDockerName(Project $project, string $library, array $values): bool
     {
         if (!isset($values[0]) || empty($values[0])) {
@@ -238,6 +256,7 @@ HLP
     }
 
     private const GIT_REMOTE                = 'git:remote';
+    private const GIT_BRANCH                = 'git:branch';
     private const PROJECT_DOCKER_NAME       = 'docker:name';
     private const PROJECT_DOCKER_NETWORK    = 'docker:network';
     private const SERVICE_CONTAINER         = 'service:container:name';
@@ -249,6 +268,7 @@ HLP
 
     private $options = [
         self::GIT_REMOTE                => 'Set the remote repository for the project/library/service',
+        self::GIT_BRANCH                => 'Set the default branch for the project/library/service',
         self::PROJECT_DOCKER_NAME       => 'Set the docker compose project name',
         self::PROJECT_DOCKER_NETWORK    => 'Set the docker shared network name',
         self::SERVICE_CONTAINER         => 'Change the name of the services main container (used for detection)',
@@ -261,6 +281,7 @@ HLP
 
     private $valueQuestion = [
         self::GIT_REMOTE                => 'Enter the full remote git address in the form git://: ',
+        self::GIT_BRANCH                => 'Enter the branch name that will be set as the default: ',
         self::PROJECT_DOCKER_NAME       => 'Enter the name to be used as the project prefix: ',
         self::PROJECT_DOCKER_NETWORK    => 'Enter the network name that services communicate with: ',
         self::SERVICE_CONTAINER         => 'Enter the name of the main container. This must be a valid docker-compose container name: ',
@@ -273,6 +294,7 @@ HLP
 
     private $services = [
         self::GIT_REMOTE                => 'AllLibraries',
+        self::GIT_BRANCH                => 'AllLibraries',
         self::PROJECT_DOCKER_NAME       => 'Project',
         self::PROJECT_DOCKER_NETWORK    => 'Project',
         self::SERVICE_CONTAINER         => 'Services',
@@ -285,6 +307,7 @@ HLP
 
     private $actions = [
         self::GIT_REMOTE                => 'setGitRemoteRepository',
+        self::GIT_BRANCH                => 'setGitDefaultBranch',
         self::PROJECT_DOCKER_NAME       => 'setDockerName',
         self::PROJECT_DOCKER_NETWORK    => 'setDockerNetwork',
         self::SERVICE_CONTAINER         => 'setServiceContainer',

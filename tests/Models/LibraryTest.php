@@ -19,11 +19,12 @@ class LibraryTest extends TestCase
 
     public function testCreate()
     {
-        $ent = new Library('test', 'foo', 'bar');
+        $ent = new Library('test', 'foo', 'bar', 'baz');
 
         $this->assertEquals('test', $ent->name());
         $this->assertEquals('foo', $ent->directoryName());
         $this->assertEquals('bar', $ent->repository());
+        $this->assertEquals('baz', $ent->branch());
     }
 
     public function testInstallPath()

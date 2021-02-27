@@ -26,8 +26,8 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
     protected function configure()
     {
         $this
-            ->setName('project:list')
             ->setAliases(['projects'])
+            ->setName('project:list')
             ->setDescription('Lists all available, configured projects on this machine')
         ;
     }

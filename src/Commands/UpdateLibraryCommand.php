@@ -6,7 +6,6 @@ use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\InstallableResource;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,8 +27,8 @@ class UpdateLibraryCommand extends AbstractCommand implements ProjectConfigAware
     {
         $this
             ->setName('update')
-            ->setDescription('Updates all local libraries/services from the configured remotes')
-            ->addArgument('branch', InputArgument::OPTIONAL, 'The name of the mainline branch to switch to', 'develop')
+            ->setDescription('Updates all local libraries/services from the configured remotes; uses the library branch if configured')
+            ->addOption('branch', 'b', InputOption::VALUE_OPTIONAL, 'The name of the mainline branch to switch to')
             ->addOption('services', 's', InputOption::VALUE_NONE, 'Update only services')
             ->addOption('libraries', 'l', InputOption::VALUE_NONE, 'Update only libraries')
             ->setHelp(<<<HLP
@@ -38,6 +37,10 @@ Attempts to switch all libraries (services or libraries) to the latest branch
 specified. The branch should exist in all the repositories on the remotes and
 remotes must be configured. While any branch can be used, in practice this
 will be either <info>master</info> or <info>develop</info>.
+
+The default branch can be configured in the project configuration by adding
+<info>branch</info> to the YAML file. If specified for all libraries/services
+then all can be updated without needing to specify the services/libraries flag.
 
 Before performing any actions, any outstanding changes are stashed along with
 any untracked files.
@@ -61,13 +64,13 @@ HLP)
 
         $this->tools()->info('active project is <info>%s</info>', $project->name());
 
-        $branch    = $input->getArgument('branch');
+        $branch    = $input->getOption('branch');
         $services  = $input->getOption('services');
         $libraries = $input->getOption('libraries');
         $all       = (false === $services && false === $libraries);
         $libs      = null;
 
-        $this->tools()->info('updating libraries to latest <info>%s</info>', $branch);
+        $this->tools()->info('updating libraries to latest branch <info>%s</info>', $branch ?: 'configured default branch');
 
         if ('y' !== $this->tools()->ask('Are you sure you wish to update all matching libraries? (y/n) ', false)) {
             return 0;
@@ -89,6 +92,13 @@ HLP)
 
         foreach ($libs as $lib) {
             /** @var InstallableResource $lib */
+            $branch = $branch ?: $lib->branch();
+
+            if (!$branch) {
+                $this->tools()->error('no branch specified for update; specify with --branch or set the config');
+                return 1;
+            }
+
             if (!$lib->isInstalled()) {
                 $this->tools()->info('<info>%s</info> is not installed, skipping', $lib->name());
                 $this->tools()->newline();

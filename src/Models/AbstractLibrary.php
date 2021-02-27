@@ -30,11 +30,17 @@ abstract class AbstractLibrary implements InstallableResource
      */
     private $repository;
 
-    public function __construct(string $name, string $dirname, string $repository = null)
+    /**
+     * @var string|null
+     */
+    private $branch;
+
+    public function __construct(string $name, string $dirname, string $repository = null, string $branch = null)
     {
         $this->name          = $name;
         $this->directoryName = $dirname;
         $this->repository    = $repository;
+        $this->branch        = $branch;
     }
 
     public function __toString()
@@ -57,9 +63,19 @@ abstract class AbstractLibrary implements InstallableResource
         return $this->repository;
     }
 
+    public function branch(): ?string
+    {
+        return $this->branch;
+    }
+
     public function setRepository(string $repository): void
     {
         $this->repository = $repository;
+    }
+
+    public function setBranch(?string $branch): void
+    {
+        $this->branch = $branch;
     }
 
     public function rename(string $name): void

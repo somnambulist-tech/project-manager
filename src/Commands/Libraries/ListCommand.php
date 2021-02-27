@@ -28,6 +28,7 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
     protected function configure()
     {
         $this
+            ->setAliases(['libraries'])
             ->setName('libraries:list')
             ->setDescription('List configured libraries')
         ;

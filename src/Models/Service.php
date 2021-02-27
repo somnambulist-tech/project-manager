@@ -35,9 +35,9 @@ final class Service extends AbstractLibrary implements RunnableResource
      */
     private $runningContainerId;
 
-    public function __construct(string $name, string $dirname, ?string $repository, ?string $appContainer, array $dependencies = [])
+    public function __construct(string $name, string $dirname, ?string $repository, ?string $branch, ?string $appContainer, array $dependencies = [])
     {
-        parent::__construct($name, $dirname, $repository);
+        parent::__construct($name, $dirname, $repository, $branch);
 
         $this->appContainer = $appContainer;
         $this->dependencies = new MutableCollection($dependencies);

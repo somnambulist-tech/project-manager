@@ -28,6 +28,7 @@ class ExportProjectToYaml
                     'name'              => $project->name(),
                     'working_dir'       => Str::replaceFirst($_SERVER['HOME'], '${HOME}', $project->workingPath()),
                     'repository'        => $project->repository(),
+                    'branch'            => $project->branch(),
                     'libraries_dirname' => $project->librariesName(),
                     'services_dirname'  => $project->servicesName(),
                 ],
@@ -63,6 +64,7 @@ class ExportProjectToYaml
         $project->libraries()->list()->each(function (Library $library) use (&$arr) {
             $arr['somnambulist']['libraries'][$library->name()] = [
                 'repository' => $library->repository(),
+                'branch'     => $library->branch(),
                 'dirname'    => $library->directoryName(),
             ];
         });
@@ -73,6 +75,7 @@ class ExportProjectToYaml
         $project->services()->list()->each(function (Service $service) use (&$arr) {
             $arr['somnambulist']['services'][$service->name()] = [
                 'repository'    => $service->repository(),
+                'branch'        => $service->branch(),
                 'dirname'       => $service->directoryName(),
                 'app_container' => $service->appContainer(),
                 'dependencies'  => $service->dependencies()->toArray(),

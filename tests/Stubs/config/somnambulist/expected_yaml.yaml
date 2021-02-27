@@ -3,6 +3,7 @@ somnambulist:
         name: somnambulist
         working_dir: '${HOME}/Projects/somnambulist'
         repository: ~
+        branch: ~
         libraries_dirname: ~
         services_dirname: ~
     docker:
@@ -10,19 +11,23 @@ somnambulist:
     libraries:
         read-models:
             repository: 'git@github.com:dave-redfern/somnambulist-read-models.git'
+            branch: master
             dirname: read-models
         cte-builder:
             repository: 'git@github.com:dave-redfern/somnambulist-cte-builder.git'
+            branch: master
             dirname: cte-builder
     services:
         cms-service:
             repository: 'git@github.com:dave-redfern/cms-service.git'
+            branch: ~
             dirname: cms-service
             app_container: cms-app
             dependencies:
                 - data
         data:
             repository: 'git@github.com:dave-redfern/data-service.git'
+            branch: master
             dirname: data-service
             app_container: proxy
             dependencies: {  }

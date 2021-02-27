@@ -19,5 +19,7 @@ interface InstallableResource
 
     public function repository(): ?string;
 
+    public function branch(): ?string;
+
     public function isInstalled(): bool;
 }
