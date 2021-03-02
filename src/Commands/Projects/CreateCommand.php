@@ -92,6 +92,7 @@ somnambulist:
 
     docker:
         compose_project_name: '$docker'
+        network_name: '{$docker}_network'
 
     libraries:
 

@@ -238,10 +238,14 @@ somnambulist:
 Templates allow for rapidly scaffolding new libraries / services. By default the following
 services templates are pre-configured globally:
 
+ * accounts - [Accounts Service](https://github.com/somnambulist-tech/accounts-service-skeleton)
  * data - [Data Service](https://github.com/somnambulist-tech/data-service-skeleton)
+ * events - [Events Service](https://github.com/somnambulist-tech/events-service-skeleton)
  * logging - [Logging Service](https://github.com/somnambulist-tech/logging-service-skeleton)
- * service - [Symfony Micro Service](https://github.com/somnambulist-tech/micro-service-skeleton)
- * web - [Symfony Skeleton](https://github.com/symfony/skeleton)
+ * api - [Web API Skeleton](https://github.com/somnambulist-tech/web-api-skeleton)
+ * app - [Web App Skeleton](https://github.com/somnambulist-tech/web-app-skeleton)
+ * symfony - [Symfony Skeleton](https://github.com/symfony/skeleton)
+ * laravel - [Laravel Skeleton](https://github.com/laravel/laravel)
 
 Templates are grouped by type: `library` and `service`. Only library types are displayed when
 making new libraries, and the same goes for services.
@@ -434,6 +438,7 @@ Several other config options can be changed using the `config` command:
  * docker:name
  * docker:network
  * git:remote
+ * git:branch
  * service:container:name
  * service:dependency:add
  * service:dependency:remove
@@ -446,6 +451,9 @@ specified, the current list of projects will be presented.
 __Note:__ when changing the remote repository, only a remote named `origin` will be modified.
 If you used a different name, you must manually change the remote and update the project config
 file yourself.
+
+If the `branch` configuration directive is set in the project config, this will be used as the
+remote branch name to track.
 
 ### Customising the development environment
 

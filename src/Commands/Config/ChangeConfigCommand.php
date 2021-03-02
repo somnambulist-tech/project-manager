@@ -2,25 +2,19 @@
 
 namespace Somnambulist\ProjectManager\Commands\Config;
 
-use Somnambulist\Collection\Contracts\Collection;
+use Exception;
 use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\CanSelectLibraryFromInput;
-use Somnambulist\ProjectManager\Commands\Behaviours\CanUpdateGitRemoteRepository;
 use Somnambulist\ProjectManager\Commands\Behaviours\CanUpdateProjectConfiguration;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Models\Project;
-use Somnambulist\ProjectManager\Models\Service;
-use Somnambulist\ProjectManager\Models\Template;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function explode;
-use function ksort;
 use function str_replace;
-use function substr_count;
 
 /**
  * Class ChangeConfigCommand
@@ -33,29 +27,28 @@ class ChangeConfigCommand extends AbstractCommand implements ProjectConfigAwareI
 
     use ProjectConfigAwareCommand;
     use CanUpdateProjectConfiguration;
-    use CanUpdateGitRemoteRepository;
     use CanSelectLibraryFromInput;
     use GetCurrentActiveProject;
 
+    /**
+     * @var Options
+     */
+    private $options;
+
     protected function configure()
     {
-        $commands = '';
+        $this->options = new Options();
 
-        ksort($this->options);
-
-        foreach ($this->options as $option => $text) {
-            $commands .= sprintf("<info>%- 25s</info> : %s\n", $option, $text);
-        }
+        $commands = $this->options->describe();
 
         $this
             ->setName('config')
             ->setDescription('Change a configuration value in the spm or project config')
             ->addArgument('option', InputArgument::OPTIONAL, 'The configuration option to change')
-            ->addArgument('library', InputArgument::OPTIONAL, 'The library or service to work or <info>project</info> for the project')
-            ->addArgument('value', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'The value to set for the option')
+            ->addArgument('library', InputArgument::OPTIONAL, 'The library or service to work on, or <info>project</info> for the project')
             ->setHelp(<<<HLP
 
-The following options can be set by this command:
+The following options can be modified by this command:
 
 $commands
 HLP
@@ -68,14 +61,23 @@ HLP
         $this->setupConsoleHelper($input, $output);
 
         $project = $this->getActiveProject();
-
         $option  = $input->getArgument('option');
         $library = $input->getArgument('library');
-        $values  = $input->getArgument('value');
 
         if (!$option) {
-            $option = $this->tools()->choose('Select the option to change ', $this->options);
+            $option = $this->tools()->choose('Select the option to change ', $this->options->list());
         }
+
+        $action = $this->options->get($option);
+        $action->setConsoleHelper($this->tools());
+
+        if ('noop' === $action->getOption()) {
+            $this->tools()->error('the provided option <info>%s</info> is not available', $option);
+            $this->tools()->newline();
+
+            return 1;
+        }
+
         if (!$library) {
             $library = str_replace(
                 [' (lib)', ' (service)'],
@@ -83,249 +85,57 @@ HLP
                 $this->tools()->choose('Select the library to modify', $this->getLibraryOptions($project, $option))
             );
         }
-        if (!$values) {
-            $question = $this->valueQuestion[$option] ?? 'Enter the value to set (separate multiple with a comma): ';
 
-            $values = array_filter(array_map('trim', explode(',', (string)$this->tools()->ask($question))));
-        }
+        try {
+            $data = [];
+            $this->tools()->step(1, 'changing option <info>%s</info> of <info>%s</info>', $option, $library);
 
-        if (null === $action = $this->getAction($option)) {
-            $this->tools()->error('the provided option <info>%s</info> has no action', $option);
-            $this->tools()->newline();
+            if ($action->hasQuestions()) {
+                foreach ($action->getQuestions() as $key => $q) {
+                    $data[$key] = (string)$this->tools()->ask($q . ' ');
+                }
+            }
 
-            return 1;
-        }
+            $result = $action->run($project, $library, $data);
 
-        $this->tools()->step(1, 'changing option <info>%s</info> of <info>%s</info>', $option, $library);
-        if (!$this->{$action}($project, $library, $values)) {
+            if ($result->success()) {
+                $this->updateProjectConfig($project, 2);
+            }
+
+            $this->displayMessages($result, $option);
+
+            return $result->getResult();
+
+        } catch (Exception $e) {
             $this->tools()->error('failed to update <info>%s</info> for <info>%s</info>', $option, $library);
+            $this->tools()->error($e->getMessage());
             $this->tools()->newline();
 
             return 1;
         }
-
-        $this->updateProjectConfig($project, 2);
-
-        $this->tools()->success('successfully updated <info>%s</info>', $option);
-        $this->tools()->newline();
-
-        return 0;
     }
 
-    private function setGitRemoteRepository(Project $project, string $library, array $values): bool
+    private function displayMessages(OptionResult $result, string $option): void
     {
-        $cwd = $resource = null;
-
-        if ('project' === $library) {
-            $resource = $project;
-            $cwd      = $project->configPath();
+        if ($result->getSuccessMessage()) {
+            $this->tools()->success($result->getSuccessMessage());
+        }
+        if ($result->getErrorMessage()) {
+            $this->tools()->error($result->getErrorMessage());
+        }
+        if ($result->getInfoMessage()) {
+            $this->tools()->info($result->getInfoMessage());
         }
 
-        if (!$resource && null === $resource = $project->getLibrary($library)) {
-            return false;
+        if ($result->success() && !$result->getSuccessMessage()) {
+            $this->tools()->success('successfully updated <info>%s</info>', $option);
+            $this->tools()->newline();
         }
-
-        if (!$cwd) {
-            $cwd = $resource->installPath();
-        }
-
-        $resource->setRepository($values[0]);
-
-        $this->changeGitOrigin($project, $cwd, $values[0]);
-
-        return true;
-    }
-
-    private function setGitDefaultBranch(Project $project, string $library, array $values): bool
-    {
-        $cwd = $resource = null;
-
-        if ('project' === $library) {
-            $resource = $project;
-            $cwd      = $project->configPath();
-        }
-
-        if (!$resource && null === $resource = $project->getLibrary($library)) {
-            return false;
-        }
-
-        $resource->setBranch($values[0]);
-
-        return true;
-    }
-
-    private function setDockerName(Project $project, string $library, array $values): bool
-    {
-        if (!isset($values[0]) || empty($values[0])) {
-            return false;
-        }
-
-        $project->docker()->set('compose_project_name', $values[0]);
-
-        return true;
-    }
-
-    private function setDockerNetwork(Project $project, string $library, array $values): bool
-    {
-        if (!isset($values[0]) || empty($values[0])) {
-            return false;
-        }
-
-        $project->docker()->set('network_name', $values[0]);
-
-        return true;
-    }
-
-    private function setServiceContainer(Project $project, string $library, array $values): bool
-    {
-        if (!isset($values[0]) || empty($values[0])) {
-            return false;
-        }
-
-        $project->getLibrary($library)->setAppContainer($values[0]);
-
-        return true;
-    }
-
-    private function addServiceDependency(Project $project, string $library, array $values): bool
-    {
-        /** @var Service $service */
-        $service = $project->services()->get($library);
-
-        foreach ($values as $dep) {
-            if (!$service->dependencies()->contains($dep)) {
-                $service->dependencies()->add($dep);
-            }
-        }
-
-        return true;
-    }
-
-    private function removeServiceDependency(Project $project, string $library, array $values): bool
-    {
-        /** @var Service $service */
-        $service = $project->services()->get($library);
-
-        foreach ($values as $dep) {
-            $service->dependencies()->remove($dep);
-        }
-
-        return true;
-    }
-
-    private function renameService(Project $project, string $library, array $values): bool
-    {
-        if (!isset($values[0]) || empty($values[0])) {
-            return false;
-        }
-
-        /** @var Service $service */
-        $service = $project->services()->get($library);
-
-        $project->services()->list()->unset($library);
-
-        $service->rename($values[0]);
-
-        $project->services()->add($service);
-
-        return true;
-    }
-
-    private function addTemplate(Project $project, string $library, array $values): bool
-    {
-        foreach ($values as $template) {
-            if (substr_count($template, ':') !== 2) {
-                continue;
-            }
-
-            [$type, $name, $source] = explode(':', $template);
-
-            $project->templates()->add(new Template($name, $type, $source));
-        }
-
-        return true;
-    }
-
-    private function removeTemplate(Project $project, string $library, array $values): bool
-    {
-        foreach ($values as $template) {
-            $project->templates()->list()->unset($template);
-        }
-
-        return true;
-    }
-
-    private const GIT_REMOTE                = 'git:remote';
-    private const GIT_BRANCH                = 'git:branch';
-    private const PROJECT_DOCKER_NAME       = 'docker:name';
-    private const PROJECT_DOCKER_NETWORK    = 'docker:network';
-    private const SERVICE_CONTAINER         = 'service:container:name';
-    private const SERVICE_DEPENDENCY_ADD    = 'service:dependency:add';
-    private const SERVICE_DEPENDENCY_REMOVE = 'service:dependency:remove';
-    private const SERVICE_RENAME            = 'service:rename';
-    private const PROJECT_TEMPLATE_ADD      = 'template:add';
-    private const PROJECT_TEMPLATE_REMOVE   = 'template:remove';
-
-    private $options = [
-        self::GIT_REMOTE                => 'Set the remote repository for the project/library/service',
-        self::GIT_BRANCH                => 'Set the default branch for the project/library/service',
-        self::PROJECT_DOCKER_NAME       => 'Set the docker compose project name',
-        self::PROJECT_DOCKER_NETWORK    => 'Set the docker shared network name',
-        self::SERVICE_CONTAINER         => 'Change the name of the services main container (used for detection)',
-        self::SERVICE_DEPENDENCY_ADD    => 'Add a dependency to the service',
-        self::SERVICE_DEPENDENCY_REMOVE => 'Remove a dependency from the service',
-        self::SERVICE_RENAME            => 'Rename an existing services alias',
-        self::PROJECT_TEMPLATE_ADD      => 'Change a project template source (specify as type:name:source)',
-        self::PROJECT_TEMPLATE_REMOVE   => 'Remove a project template',
-    ];
-
-    private $valueQuestion = [
-        self::GIT_REMOTE                => 'Enter the full remote git address in the form git://: ',
-        self::GIT_BRANCH                => 'Enter the branch name that will be set as the default: ',
-        self::PROJECT_DOCKER_NAME       => 'Enter the name to be used as the project prefix: ',
-        self::PROJECT_DOCKER_NETWORK    => 'Enter the network name that services communicate with: ',
-        self::SERVICE_CONTAINER         => 'Enter the name of the main container. This must be a valid docker-compose container name: ',
-        self::SERVICE_DEPENDENCY_ADD    => 'Specify dependencies to add as a comma separated string: ',
-        self::SERVICE_DEPENDENCY_REMOVE => 'Specify dependencies to remove as a comma separated string: ',
-        self::SERVICE_RENAME            => 'Enter the new service alias (this is only the name used in spm): ',
-        self::PROJECT_TEMPLATE_ADD      => 'Add or set the template source ([library|service]:name:source) : ',
-        self::PROJECT_TEMPLATE_REMOVE   => 'Remove templates (separate with a comma) from the project: ',
-    ];
-
-    private $services = [
-        self::GIT_REMOTE                => 'AllLibraries',
-        self::GIT_BRANCH                => 'AllLibraries',
-        self::PROJECT_DOCKER_NAME       => 'Project',
-        self::PROJECT_DOCKER_NETWORK    => 'Project',
-        self::SERVICE_CONTAINER         => 'Services',
-        self::SERVICE_DEPENDENCY_ADD    => 'Services',
-        self::SERVICE_DEPENDENCY_REMOVE => 'Services',
-        self::SERVICE_RENAME            => 'Services',
-        self::PROJECT_TEMPLATE_ADD      => 'Project',
-        self::PROJECT_TEMPLATE_REMOVE   => 'Project',
-    ];
-
-    private $actions = [
-        self::GIT_REMOTE                => 'setGitRemoteRepository',
-        self::GIT_BRANCH                => 'setGitDefaultBranch',
-        self::PROJECT_DOCKER_NAME       => 'setDockerName',
-        self::PROJECT_DOCKER_NETWORK    => 'setDockerNetwork',
-        self::SERVICE_CONTAINER         => 'setServiceContainer',
-        self::SERVICE_DEPENDENCY_ADD    => 'addServiceDependency',
-        self::SERVICE_DEPENDENCY_REMOVE => 'removeServiceDependency',
-        self::SERVICE_RENAME            => 'renameService',
-        self::PROJECT_TEMPLATE_ADD      => 'addTemplate',
-        self::PROJECT_TEMPLATE_REMOVE   => 'removeTemplate',
-    ];
-
-    private function getAction(string $option): ?string
-    {
-        return $this->actions[$option] ?? null;
     }
 
     private function getLibraryOptions(Project $project, string $option): array
     {
-        $libs = $this->services[$option] ?? 'AllLibraries';
+        $libs = $this->options->get($option)->getScope();
 
         if ('Project' === $libs) {
             return ['project'];
