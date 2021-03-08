@@ -7,12 +7,12 @@ use Somnambulist\ProjectManager\Models\Project;
 use function sprintf;
 
 /**
- * Class Options
+ * Class CommandOptions
  *
  * @package    Somnambulist\ProjectManager\Commands\Config
- * @subpackage Somnambulist\ProjectManager\Commands\Config\Options
+ * @subpackage Somnambulist\ProjectManager\Commands\Config\CommandOptions
  */
-class Options
+class CommandOptions
 {
 
     /**
@@ -47,7 +47,7 @@ class Options
         }
     }
 
-    private function addOption(AbstractOption $option): void
+    private function addOption(AbstractCommandOption $option): void
     {
         $this->options->set($option->getOption(), $option);
     }
@@ -56,7 +56,7 @@ class Options
     {
         return $this
             ->options
-            ->map(function (AbstractOption $o) {
+            ->map(function (AbstractCommandOption $o) {
                 return sprintf("<info>%- 25s</info> : %s\n", $o->getOption(), $o->getDescription());
             })
             ->implode('')
@@ -68,17 +68,17 @@ class Options
         return $this->options->keys()->toArray();
     }
 
-    public function get(string $option): AbstractOption
+    public function get(string $option): AbstractCommandOption
     {
-        return $this->options->get($option, new class extends AbstractOption {
+        return $this->options->get($option, new class extends AbstractCommandOption {
             public function __construct()
             {
                 $this->option = 'noop';
             }
 
-            public function run(Project $project, string $library, array $options): OptionResult
+            public function run(Project $project, string $library, array $options): CommandOptionResult
             {
-                return OptionResult::ok();
+                return CommandOptionResult::ok();
             }
         });
     }

@@ -2,8 +2,8 @@
 
 namespace Somnambulist\ProjectManager\Commands\Config\Options;
 
-use Somnambulist\ProjectManager\Commands\Config\AbstractOption;
-use Somnambulist\ProjectManager\Commands\Config\OptionResult;
+use Somnambulist\ProjectManager\Commands\Config\AbstractCommandOption;
+use Somnambulist\ProjectManager\Commands\Config\CommandOptionResult;
 use Somnambulist\ProjectManager\Models\Project;
 
 /**
@@ -12,7 +12,7 @@ use Somnambulist\ProjectManager\Models\Project;
  * @package    Somnambulist\ProjectManager\Commands\Config\Options
  * @subpackage Somnambulist\ProjectManager\Commands\Config\Options\SetServiceContainerName
  */
-class SetServiceContainerName extends AbstractOption
+class SetServiceContainerName extends AbstractCommandOption
 {
 
     public function __construct()
@@ -25,14 +25,14 @@ class SetServiceContainerName extends AbstractOption
         ];
     }
 
-    public function run(Project $project, string $library, array $options): OptionResult
+    public function run(Project $project, string $library, array $options): CommandOptionResult
     {
         if (!isset($options['name']) || empty($options['name'])) {
-            return OptionResult::error('missing a value for <info>name</info>');
+            return CommandOptionResult::error('missing a value for <info>name</info>');
         }
 
         $project->getLibrary($library)->setAppContainer($options['name']);
 
-        return OptionResult::ok();
+        return CommandOptionResult::ok();
     }
 }

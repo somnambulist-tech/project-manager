@@ -21,7 +21,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function array_key_exists;
 use function explode;
 use function implode;
-use function json_encode;
 use function parse_url;
 use function sprintf;
 use function str_replace;

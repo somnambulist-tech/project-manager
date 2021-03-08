@@ -1,0 +1,133 @@
+version: "3.7"
+
+services:
+  db-accounts:
+    build:
+      context: .
+      dockerfile: config/docker/postgres/Dockerfile
+    environment:
+      POSTGRES_DB: accounts
+      POSTGRES_USER: mycompany
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - accounts_db:/var/lib/postgresql/data
+    ports:
+      - "54321:5432"
+    networks:
+      - backend
+
+  db-events:
+    build:
+      context: .
+      dockerfile: config/docker/postgres/Dockerfile
+    environment:
+      POSTGRES_DB: events
+      POSTGRES_USER: mycompany
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - events_db:/var/lib/postgresql/data
+    ports:
+      - "54322:5432"
+    networks:
+      - backend
+
+  proxy:
+    build:
+      dockerfile: config/docker/proxy/Dockerfile
+      context: .
+    command:
+      - --global.sendAnonymousUsage=false
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=https
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.https.address=:443
+      - --providers.file.directory=/etc/traefik/dynamic_conf/
+      - --providers.file.watch=true
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - backend
+    labels:
+      traefik.enable: true
+      traefik.http.routers.proxy.rule: "Host(`proxy.${PROJECT_DOMAIN:-example.dev}`)"
+      traefik.http.routers.proxy.tls: true
+      traefik.http.services.proxy.loadbalancer.server.port: 8080
+
+  dns:
+    build:
+      context: .
+      dockerfile: config/docker/dns/Dockerfile
+      args:
+        DNS_HOST_IP: ${DNS_HOST_IP:-127.0.0.1}
+        PROJECT_DOMAIN: ${PROJECT_DOMAIN:-example.dev}
+    restart: always
+    ports:
+      - "1034:53/udp"
+      - "5380:8080"
+    logging:
+      options:
+        max-size: 10m
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dns.rule=Host(`dns.${PROJECT_DOMAIN:-example.dev}`)"
+      - "traefik.http.routers.dns.tls=true"
+      - "traefik.http.services.dns.loadbalancer.server.port=8080"
+
+  rabbitmq:
+    image: rabbitmq:3.7-management-alpine
+    environment:
+      RABBITMQ_ERLANG_COOKIE: rabbitmqcookienamehere
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    ports:
+      - "25673:15672"
+      - "25672:5672"
+    networks:
+      - backend
+    labels:
+      traefik.enable: true
+      traefik.http.routers.rabbitmq.rule: "Host(`rabbit.${PROJECT_DOMAIN:-example.dev}`)"
+      traefik.http.routers.rabbitmq.tls: true
+      traefik.http.services.rabbitmq.loadbalancer.server.port: 15672
+
+  syslog:
+    build:
+      context: .
+      dockerfile: config/docker/logger/Dockerfile
+    volumes:
+      - ~/data/syslog_logs:/var/log/syslog-ng
+    restart: always
+    ports:
+      - "5501:514/udp"
+      - "5502:601/tcp"
+      - "5503:6514/tcp"
+    networks:
+      backend:
+        aliases:
+          - alias
+          - alias2
+
+networks:
+  backend:
+    driver: bridge
+    name: mycompany_network_backend
+
+volumes:
+  accounts_db:
+    name: mycompany_volumes_accounts-db
+  events_db:
+    name: mycompany_volumes_events-db
+  rabbitmq:
+    name: mycompany_volumes_rabbitmq
+  syslog_logs:
+    name: mycompany_volumes_syslog-logs
+

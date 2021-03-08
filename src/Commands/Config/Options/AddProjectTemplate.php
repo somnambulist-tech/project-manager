@@ -2,8 +2,8 @@
 
 namespace Somnambulist\ProjectManager\Commands\Config\Options;
 
-use Somnambulist\ProjectManager\Commands\Config\AbstractOption;
-use Somnambulist\ProjectManager\Commands\Config\OptionResult;
+use Somnambulist\ProjectManager\Commands\Config\AbstractCommandOption;
+use Somnambulist\ProjectManager\Commands\Config\CommandOptionResult;
 use Somnambulist\ProjectManager\Models\Project;
 use Somnambulist\ProjectManager\Models\Template;
 
@@ -13,7 +13,7 @@ use Somnambulist\ProjectManager\Models\Template;
  * @package    Somnambulist\ProjectManager\Commands\Config\Options
  * @subpackage Somnambulist\ProjectManager\Commands\Config\Options\AddProjectTemplate
  */
-class AddProjectTemplate extends AbstractOption
+class AddProjectTemplate extends AbstractCommandOption
 {
 
     public function __construct()
@@ -28,20 +28,20 @@ class AddProjectTemplate extends AbstractOption
         ];
     }
 
-    public function run(Project $project, string $library, array $options): OptionResult
+    public function run(Project $project, string $library, array $options): CommandOptionResult
     {
         if (!isset($options['type']) || !in_array($options['type'], ['library', 'service'])) {
-            return OptionResult::error('<info>type</info> must be either: <info>library</info> or <info>service</info>');
+            return CommandOptionResult::error('<info>type</info> must be either: <info>library</info> or <info>service</info>');
         }
         if (!isset($options['name']) || empty($options['name'])) {
-            return OptionResult::error('missing a value for <info>name</info>');
+            return CommandOptionResult::error('missing a value for <info>name</info>');
         }
         if (!isset($options['source']) || empty($options['source'])) {
-            return OptionResult::error('missing a value for <info>source</info>');
+            return CommandOptionResult::error('missing a value for <info>source</info>');
         }
 
         $project->templates()->add(new Template($options['name'], $options['type'], $options['source']));
 
-        return OptionResult::ok();
+        return CommandOptionResult::ok();
     }
 }

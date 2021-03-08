@@ -2,8 +2,8 @@
 
 namespace Somnambulist\ProjectManager\Commands\Config\Options;
 
-use Somnambulist\ProjectManager\Commands\Config\AbstractOption;
-use Somnambulist\ProjectManager\Commands\Config\OptionResult;
+use Somnambulist\ProjectManager\Commands\Config\AbstractCommandOption;
+use Somnambulist\ProjectManager\Commands\Config\CommandOptionResult;
 use Somnambulist\ProjectManager\Exceptions\ResourceNotFound;
 use Somnambulist\ProjectManager\Models\Project;
 
@@ -13,7 +13,7 @@ use Somnambulist\ProjectManager\Models\Project;
  * @package    Somnambulist\ProjectManager\Commands\Config\Options
  * @subpackage Somnambulist\ProjectManager\Commands\Config\Options\SetGitDefaultBranch
  */
-class SetGitDefaultBranch extends AbstractOption
+class SetGitDefaultBranch extends AbstractCommandOption
 {
 
     public function __construct()
@@ -26,12 +26,12 @@ class SetGitDefaultBranch extends AbstractOption
         ];
     }
 
-    public function run(Project $project, string $library, array $options): OptionResult
+    public function run(Project $project, string $library, array $options): CommandOptionResult
     {
         $resource = 'project' === $library ? $project : null;
 
         if (!isset($options['branch']) || empty($options['branch'])) {
-            return OptionResult::error('missing a value for <info>branch</info>');
+            return CommandOptionResult::error('missing a value for <info>branch</info>');
         }
 
         if (!$resource && null === $resource = $project->getLibrary($library)) {
@@ -40,6 +40,6 @@ class SetGitDefaultBranch extends AbstractOption
 
         $resource->setBranch($options['branch']);
 
-        return OptionResult::ok();
+        return CommandOptionResult::ok();
     }
 }

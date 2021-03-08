@@ -5,7 +5,6 @@ namespace Somnambulist\ProjectManager\Services\Installers;
 use Somnambulist\ProjectManager\Models\Project;
 use Somnambulist\ProjectManager\Models\Template;
 use function array_map;
-use function escapeshellarg;
 use function file_exists;
 use function implode;
 use function is_array;

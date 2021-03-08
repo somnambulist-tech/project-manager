@@ -2,8 +2,8 @@
 
 namespace Somnambulist\ProjectManager\Commands\Config\Options;
 
-use Somnambulist\ProjectManager\Commands\Config\AbstractOption;
-use Somnambulist\ProjectManager\Commands\Config\OptionResult;
+use Somnambulist\ProjectManager\Commands\Config\AbstractCommandOption;
+use Somnambulist\ProjectManager\Commands\Config\CommandOptionResult;
 use Somnambulist\ProjectManager\Models\Project;
 use Somnambulist\ProjectManager\Models\Service;
 
@@ -13,20 +13,20 @@ use Somnambulist\ProjectManager\Models\Service;
  * @package    Somnambulist\ProjectManager\Commands\Config\Options
  * @subpackage Somnambulist\ProjectManager\Commands\Config\Options\AddServiceDependency
  */
-class AddServiceDependency extends AbstractOption
+class AddServiceDependency extends AbstractCommandOption
 {
 
     public function __construct()
     {
         $this->option      = 'service:dependency:add';
-        $this->description = 'Add a dependency to the service';
+        $this->description = 'Add a dependency to the specified service';
         $this->scope       = self::SCOPE_SERVICES;
         $this->questions   = [
             'deps' => 'Specify dependencies to add as a comma separated string:',
         ];
     }
 
-    public function run(Project $project, string $library, array $options): OptionResult
+    public function run(Project $project, string $library, array $options): CommandOptionResult
     {
         /** @var Service $service */
         $service = $project->services()->get($library);
@@ -37,6 +37,6 @@ class AddServiceDependency extends AbstractOption
             }
         }
 
-        return OptionResult::ok();
+        return CommandOptionResult::ok();
     }
 }

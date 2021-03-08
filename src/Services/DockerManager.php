@@ -22,7 +22,7 @@ use function trim;
  * Class DockerManager
  *
  * @link https://docs.docker.com/engine/reference/commandline/ps/#formatting
- * @link https://github.com/dave-redfern/somnambulist-sync-it/blob/master/src/Services/DockerContainerResolver.php
+ * @link https://github.com/somnambulist-tech/sync-it/blob/master/src/Services/DockerContainerResolver.php
  *
  * Available template placeholders:
  *

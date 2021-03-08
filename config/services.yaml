@@ -12,7 +12,7 @@ services:
 
     Somnambulist\ProjectManager\Commands\:
         resource: '../src/Commands'
-        exclude: '../src/Commands/Config/{Options,OptionResult.php,Options.php}'
+        exclude: '../src/Commands/Config/{Options,CommandOptionResult.php,CommandOptions.php}'
         tags: ['console.command']
 
     Somnambulist\ProjectManager\Services\:

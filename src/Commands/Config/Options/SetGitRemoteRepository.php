@@ -2,8 +2,8 @@
 
 namespace Somnambulist\ProjectManager\Commands\Config\Options;
 
-use Somnambulist\ProjectManager\Commands\Config\AbstractOption;
-use Somnambulist\ProjectManager\Commands\Config\OptionResult;
+use Somnambulist\ProjectManager\Commands\Config\AbstractCommandOption;
+use Somnambulist\ProjectManager\Commands\Config\CommandOptionResult;
 use Somnambulist\ProjectManager\Exceptions\ResourceNotFound;
 use Somnambulist\ProjectManager\Models\Project;
 
@@ -13,7 +13,7 @@ use Somnambulist\ProjectManager\Models\Project;
  * @package    Somnambulist\ProjectManager\Commands\Config\Options
  * @subpackage Somnambulist\ProjectManager\Commands\Config\Options\SetGitRemoteRepository
  */
-class SetGitRemoteRepository extends AbstractOption
+class SetGitRemoteRepository extends AbstractCommandOption
 {
 
     public function __construct()
@@ -26,12 +26,12 @@ class SetGitRemoteRepository extends AbstractOption
         ];
     }
 
-    public function run(Project $project, string $library, array $options): OptionResult
+    public function run(Project $project, string $library, array $options): CommandOptionResult
     {
         $cwd = $resource = null;
 
         if (!isset($options['repo']) || empty($options['repo'])) {
-            return OptionResult::error('missing a value for <info>repo</info>');
+            return CommandOptionResult::error('missing a value for <info>repo</info>');
         }
 
         if ('project' === $library) {
@@ -64,6 +64,6 @@ class SetGitRemoteRepository extends AbstractOption
             $info  = sprintf('if you did not use <info>origin</info> as the remote name, manually change it');
         }
 
-        return new OptionResult($result, $success, $error, $info);
+        return new CommandOptionResult($result, $success, $error, $info);
     }
 }

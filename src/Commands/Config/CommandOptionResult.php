@@ -3,12 +3,12 @@
 namespace Somnambulist\ProjectManager\Commands\Config;
 
 /**
- * Class OptionResult
+ * Class CommandOptionResult
  *
  * @package    Somnambulist\ProjectManager\Commands\Config
- * @subpackage Somnambulist\ProjectManager\Commands\Config\OptionResult
+ * @subpackage Somnambulist\ProjectManager\Commands\Config\CommandOptionResult
  */
-final class OptionResult
+final class CommandOptionResult
 {
 
     private $result;
@@ -24,12 +24,12 @@ final class OptionResult
         $this->info    = $info;
     }
 
-    public static function ok(string $message = ''): OptionResult
+    public static function ok(string $message = ''): CommandOptionResult
     {
         return new self(0, $message, '', '');
     }
 
-    public static function error(string $message = ''): OptionResult
+    public static function error(string $message = ''): CommandOptionResult
     {
         return new self(1, '', $message, '');
     }

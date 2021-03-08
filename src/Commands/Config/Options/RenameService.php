@@ -2,8 +2,8 @@
 
 namespace Somnambulist\ProjectManager\Commands\Config\Options;
 
-use Somnambulist\ProjectManager\Commands\Config\AbstractOption;
-use Somnambulist\ProjectManager\Commands\Config\OptionResult;
+use Somnambulist\ProjectManager\Commands\Config\AbstractCommandOption;
+use Somnambulist\ProjectManager\Commands\Config\CommandOptionResult;
 use Somnambulist\ProjectManager\Models\Project;
 use Somnambulist\ProjectManager\Models\Service;
 
@@ -13,7 +13,7 @@ use Somnambulist\ProjectManager\Models\Service;
  * @package    Somnambulist\ProjectManager\Commands\Config\Options
  * @subpackage Somnambulist\ProjectManager\Commands\Config\Options\RenameService
  */
-class RenameService extends AbstractOption
+class RenameService extends AbstractCommandOption
 {
 
     public function __construct()
@@ -26,10 +26,10 @@ class RenameService extends AbstractOption
         ];
     }
 
-    public function run(Project $project, string $library, array $options): OptionResult
+    public function run(Project $project, string $library, array $options): CommandOptionResult
     {
         if (!isset($options['name']) || empty($options['name'])) {
-            return OptionResult::error('missing a value for <info>name</info>');
+            return CommandOptionResult::error('missing a value for <info>name</info>');
         }
 
         /** @var Service $service */
@@ -41,6 +41,6 @@ class RenameService extends AbstractOption
 
         $project->services()->add($service);
 
-        return OptionResult::ok();
+        return CommandOptionResult::ok();
     }
 }

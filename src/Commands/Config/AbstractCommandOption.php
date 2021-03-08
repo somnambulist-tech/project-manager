@@ -9,12 +9,12 @@ use function array_map;
 use function explode;
 
 /**
- * Class AbstractOption
+ * Class AbstractCommandOption
  *
  * @package    Somnambulist\ProjectManager\Commands\Config
- * @subpackage Somnambulist\ProjectManager\Commands\Config\AbstractOption
+ * @subpackage Somnambulist\ProjectManager\Commands\Config\AbstractCommandOption
  */
-abstract class AbstractOption
+abstract class AbstractCommandOption
 {
 
     const SCOPE_ALL_LIBRARIES = 'AllLibraries';
@@ -63,6 +63,6 @@ abstract class AbstractOption
         return array_filter(array_map('trim', explode($separator, $string)));
     }
 
-    abstract public function run(Project $project, string $library, array $options): OptionResult;
+    abstract public function run(Project $project, string $library, array $options): CommandOptionResult;
 
 }

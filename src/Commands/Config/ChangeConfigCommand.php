@@ -31,13 +31,13 @@ class ChangeConfigCommand extends AbstractCommand implements ProjectConfigAwareI
     use GetCurrentActiveProject;
 
     /**
-     * @var Options
+     * @var CommandOptions
      */
     private $options;
 
     protected function configure()
     {
-        $this->options = new Options();
+        $this->options = new CommandOptions();
 
         $commands = $this->options->describe();
 
@@ -92,7 +92,7 @@ HLP
 
             if ($action->hasQuestions()) {
                 foreach ($action->getQuestions() as $key => $q) {
-                    $data[$key] = (string)$this->tools()->ask($q . ' ');
+                    $data[$key] = (string)$this->tools()->ask($q . ' ', false);
                 }
             }
 
@@ -115,7 +115,7 @@ HLP
         }
     }
 
-    private function displayMessages(OptionResult $result, string $option): void
+    private function displayMessages(CommandOptionResult $result, string $option): void
     {
         if ($result->getSuccessMessage()) {
             $this->tools()->success($result->getSuccessMessage());

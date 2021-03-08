@@ -3,7 +3,6 @@
 namespace Somnambulist\ProjectManager\Commands\Libraries;
 
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
-use Somnambulist\ProjectManager\Commands\Behaviours\CanSelectLibraryFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetLibrariesFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\InstallableResourceSetupHelpers;

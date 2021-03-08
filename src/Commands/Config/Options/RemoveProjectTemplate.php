@@ -2,8 +2,8 @@
 
 namespace Somnambulist\ProjectManager\Commands\Config\Options;
 
-use Somnambulist\ProjectManager\Commands\Config\AbstractOption;
-use Somnambulist\ProjectManager\Commands\Config\OptionResult;
+use Somnambulist\ProjectManager\Commands\Config\AbstractCommandOption;
+use Somnambulist\ProjectManager\Commands\Config\CommandOptionResult;
 use Somnambulist\ProjectManager\Models\Project;
 
 /**
@@ -12,7 +12,7 @@ use Somnambulist\ProjectManager\Models\Project;
  * @package    Somnambulist\ProjectManager\Commands\Config\Options
  * @subpackage Somnambulist\ProjectManager\Commands\Config\Options\RemoveProjectTemplate
  */
-class RemoveProjectTemplate extends AbstractOption
+class RemoveProjectTemplate extends AbstractCommandOption
 {
 
     public function __construct()
@@ -25,12 +25,12 @@ class RemoveProjectTemplate extends AbstractOption
         ];
     }
 
-    public function run(Project $project, string $library, array $options): OptionResult
+    public function run(Project $project, string $library, array $options): CommandOptionResult
     {
         foreach ($this->arrayFromString($options['templates']) as $template) {
             $project->templates()->list()->unset($template);
         }
 
-        return OptionResult::ok();
+        return CommandOptionResult::ok();
     }
 }
