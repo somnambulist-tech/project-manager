@@ -1,0 +1,8 @@
+{SPM::SERVICE_NAME}:
+    build:
+        context: .
+        dockerfile: config/docker/dev/{SPM::SERVICE_NAME}/Dockerfile
+    networks:
+        - {SPM::NETWORK_NAME}
+    ports:
+        - 9003:9003

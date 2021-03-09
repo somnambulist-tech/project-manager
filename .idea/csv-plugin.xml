@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/src/Commands/Behaviours/CanSelectServiceFromInput.php">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/src/Commands/Behaviours/CanUpdateGitRemoteRepository.php">
           <value>
             <Attribute>
@@ -18,6 +25,13 @@
           </value>
         </entry>
         <entry key="/src/Commands/Config/ChangeConfigCommand.php">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/src/Commands/Services/DockerComposeCommand.php">
           <value>
             <Attribute>
               <option name="separator" value=";" />

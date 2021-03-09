@@ -1,0 +1,15 @@
+{SPM::SERVICE_NAME}:
+    image: 'mariadb:10.5'
+    ports:
+        - '{SPM::EXTERNAL_PORT}:3306'
+    environment:
+        MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-secret}'
+        MYSQL_DATABASE: '${DB_DATABASE:-main}'
+        MYSQL_USER: '${DB_USERNAME:-{SPM::PROJECT_NAME}}'
+        MYSQL_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+        - '{SPM::PROJECT_NAME}_volumes_{SPM::SERVICE_NAME}-data:/var/lib/mysql'
+    networks:
+        - {SPM::NETWORK_NAME}
+    healthcheck:
+        test: ["CMD", "mysqladmin", "ping"]

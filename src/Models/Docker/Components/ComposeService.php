@@ -18,7 +18,7 @@ class ComposeService
 {
 
     /**
-     * @var string
+     * @var string|null
      */
     private $name;
 
@@ -83,7 +83,7 @@ class ComposeService
     private $logging;
 
     public function __construct(
-        string $name,
+        ?string $name,
         ?string $image = null,
         ?Build $build = null,
         string $restart = 'no',
@@ -119,7 +119,7 @@ class ComposeService
         $this->logging     = $logging;
     }
 
-    public function name(): string
+    public function name(): ?string
     {
         return $this->name;
     }
@@ -188,6 +188,9 @@ class ComposeService
     {
         $ret = [];
 
+        if ($this->name) {
+            $ret['container_name'] = $this->name;
+        }
         if ($this->image) {
             $ret['image'] = $this->image;
         }

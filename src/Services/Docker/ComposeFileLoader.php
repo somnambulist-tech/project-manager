@@ -51,7 +51,7 @@ class ComposeFileLoader
     private function addServices(DockerCompose $dc, array $data): void
     {
         foreach ($data['services'] as $name => $datum) {
-            $dc->services()->register($name, $this->services->from($name, $datum));
+            $dc->services()->register($name, $this->services->from($datum));
         }
     }
 

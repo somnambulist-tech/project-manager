@@ -1,0 +1,6 @@
+{SPM::SERVICE_NAME}:
+    image: 'redis:alpine'
+    networks:
+        - {SPM::NETWORK_NAME}
+    healthcheck:
+        test: ["CMD", "redis-cli", "ping"]

@@ -37,6 +37,11 @@ class ServiceDefinition
         $this->files         = new MutableCollection($files);
     }
 
+    public function name(): string
+    {
+        return $this->service();
+    }
+
     public function service(): string
     {
         return $this->service;

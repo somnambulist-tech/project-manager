@@ -1,0 +1,15 @@
+{SPM::SERVICE_NAME}:
+    image: postgres:12-alpine
+    ports:
+        - '{SPM::EXTERNAL_PORT}:5432'
+    environment:
+        PGPASSWORD: '${DB_PASSWORD:-secret}'
+        POSTGRES_DB: '${DB_DATABASE:-main}'
+        POSTGRES_USER: '${DB_USERNAME:-{SPM::PROJECT_NAME}}'
+        POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+        - '{SPM::PROJECT_NAME}_volumes_{SPM::SERVICE_NAME}-data:/var/lib/postgresql/data'
+    networks:
+        - {SPM::NETWORK_NAME}
+    healthcheck:
+        test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-main}", "-U", "${DB_USERNAME:-{SPM::PROJECT_NAME}}"]

@@ -1,0 +1,13 @@
+{SPM::SERVICE_NAME}:
+    build:
+        context: .
+        dockerfile: config/docker/dev/{SPM::SERVICE_NAME}/Dockerfile
+    depends_on:
+        - {SPM::SERVICE_APP_NAME}
+    networks:
+        - {SPM::NETWORK_NAME}
+    labels:
+        traefik.enable: true
+        traefik.http.routers.{SPM::SERVICE_NAME}.rule: "Host(`{SPM::SERVICE_HOST}`)"
+        traefik.http.routers.{SPM::SERVICE_NAME}.tls: true
+        traefik.http.services.{SPM::SERVICE_NAME}.loadbalancer.server.port: {SPM::SERVICE_PORT}

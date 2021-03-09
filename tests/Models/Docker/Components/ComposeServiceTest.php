@@ -56,7 +56,7 @@ class ComposeServiceTest extends TestCase
             ]
         ];
 
-        $service = (new ComposeServiceFactory())->from('dns', $data);
+        $service = (new ComposeServiceFactory())->from($data);
 
         $opts = Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_NULL_AS_TILDE;
 

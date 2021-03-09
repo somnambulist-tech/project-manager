@@ -11,6 +11,7 @@ use Somnambulist\ProjectManager\Models\Docker\Components\Port;
 use Somnambulist\ProjectManager\Models\Docker\Components\ServiceNetwork;
 use Somnambulist\ProjectManager\Models\Docker\Components\ServiceVolume;
 use Symfony\Component\Yaml\Yaml;
+use function array_pop;
 use function explode;
 use function is_array;
 use function is_numeric;
@@ -26,15 +27,18 @@ use function preg_match;
 class ComposeServiceFactory
 {
 
-    public function convert($name, string $yaml): ComposeService
+    public function convert(string $yaml): ComposeService
     {
-        return $this->from($name, Yaml::parse($yaml));
+        // yaml string should be by service-name -> options
+        $data = Yaml::parse($yaml);
+
+        return $this->from(array_pop($data));
     }
 
-    public function from($name, array $data): ComposeService
+    public function from(array $data): ComposeService
     {
         return new ComposeService(
-            $data['container_name'] ?? $name,
+            $data['container_name'] ?? null,
             $data['image'] ?? null,
             Build::from($data['build'] ?? []),
             $data['restart'] ?? 'no',

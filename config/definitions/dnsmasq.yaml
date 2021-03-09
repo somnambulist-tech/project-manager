@@ -1,0 +1,20 @@
+{SPM::SERVICE_NAME}:
+    build:
+        context: .
+        dockerfile: config/docker/dev/{SPM::SERVICE_NAME}/Dockerfile
+        args:
+            DNS_HOST_IP: ${DNS_HOST_IP:-127.0.0.1}
+            PROJECT_DOMAIN: ${PROJECT_DOMAIN:-example.dev}
+    restart: always
+    ports:
+        - "1034:53/udp"
+    logging:
+        options:
+            max-size: 10m
+    networks:
+        - {SPM::NETWORK_NAME}
+    labels:
+        traefik.enable: true
+        traefik.http.routers.{SPM::SERVICE_NAME}.rule: "Host(`dns.${PROJECT_DOMAIN:-example.dev}`)"
+        traefik.http.routers.{SPM::SERVICE_NAME}.tls: true
+        traefik.http.services.{SPM::SERVICE_NAME}.loadbalancer.server.port: 8080

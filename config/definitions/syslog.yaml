@@ -1,0 +1,13 @@
+{SPM::SERVICE_NAME}:
+    build:
+        context: .
+        dockerfile: config/docker/dev/{SPM::SERVICE_NAME}/Dockerfile
+    volumes:
+        - {SPM::PROJECT_NAME}_volumes_{SPM::SERVICE_NAME}-data:/var/log/syslog-ng
+    restart: always
+    ports:
+        - "5501:514/udp"
+        - "5502:601/tcp"
+        - "5503:6514/tcp"
+    networks:
+        - {SPM::NETWORK_NAME}
