@@ -57,8 +57,7 @@ class ComposeServiceTest extends TestCase
         ];
 
         $service = (new ComposeServiceFactory())->from($data);
-
-        $opts = Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_NULL_AS_TILDE;
+        $opts    = Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_NULL_AS_TILDE;
 
         $this->assertEquals($this->expected(), Yaml::dump($service->exportForYaml(), 4, 4, $opts));
     }

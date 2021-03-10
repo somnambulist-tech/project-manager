@@ -3,6 +3,7 @@
 namespace Somnambulist\ProjectManager\Commands\Services;
 
 use IlluminateAgnostic\Str\Support\Str;
+use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\CanSelectServiceFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
@@ -10,7 +11,13 @@ use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\DockerAwareInterface;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
+use Somnambulist\ProjectManager\Exceptions\DockerComposeException;
 use Somnambulist\ProjectManager\Models\Definitions\ServiceDefinition;
+use Somnambulist\ProjectManager\Models\Docker\Components\ComposeNetwork;
+use Somnambulist\ProjectManager\Models\Docker\Components\ComposeService;
+use Somnambulist\ProjectManager\Models\Docker\Components\ComposeVolume;
+use Somnambulist\ProjectManager\Models\Docker\Components\ServiceNetwork;
+use Somnambulist\ProjectManager\Models\Docker\Components\ServiceVolume;
 use Somnambulist\ProjectManager\Models\Docker\DockerCompose;
 use Somnambulist\ProjectManager\Models\Project;
 use Somnambulist\ProjectManager\Models\Service;
@@ -22,11 +29,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use function dir;
 use function dirname;
 use function file_exists;
 use function file_put_contents;
 use function getcwd;
+use function mkdir;
+use function sprintf;
 use function str_replace;
 
 /**
@@ -125,8 +133,8 @@ HLP
 
         $this->tools()->info('adding the following containers: <info>%s</info>', implode(', ', $containers));
 
-        $defs = $this->locator->findAll()->filter(function (ServiceDefinition $def, $key) use ($containers) {
-            return in_array($key, $containers);
+        $defs = $this->locator->findAll()->filter(function (ServiceDefinition $def) use ($containers) {
+            return in_array($def->name(), $containers);
         });
 
         if (!$defs->count()) {
@@ -137,40 +145,99 @@ HLP
 
         $loader  = new ComposeFileLoader();
         $dumper  = new ComposeFileDumper();
+        $files   = new MutableCollection();
         $compose = $this->getComposeInstance($service, $loader, $input);
 
-        $defs->each(function (ServiceDefinition $def) use ($project, $service, $compose) {
-            $data = $this->getParametersForContainer($project, $def);
-            $dc   = (new ComposeServiceFactory())->convert($def->createServiceDefinitionUsing($data));
+        try {
+            $defs->each(function (ServiceDefinition $def) use ($project, $service, $compose, $files) {
+                $data = $this->getParametersForContainer($project, $def);
+                $dc   = (new ComposeServiceFactory())->convert($def->createServiceDefinitionUsing($data));
 
-            $compose->services()->register($data['{SPM::SERVICE_NAME}'], $dc);
+                $compose->services()->register($data['{SPM::SERVICE_NAME}'], $dc);
 
-            $this->tools()->info('creating any files needed by <info>%s</info>', $def->name());
+                $this->resolveNetworkMappings($dc, $compose, $data);
+                $this->resolveVolumeMappings($dc, $compose, $data);
 
-            $def->files()->each(function (ServiceDefinition $f) use ($service, $data) {
-                $path = $this->tools()->input()->getOption('config');
-                $file = $service->getFileInProject($p = sprintf('%s/%s/%s', $path, $data['{SPM::SERVICE_NAME}'], $f->name()));
-
-                if (!file_exists(dirname($file))) {
-                    @mkdir(dirname($file), 0755, true);
-                }
-
-                $this->tools()->when(
-                    false !== file_put_contents($file, $f->createServiceDefinitionUsing($data)),
-                    'created <info>%s</info> successfully',
-                    'failed to make <info>%s</info>, it should be created manually',
-                    $p
-                );
+                $this->copyDefinitionFilesToService($def, $service, $data, $files);
             });
+
+            $this->tools()->info('checking docker-compose structure is valid...');
+
+            $compose->validate();
+
+            $this->tools()->info('writing updated <info>docker-compose.yml</info> file to project service');
+
+            $dumper->store($compose, $service->getFileInProject('docker-compose.yml'));
+
+            $this->tools()->success('done');
+
+            return 0;
+        } catch (DockerComposeException $e) {
+            $this->tools()->error($e->getMessage());
+            $this->tools()->info('changes aborted');
+
+            if ($files->count() > 0) {
+                $files->each(function ($file) {
+                    if (file_exists($file)) {
+                        unlink($file);
+                    }
+                });
+            }
+
+            return 1;
+        }
+    }
+
+    private function resolveNetworkMappings(ComposeService $dc, DockerCompose $compose, array $data): void
+    {
+        $dc->networks()->each(function (ServiceNetwork $n, $name) use ($compose, $data, $dc) {
+            if (null !== $net = $compose->networks()->getReferenceFromNetworkName($n->name())) {
+                $dc->networks()->unset($name);
+                $dc->networks()->set($net, new ServiceNetwork($net));
+            } else {
+                $compose->networks()->register($n->name(), new ComposeNetwork(null));
+            }
         });
+    }
 
-        $this->tools()->info('writing updated docker-compose.yml file to project service');
+    private function resolveVolumeMappings(ComposeService $dc, DockerCompose $compose, array $data): void
+    {
+        $dc->volumes()->each(function (ServiceVolume $v) use ($compose, $data) {
+            if ($v->isVolume() && !$compose->volumes()->hasNamedVolumeOf($v->source())) {
+                $vol = sprintf('%s-data', $data['{SPM::SERVICE_NAME}']);
 
-        $dumper->store($compose, $service->getFileInProject('docker-compose.yml'));
+                $compose->volumes()->register($vol, new ComposeVolume($v->source()));
 
-        $this->tools()->success('done');
+                $v->renameSourceVolume($vol);
+            }
+        });
+    }
 
-        return 0;
+    private function copyDefinitionFilesToService(ServiceDefinition $def, Service $service, array $data, MutableCollection $files): void
+    {
+        if (!$def->files()->count()) {
+            return;
+        }
+
+        $this->tools()->info('creating files needed by <info>%s</info>', $def->name());
+
+        $def->files()->each(function (ServiceDefinition $f) use ($service, $data, $files) {
+            $path = $this->tools()->input()->getOption('config');
+            $file = $service->getFileInProject($p = sprintf('%s/%s/%s', $path, $data['{SPM::SERVICE_NAME}'], $f->name()));
+
+            if (!file_exists(dirname($file))) {
+                @mkdir(dirname($file), 0755, true);
+            }
+
+            $this->tools()->when(
+                false !== file_put_contents($file, $f->createServiceDefinitionUsing($data)),
+                'created <info>%s</info> successfully',
+                'failed to make <info>%s</info>, it should be created manually',
+                $p
+            );
+
+            $files->add($file);
+        });
     }
 
     private function getComposeInstance(Service $service, ComposeFileLoader $loader, InputInterface $input): DockerCompose
@@ -192,7 +259,7 @@ HLP
             if (null !== $v = $this->getParameterDefaultValue($project, $parameter)) {
                 $data[$parameter] = $v;
             } else {
-                $data[$parameter] = $this->tools()->ask($this->getParameterQuestionFor($parameter), false);
+                $data[$parameter] = $this->tools()->ask(sprintf('<warn> %s </warn> ', $def->name()) . $this->getParameterQuestionFor($parameter), false);
             }
         }
 

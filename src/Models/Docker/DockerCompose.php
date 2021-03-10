@@ -4,8 +4,10 @@ namespace Somnambulist\ProjectManager\Models\Docker;
 
 use Somnambulist\ProjectManager\Exceptions\DockerComposeException;
 use Somnambulist\ProjectManager\Models\Docker\Components\ComposeService;
+use Somnambulist\ProjectManager\Models\Docker\Components\Port;
 use Somnambulist\ProjectManager\Models\Docker\Components\ServiceNetwork;
 use Somnambulist\ProjectManager\Models\Docker\Components\ServiceVolume;
+use function array_key_exists;
 
 /**
  * Class DockerCompose
@@ -117,5 +119,16 @@ class DockerCompose
         if (!$this->networks->hasAllOf(...$networks)) {
             throw DockerComposeException::serviceNetworkNotDefined($networks);
         }
+
+        $ports = [];
+        $this->services->each(function (ComposeService $s, $name) use (&$ports) {
+            $s->ports()->each(function (Port $p) use ($s, $name, &$ports) {
+                if (!array_key_exists($p->local(), $ports)) {
+                    $ports[$p->local()] = $name;
+                } else {
+                    throw DockerComposeException::portAlreadyAssigned($p->local(), $ports[$p->local()]);
+                }
+            });
+        });
     }
 }

@@ -59,7 +59,7 @@ class ComposeFileLoader
     {
         foreach ($data['networks'] ?? [] as $name => $datum) {
             $net = new ComposeNetwork(
-                $datum['name'] ?? $name,
+                $datum['name'] ?? null,
                 $datum['driver'] ?? null,
                 $datum['driver_opts'] ?? [],
                 $datum['labels'] ?? [],

@@ -3,6 +3,7 @@
 namespace Somnambulist\ProjectManager\Models;
 
 use InvalidArgumentException;
+use Somnambulist\ProjectManager\Exceptions\DockerComposeException;
 
 /**
  * Class AbstractElements
@@ -38,11 +39,10 @@ class AbstractElements extends Options
 
     public function register(string $name, $value): AbstractElements
     {
-        return $this->set($name, $value);
-    }
+        if ($this->has($name)) {
+            throw DockerComposeException::elementAlreadyDefined($value->type(), $name);
+        }
 
-    public function remove(string $name): AbstractElements
-    {
-        return $this->unset($name);
+        return $this->set($name, $value);
     }
 }

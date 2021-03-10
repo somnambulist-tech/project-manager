@@ -119,6 +119,11 @@ class ComposeService
         $this->logging     = $logging;
     }
 
+    public function type(): string
+    {
+        return 'service';
+    }
+
     public function name(): ?string
     {
         return $this->name;

@@ -41,13 +41,13 @@ class ServiceDefinitionTest extends TestCase
     {
         $def = new ServiceDefinition('service', file_get_contents(__DIR__ . '/../../../config/definitions/nginx.yaml'), [
             new ServiceDefinition('Dockerfile', file_get_contents(__DIR__ . '/../../../config/definitions/nginx/Dockerfile')),
-            new ServiceDefinition('site.conf', file_get_contents(__DIR__ . '/../../../config/definitions/nginx/site.conf')),
+            new ServiceDefinition('site.conf', file_get_contents(__DIR__ . '/../../../config/definitions/nginx/conf.d/site.conf')),
         ]);
 
         $expected = [
             '{SPM::NETWORK_NAME}',
+            '{SPM::SERVICE_APP_NAME}',
             '{SPM::SERVICE_APP_PORT}',
-            '{SPM::SERVICE_APP}',
             '{SPM::SERVICE_HOST}',
             '{SPM::SERVICE_NAME}',
             '{SPM::SERVICE_PORT}',

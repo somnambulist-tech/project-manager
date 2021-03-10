@@ -4,6 +4,7 @@ namespace Somnambulist\ProjectManager\Tests\Models\Docker;
 
 use Somnambulist\ProjectManager\Exceptions\DockerComposeException;
 use Somnambulist\ProjectManager\Models\Docker\Components\ComposeService;
+use Somnambulist\ProjectManager\Models\Docker\Components\Port;
 use Somnambulist\ProjectManager\Models\Docker\Components\ServiceNetwork;
 use Somnambulist\ProjectManager\Models\Docker\Components\ServiceVolume;
 use Somnambulist\ProjectManager\Models\Docker\DockerCompose;
@@ -47,6 +48,22 @@ class DockerComposeTest extends TestCase
 
         $this->expectException(DockerComposeException::class);
         $this->expectExceptionMessage('One or more service networks (backend, redis) have not been defined');
+
+        $dc->validate();
+    }
+
+    public function testValidateChecksForPortCollisions()
+    {
+        $dc = new DockerCompose('3.7');
+        $dc->services()
+            ->register('redis', $s1 = new ComposeService('redis', 'redis:alpine'))
+            ->register('redis2', $s2 = new ComposeService('redis2', 'redis:alpine'))
+        ;
+        $s1->ports()->add(new Port(33060, 3306));
+        $s2->ports()->add(new Port(33060, 3306));
+
+        $this->expectException(DockerComposeException::class);
+        $this->expectExceptionMessage('Service "redis" has already registered local port "33060"');
 
         $dc->validate();
     }

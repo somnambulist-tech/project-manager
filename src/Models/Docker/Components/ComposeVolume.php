@@ -14,7 +14,7 @@ class ComposeVolume
 {
 
     /**
-     * @var string
+     * @var string|null
      */
     private $name;
 
@@ -38,7 +38,7 @@ class ComposeVolume
      */
     private $external;
 
-    public function __construct(string $name, string $driver = null, array $options = [], array $labels = [], bool $external = false)
+    public function __construct(?string $name, string $driver = null, array $options = [], array $labels = [], bool $external = false)
     {
         $this->name     = $name;
         $this->driver   = $driver;
@@ -47,7 +47,12 @@ class ComposeVolume
         $this->external = $external;
     }
 
-    public function name(): string
+    public function type(): string
+    {
+        return 'volume';
+    }
+
+    public function name(): ?string
     {
         return $this->name;
     }
@@ -72,11 +77,15 @@ class ComposeVolume
         return $this->external;
     }
 
-    public function exportForYaml(): array
+    public function exportForYaml(): ?array
     {
+        if (!$this->name && !$this->labels->count() && !$this->options->count() && !$this->driver) {
+            return null;
+        }
+
         $ret = ['name' => $this->name];
 
-        if ($this->driver !== 'local') {
+        if ($this->driver && $this->driver !== 'local') {
             $ret['driver'] = $this->driver;
         }
         if ($this->external) {

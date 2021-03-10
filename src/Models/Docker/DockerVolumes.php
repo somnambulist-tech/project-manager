@@ -27,4 +27,14 @@ class DockerVolumes extends AbstractElements
             ->all()
         ;
     }
+
+    public function hasNamedVolumeOf(string $name): bool
+    {
+        return $this
+            ->filter(function (ComposeVolume $v) use ($name) {
+                return $v->name() === $name;
+            })
+            ->count() > 0
+        ;
+    }
 }

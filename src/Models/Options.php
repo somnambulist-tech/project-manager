@@ -9,6 +9,8 @@ use IteratorAggregate;
 use function array_filter;
 use function array_key_exists;
 use function array_map;
+use function array_search;
+use function array_values;
 use function reset;
 use const ARRAY_FILTER_USE_BOTH;
 
@@ -107,7 +109,7 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         return $return;
     }
 
-    public function each(callable $func)
+    public function each(callable $func): self
     {
         foreach ($this->items as $key => $value) {
             if (false === $func($value, $key)) {
@@ -116,6 +118,16 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         }
 
         return $this;
+    }
+
+    public function keys(): Options
+    {
+        return new Options(array_keys($this->items));
+    }
+
+    public function values(): Options
+    {
+        return new Options(array_values($this->items));
     }
 
     public function map(callable $func): Options
@@ -172,6 +184,15 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
     public function set($option, $value): self
     {
         $this->offsetSet($option, $value);
+
+        return $this;
+    }
+
+    public function remove($value): self
+    {
+        if (false !== $key = array_search($value, $this->items, true)) {
+            $this->unset($key);
+        }
 
         return $this;
     }

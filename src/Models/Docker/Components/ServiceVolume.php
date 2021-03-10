@@ -2,6 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Models\Docker\Components;
 
+use IlluminateAgnostic\Str\Support\Str;
 use InvalidArgumentException;
 use Somnambulist\ProjectManager\Models\Options;
 
@@ -75,6 +76,13 @@ class ServiceVolume
             $data['volume'] ?? [],
             $data['tmpfs'] ?? [],
         );
+    }
+
+    public function renameSourceVolume(string $source): void
+    {
+        if ($this->isVolume() && !Str::startsWith($source, ['~', '.', '/', '\\'])) {
+            $this->source = $source;
+        }
     }
 
     public function isVolume(): bool

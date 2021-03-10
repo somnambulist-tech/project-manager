@@ -27,4 +27,15 @@ class DockerNetworks extends AbstractElements
             ->all()
         ;
     }
+
+    public function getReferenceFromNetworkName(string $name)
+    {
+        return $this
+            ->filter(function (ComposeNetwork $n) use ($name) {
+                return $n->name() === $name;
+            })
+            ->keys()
+            ->first()
+        ;
+    }
 }

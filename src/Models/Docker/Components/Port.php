@@ -16,12 +16,12 @@ class Port
     /**
      * @var int
      */
-    private $target;
+    private $local;
 
     /**
      * @var int
      */
-    private $published;
+    private $docker;
 
     /**
      * @var string
@@ -42,9 +42,9 @@ class Port
             throw new InvalidArgumentException('mode can be one of: host, ingress');
         }
 
-        $this->target    = $local;
-        $this->published = $docker;
-        $this->protocol  = $protocol;
+        $this->local    = $local;
+        $this->docker   = $docker;
+        $this->protocol = $protocol;
         $this->mode      = $mode;
     }
 
@@ -58,14 +58,14 @@ class Port
         );
     }
 
-    public function target(): int
+    public function local(): int
     {
-        return $this->target;
+        return $this->local;
     }
 
-    public function published(): int
+    public function docker(): int
     {
-        return $this->published;
+        return $this->docker;
     }
 
     public function protocol(): string
@@ -85,13 +85,13 @@ class Port
     {
         if ($this->mode === 'ingress') {
             return [
-                'target'    => $this->target,
-                'published' => $this->published,
+                'target'    => $this->local,
+                'published' => $this->docker,
                 'protocol'  => $this->protocol,
                 'mode'      => $this->mode,
             ];
         }
 
-        return sprintf('%s:%s', $this->target, $this->published) . ('udp' == $this->protocol ? '/' . $this->protocol : '');
+        return sprintf('%s:%s', $this->local, $this->docker) . ('udp' == $this->protocol ? '/' . $this->protocol : '');
     }
 }
