@@ -148,6 +148,27 @@ HLP
         $files   = new MutableCollection();
         $compose = $this->getComposeInstance($service, $loader, $input);
 
+        if (!$project->docker()->get('network_name')) {
+            $this->tools()->error('the docker-compose network name has not been configured!');
+            $this->tools()->info('run: <info>config docker:network project</info> to set the name');
+            return 1;
+        }
+        if (!$compose->networks()->getReferenceFromNetworkName($project->docker()->get('network_name'))) {
+            $this->tools()->error('the project network name <info>%s</info> is not used in the docker-compose file', $project->docker()->get('network_name'));
+            $this->tools()->info('the docker-compose file is expected to have a network using this name; for example:');
+            $this->tools()->message(<<<YML
+
+docker-compose.yml
+~~~~
+networks:
+    backend:
+        name: {$project->docker()->get('network_name')}
+
+YML
+);
+            return 1;
+        }
+
         try {
             $defs->each(function (ServiceDefinition $def) use ($project, $service, $compose, $files) {
                 $data = $this->getParametersForContainer($project, $def);

@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/readme.md">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/src/Commands/Behaviours/CanSelectServiceFromInput.php">
           <value>
             <Attribute>

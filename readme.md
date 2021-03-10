@@ -23,11 +23,11 @@ Grab the phar archive and copy it to `/usr/local/bin` or add it to your path.
 Symlink the phar to `spm` or a.n.other name. Be sure to verify the SHA checksum with
 the ones in the release checksums text file.
 
-Run: `spm init` to create the standard configuration (see later).
-
 Or:
 
     $ brew install somnambulist-tech/somnambulist/spm
+
+Run: `spm init` to create the standard configuration (see later).
 
 ### Removing Project Manager
 
@@ -423,6 +423,109 @@ __Note:__ the copy command uses the **service** name; _not_ the actual docker co
 
 __Note:__ the copy command uses the current working directory and not the services path when it
 is running. Run `spm services:copy -h` for help and the current working folder.
+
+#### Adding containers to the service
+
+From v0.19.0, `spm` has basic support for templated docker-compose services (containers). These
+can be added to a service by using the `services:docker` command. Several definitions are
+included in `spm` and others can be created by adding YAML files to a `definitions` folder in
+the main `.spm_projects.d` folder.
+
+The bundled definitions include:
+
+ * dnsmasq
+ * mariadb (10.5)  
+ * nginx (configured for php-fpm)
+ * php-fpm7 (PHP 7.4)
+ * php-fpm8
+ * postgres (12.X)
+ * rabbitmq
+ * redis
+ * syslog
+ * traefik (2.4)
+
+__Note:__ only a small subset of the docker-compose file format is supported. If you have an
+existing file that is heavily customised you should not use this feature. At the time of writing
+`config` sections are not supported, nor are swarm or other variants.
+
+To add container services run: `spm services:docker <service_name> <container> <container>`
+
+Multiple container templates can be specified at once. If none are given the list of definitions
+will be displayed instead. Similarly if the service is not specified, you will be asked to choose
+which one to modify.
+
+For each chosen definition, any parameter substitutions will be prompted for values. Note that
+these do not ask for confirmation.
+
+Before committing the updated docker-compose.yml file (.yaml is not supported), a set of checks
+are made to ensure that volumes and networks match and there are no port collisions when port
+forwarding is enabled.
+
+__Note:__ containers must have unique names and attempts to set a duplicate name will stop the
+command.
+
+__Note:__ some definitions have supporting files; these will be copied immediately, but in the
+case of an error will be removed, however the folders may be left behind.
+
+#### Adding or overriding definitions
+
+To add new definitions, or override the built-ins: add a `definitions` folder to the main `spm`
+config folder. Then add a YAML file that contains just the service definition from a compose
+file.
+
+For example if the `docker-compose.yml` contains something like:
+
+```yaml
+services:
+    mariadb:
+        image: 'mariadb:10.5'
+        environment:
+            MYSQL_ROOT_PASSWORD: 'pass'
+            MYSQL_DATABASE: 'db'
+            MYSQL_USER: 'user'
+            MYSQL_PASSWORD: 'pass'
+        volumes:
+            - 'mariadb:/var/lib/mysql'
+        networks:
+            - backend
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping"]
+```
+
+The definition would be named `mariadb.yaml` and contain:
+
+```yaml
+mariadb:
+    image: 'mariadb:10.5'
+    environment:
+        MYSQL_ROOT_PASSWORD: 'pass'
+        MYSQL_DATABASE: 'db'
+        MYSQL_USER: 'user'
+        MYSQL_PASSWORD: 'pass'
+    volumes:
+        - 'mariadb:/var/lib/mysql'
+    networks:
+        - backend
+    healthcheck:
+        test: ["CMD", "mysqladmin", "ping"]
+```
+
+Definitions support parameter substitutions using the pattern `{SPM::THE_NAME_HERE}` where
+`THE_NAME_HERE` is your all-caps, underscore, separated string. Several are used by default
+and are mapped to more suitable questions. These are:
+
+`{SPM::NETWORK_NAME}` the docker network name, taken from the project config
+`{SPM::SERVICE_NAME}`  the name for the container in the docker compose file
+`{SPM::EXTERNAL_PORT}` if set, the exposed port that will be made available on the host
+`{SPM::PROJECT_NAME}`  the current project name, taken from the project config
+`{SPM::SERVICE_APP_NAME}` for nginx / fastcgi: the name of the container to forward to e.g. php-fpm
+`{SPM::SERVICE_APP_PORT}` for nginx / fastcgi: the port of the container to forward to e.g.: 9000
+`{SPM::SERVICE_HOST}` the host name that the container will resolve to (for traefik / proxies)
+`{SPM::SERVICE_PORT}` the internal port the container will run on e.g.: 8080, 3306, 5432
+
+__Note:__ the network name and project name are automatically resolved using the current
+configuration from the project file. If a mis-match is detected, you will be notified of the
+issue.
 
 ### Setting Remote Repositories
 
