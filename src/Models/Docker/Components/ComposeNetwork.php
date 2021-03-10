@@ -21,7 +21,7 @@ class ComposeNetwork
     private $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $driver;
 
@@ -40,9 +40,9 @@ class ComposeNetwork
      */
     private $external;
 
-    public function __construct(?string $name, string $driver = 'bridge', array $options = [], array $labels = [], bool $external = false)
+    public function __construct(?string $name, ?string $driver = 'bridge', array $options = [], array $labels = [], bool $external = false)
     {
-        if (!in_array($driver, $a = ['bridge', 'overlay', 'host', 'none'])) {
+        if (!is_null($driver) && !in_array($driver, $a = ['bridge', 'overlay', 'host', 'none'])) {
             throw new InvalidArgumentException(sprintf('Network driver must be one of: %s', implode(', ', $a)));
         }
 
@@ -58,12 +58,12 @@ class ComposeNetwork
         return 'network';
     }
 
-    public function name(): string
+    public function name(): ?string
     {
         return $this->name;
     }
 
-    public function driver(): string
+    public function driver(): ?string
     {
         return $this->driver;
     }
@@ -85,15 +85,18 @@ class ComposeNetwork
 
     public function exportForYaml(): ?array
     {
-        if (!$this->name && !$this->options->count() && !$this->labels->count()) {
+        if (!$this->name && !$this->driver && !$this->options->count() && !$this->labels->count()) {
             return null;
         }
 
-        $ret = [
-            'name'   => $this->name,
-            'driver' => $this->driver,
-        ];
+        $ret = [];
 
+        if ($this->name) {
+            $ret['name'] = $this->name;
+        }
+        if ($this->driver) {
+            $ret['driver'] = $this->driver;
+        }
         if ($this->options->count()) {
             $ret['driver_opts'] = $this->options->all();
         }

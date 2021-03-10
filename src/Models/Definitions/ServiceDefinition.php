@@ -32,9 +32,9 @@ class ServiceDefinition
 
     public function __construct(string $service, string $template, array $files = [])
     {
-        $this->service       = $service;
-        $this->template      = $template;
-        $this->files         = new MutableCollection($files);
+        $this->service  = $service;
+        $this->template = $template;
+        $this->files    = new MutableCollection($files);
     }
 
     public function name(): string

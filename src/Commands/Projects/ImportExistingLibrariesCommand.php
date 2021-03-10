@@ -7,12 +7,13 @@ use Somnambulist\ProjectManager\Commands\Behaviours\CanUpdateProjectConfiguratio
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
+use Somnambulist\ProjectManager\Models\Docker\Components\ComposeService;
 use Somnambulist\ProjectManager\Models\Library;
 use Somnambulist\ProjectManager\Models\Project;
 use Somnambulist\ProjectManager\Models\Service;
+use Somnambulist\ProjectManager\Services\Docker\ComposeFileLoader;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Yaml\Yaml;
 use function basename;
 use function file_exists;
 use function glob;
@@ -101,7 +102,7 @@ class ImportExistingLibrariesCommand extends AbstractCommand implements ProjectC
         if ($container) {
             $this->tools()->step($step, 'adding <info>%s</info> for <info>%s</info> to services', $container, $name);
 
-            $project->services()->add(new Service($name, $dirname, $repo, $container));
+            $project->services()->add(new Service($name, $dirname, $repo, null, $container));
         } else {
             $this->tools()->error('failed to find a suitable container name for <info>%s</info>', $name);
         }
@@ -126,16 +127,20 @@ class ImportExistingLibrariesCommand extends AbstractCommand implements ProjectC
 
     private function getAppContainerName(string $cwd): ?string
     {
-        $config = Yaml::parseFile($cwd . DIRECTORY_SEPARATOR . 'docker-compose.yml');
+        $config = (new ComposeFileLoader())->load($cwd . DIRECTORY_SEPARATOR . 'docker-compose.yml');
 
-        foreach ($config['services'] ?? [] as $key => $service) {
+        foreach ($config->services() as $key => $service) {
+            /** @var ComposeService $service */
             if (false !== strpos($key, '-app')) {
                 return $key;
             }
-            foreach ($service['labels'] ?? [] as $label => $value) {
-                if (false !== strpos($label, 'traefik.frontend.rule') && $service['labels']['traefik.port'] == '8080') {
-                    return $key;
-                }
+
+            if (
+                $service->labels()->has('traefik.enable') && $service->labels()->get('traefik.enable')
+                &&
+                $service->labels()->matching('/^traefik.http.routers/')-> count() > 0
+            ) {
+                return $key;
             }
         }
 

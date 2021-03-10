@@ -11,6 +11,7 @@ use function array_key_exists;
 use function array_map;
 use function array_search;
 use function array_values;
+use function preg_match;
 use function reset;
 use const ARRAY_FILTER_USE_BOTH;
 
@@ -163,6 +164,19 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         }
 
         return false;
+    }
+
+    public function matching(string $rule): Options
+    {
+        $ret = new Options();
+
+        foreach ($this->items as $key => $value) {
+            if (false !== preg_match($rule, $key)) {
+                $ret->set($key, $value);
+            }
+        }
+
+        return $ret;
     }
 
     public function get($option, $default = null)
