@@ -85,9 +85,9 @@ for container names are:
 The import does not try to determine dependencies and will use the folder name as the project
 and dirname values.
 
- * [Getting Started](./getting-started.md)
- * [Project Configuration](./project-configuration.md)
- * [Managing Services](./services.md)
- * [Templates](./templates.md)
- * [Changing Config Options](./changing-config.md)
- * [Setting up a dev env](./init-dev-env.md)
+ * [Getting Started](getting-started.md)
+ * [Project Configuration](project-configuration.md)
+ * [Managing Services](services.md)
+ * [Templates](templates.md)
+ * [Changing Config Options](changing-config.md)
+ * [Setting up a dev env](init-dev-env.md)

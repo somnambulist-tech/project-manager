@@ -10,14 +10,17 @@ and continue on. There is no special configuration needed in any project.
 
 ## Features
 
- * groups separate micro services projects together
- * gives a docker overview of running processes
+ * groups separate micro-service projects together
+ * gives an overview of running docker processes across all services
  * supports dependencies between services
- * supports making new services and libraries (configurable source repositories)
  * supports multiple projects on a single machine
+ * supports templates for libraries and services
+ * supports docker container definitions for easier adding to services
  * all configuration is by yaml files
 
 ## Installation
+
+Project Manager requires PHP 7.3+ to be installed and in your shell path.
 
 Grab the phar archive and copy it to `/usr/local/bin` or add it to your path.
 Symlink the phar to `spm` or a.n.other name. Be sure to verify the SHA checksum with
@@ -29,15 +32,15 @@ Or:
 
 Run: `spm init` to create the standard configuration (see later).
 
-See [getting started](./docs/getting-started.md) for the next steps.
+See [getting started](docs/getting-started.md) for the next steps.
 
 More:
 
- * [Project Configuration](./docs/project-configuration.md)
- * [Managing Services](./docs/services.md)
- * [Templates](./docs/templates.md)
- * [Changing Config Options](./docs/changing-config.md)
- * [Setting up a dev env](./docs/init-dev-env.md)
+ * [Project Configuration](docs/project-configuration.md)
+ * [Managing Services](docs/services.md)
+ * [Templates](docs/templates.md)
+ * [Changing Config Options](docs/changing-config.md)
+ * [Setting up a dev env](docs/init-dev-env.md)
 
 ### Removing Project Manager
 

@@ -149,9 +149,9 @@ per-project basis in the templates section.
 
 See [templates](./templates.md) for more information.
 
- * [Getting Started](./getting-started.md)
- * [Project Configuration](./project-configuration.md)
- * [Managing Services](./services.md)
- * [Templates](./templates.md)
- * [Changing Config Options](./changing-config.md)
- * [Setting up a dev env](./init-dev-env.md)
+ * [Getting Started](getting-started.md)
+ * [Project Configuration](project-configuration.md)
+ * [Managing Services](services.md)
+ * [Templates](templates.md)
+ * [Changing Config Options](changing-config.md)
+ * [Setting up a dev env](init-dev-env.md)

@@ -46,9 +46,9 @@ If debugging is used `-vvv` then each command and it's output will be streamed t
 When developing a setup script, be sure to do it in a virtual machine to avoid damaging your
 own setup.
 
- * [Getting Started](./getting-started.md)
- * [Project Configuration](./project-configuration.md)
- * [Managing Services](./services.md)
- * [Templates](./templates.md)
- * [Changing Config Options](./changing-config.md)
- * [Setting up a dev env](./init-dev-env.md)
+ * [Getting Started](getting-started.md)
+ * [Project Configuration](project-configuration.md)
+ * [Managing Services](services.md)
+ * [Templates](templates.md)
+ * [Changing Config Options](changing-config.md)
+ * [Setting up a dev env](init-dev-env.md)

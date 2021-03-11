@@ -60,9 +60,9 @@ of forcing the one provided via arguments.
 these will be started or stopped together. Use the config options to add or remove these. The
 dependencies are defined as an array in the `project.yaml` on a per service basis.
 
- * [Getting Started](./getting-started.md)
- * [Project Configuration](./project-configuration.md)
- * [Managing Services](./services.md)
- * [Templates](./templates.md)
- * [Changing Config Options](./changing-config.md)
- * [Setting up a dev env](./init-dev-env.md)
+ * [Getting Started](getting-started.md)
+ * [Project Configuration](project-configuration.md)
+ * [Managing Services](services.md)
+ * [Templates](templates.md)
+ * [Changing Config Options](changing-config.md)
+ * [Setting up a dev env](init-dev-env.md)

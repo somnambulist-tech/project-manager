@@ -193,9 +193,9 @@ __Note:__ the network name and project name are automatically resolved using the
 configuration from the project file. If a mis-match is detected, you will be notified of the
 issue.
 
- * [Getting Started](./getting-started.md)
- * [Project Configuration](./project-configuration.md)
- * [Managing Services](./services.md)
- * [Templates](./templates.md)
- * [Changing Config Options](./changing-config.md)
- * [Setting up a dev env](./init-dev-env.md)
+ * [Getting Started](getting-started.md)
+ * [Project Configuration](project-configuration.md)
+ * [Managing Services](services.md)
+ * [Templates](templates.md)
+ * [Changing Config Options](changing-config.md)
+ * [Setting up a dev env](init-dev-env.md)
