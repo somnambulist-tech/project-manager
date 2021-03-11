@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/src/Commands/Projects/CurrentProjectCommand.php">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/src/Commands/Services/DockerComposeCommand.php">
           <value>
             <Attribute>
