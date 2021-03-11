@@ -9,6 +9,7 @@ use Symfony\Component\Finder\Finder;
 use function file_exists;
 use function shell_exec;
 use function str_replace;
+use function strcmp;
 use function strtr;
 
 /**
@@ -42,37 +43,10 @@ class Compiler
         $phar = new Phar($pharFile, 0, 'somnambulist-project-manager.phar');
         $phar->startBuffering();
 
-        $finderSort = function (SplFileInfo $a, SplFileInfo $b) {
-            return strcmp(strtr($a->getRealPath(), '\\', '/'), strtr($b->getRealPath(), '\\', '/'));
-        };
-
         $basePath = $this->basePath();
 
-        $finder = new Finder();
-        $finder->files()
-            ->ignoreVCS(true)
-            ->name(['*.php', '*.yaml', '*.yml', '*.md', '*.xml'])
-            ->name('LICENSE')
-            ->name('dockerignore')
-            ->name('gitignore')
-            ->exclude('Tests')
-            ->exclude('tests')
-            ->exclude('docs')
-            ->notName('create-phar.php')
-            ->in($basePath . '/config/')
-            ->in($basePath . '/src/')
-            ->in($basePath . '/var/cache/prod/')
-            ->in($basePath . '/vendor/pragmarx/')
-            ->in($basePath . '/vendor/psr/')
-            ->in($basePath . '/vendor/somnambulist/')
-            ->in($basePath . '/vendor/symfony/')
-            ->in($basePath . '/vendor/voku/')
-            ->sort($finderSort)
-        ;
-
-        foreach ($finder as $file) {
-            $this->addFile($phar, $file);
-        }
+        $this->addApplicationFiles($phar, $basePath);
+        $this->addDefinitionFiles($phar, $basePath);
 
         $testFor = [
             'include_paths.php', 'platform_check.php', 'installed.php', 'InstalledVersions.php', 'installed.json',
@@ -104,6 +78,57 @@ class Compiler
         unset($phar);
 
         chmod($pharFile, 0755);
+    }
+
+    private function addApplicationFiles(Phar $phar, string $basePath): void
+    {
+        $finder = new Finder();
+        $finder
+            ->files()
+            ->ignoreVCS(true)
+            ->name(['*.php', '*.yaml', '*.yml', '*.md', '*.xml'])
+            ->name('LICENSE')
+            ->name('dockerignore')
+            ->name('gitignore')
+            ->exclude('Tests')
+            ->exclude('tests')
+            ->exclude('docs')
+            ->exclude('config/definitions')
+            ->notName('create-phar.php')
+            ->in($basePath . '/config/')
+            ->in($basePath . '/src/')
+            ->in($basePath . '/var/cache/prod/')
+            ->in($basePath . '/vendor/pragmarx/')
+            ->in($basePath . '/vendor/psr/')
+            ->in($basePath . '/vendor/somnambulist/')
+            ->in($basePath . '/vendor/symfony/')
+            ->in($basePath . '/vendor/voku/')
+            ->sort(function (SplFileInfo $a, SplFileInfo $b) {
+                return strcmp(strtr($a->getRealPath(), '\\', '/'), strtr($b->getRealPath(), '\\', '/'));
+            })
+        ;
+
+        foreach ($finder as $file) {
+            $this->addFile($phar, $file);
+        }
+    }
+
+    private function addDefinitionFiles(Phar $phar, string $basePath): void
+    {
+        $finder = new Finder();
+        $finder
+            ->files()
+            ->in($basePath . '/config/definitions/')
+            ->name('*')
+            ->ignoreVCS(true)
+            ->sort(function (SplFileInfo $a, SplFileInfo $b) {
+                return strcmp(strtr($a->getRealPath(), '\\', '/'), strtr($b->getRealPath(), '\\', '/'));
+            })
+        ;
+
+        foreach ($finder as $file) {
+            $this->addFile($phar, $file);
+        }
     }
 
     private function addFile(Phar $phar, SplFileInfo $file, $strip = true): void

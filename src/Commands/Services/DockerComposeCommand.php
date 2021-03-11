@@ -190,7 +190,7 @@ YML
 
             $dumper->store($compose, $service->getFileInProject('docker-compose.yml'));
 
-            $this->tools()->success('done');
+            $this->tools()->success('done - be sure to check your <info>docker-compose.yml</info> file');
 
             return 0;
         } catch (DockerComposeException $e) {

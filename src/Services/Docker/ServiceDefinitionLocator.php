@@ -5,13 +5,12 @@ namespace Somnambulist\ProjectManager\Services\Docker;
 use Somnambulist\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Exceptions\DefinitionNotFound;
 use Somnambulist\ProjectManager\Models\Definitions\ServiceDefinition;
-use function basename;
+use SplFileInfo;
+use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
+use Symfony\Component\Finder\Finder;
 use function dirname;
-use function file_get_contents;
-use function glob;
-use function is_dir;
+use function sprintf;
 use function str_replace;
-use const GLOB_BRACE;
 
 /**
  * Class ServiceDefinitionLocator
@@ -39,11 +38,11 @@ class ServiceDefinitionLocator
     private function findInternalDefinitions(): MutableCollection
     {
         $ret   = new MutableCollection();
-        $files = glob(dirname(__DIR__, 3) . '/config/definitions/*.yaml');
+        $files = (new Finder())->files()->in(dirname(__DIR__, 3) . '/config/definitions')->depth(0)->name('*.yaml')->sortByName();
 
         foreach ($files as $file) {
-            $name = basename($file, '.yaml');
-            $ret->set($name, new ServiceDefinition($name, file_get_contents($file), $this->findRelatedFilesForService($name, $file)));
+            $name = $file->getBasename('.yaml');
+            $ret->set($name, new ServiceDefinition($name, $file->getContents(), $this->findRelatedFilesForService($name, $file)));
         }
 
         return $ret;
@@ -52,26 +51,40 @@ class ServiceDefinitionLocator
     private function findExternalDefinitions(): MutableCollection
     {
         $ret   = new MutableCollection();
-        $files = glob($p = $_SERVER['SOMNAMBULIST_PROJECTS_CONFIG_DIR'] . '/definitions/*.yaml');
+        $files = (new Finder())->files()->ignoreDotFiles(true)->ignoreVCS(true)->name('*.yaml')->sortByName();
+        $f     = false;
 
-        foreach ($files as $file) {
-            $name = basename($file, '.yaml');
-            $ret->set($name, new ServiceDefinition($name, file_get_contents($file), $this->findRelatedFilesForService($name, $file)));
+        foreach ([$_SERVER['SOMNAMBULIST_ACTIVE_PROJECT'] . '/definitions', '/definitions'] as $path) {
+            try {
+                $files->in($d = sprintf('%s/%s', $_SERVER['SOMNAMBULIST_PROJECTS_CONFIG_DIR'], $path));
+                $f = true;
+            } catch (DirectoryNotFoundException $e) {
+                // SF Finder throws exceptions if the dir does not exist
+            }
+        }
+
+        if ($f) {
+            foreach ($files as $file) {
+                $name = $file->getBasename('.yaml');
+                $ret->set($name, new ServiceDefinition($name, $file->getContents(), $this->findRelatedFilesForService($name, $file)));
+            }
         }
 
         return $ret;
     }
 
-    private function findRelatedFilesForService(string $name, string $file): array
+    private function findRelatedFilesForService(string $name, SplFileInfo $file): array
     {
-        $root   = sprintf('%s/%s', dirname($file), $name);
-        $files  = glob($p = sprintf('%s/{,*/,*/*/}*', $root), GLOB_BRACE);
+        $path   = sprintf('%s/%s', $file->getPath(), $name);
         $return = [];
 
-        foreach ($files as $f) {
-            if (is_dir($f)) continue;
+        try {
+            $files = (new Finder())->files()->in($path)->name('*')->ignoreVCS(true)->ignoreDotFiles(true);
 
-            $return[] = new ServiceDefinition(str_replace($root . '/', '', $f), file_get_contents($f));
+            foreach ($files as $f) {
+                $return[] = new ServiceDefinition(str_replace($path . '/', '', $f->getPathname()), $f->getContents());
+            }
+        } catch (DirectoryNotFoundException $e) {
         }
 
         return $return;

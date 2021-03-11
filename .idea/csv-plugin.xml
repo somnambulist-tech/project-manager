@@ -73,6 +73,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/src/Services/Docker/ServiceDefinitionLocator.php">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
