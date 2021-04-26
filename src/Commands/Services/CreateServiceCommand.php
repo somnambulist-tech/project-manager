@@ -98,7 +98,7 @@ HLP
 
         $cwd = $_SERVER['PROJECT_SERVICES_DIR'] . DIRECTORY_SEPARATOR . $name;
 
-        $project->services()->add(new Service($name, $name, null, $container, $dependencies));
+        $project->services()->add(new Service($name, $name, null, null, $container, $dependencies));
 
         switch (true):
             case $template->isGitResource():
