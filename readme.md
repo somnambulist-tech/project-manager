@@ -1,6 +1,8 @@
 # Somnambulist Project Manager
 
-[![GitHub Actions release Build Status](https://github.com/somnambulist-tech/project-manager/workflows/release/badge.svg)](https://github.com/somnambulist-tech/project-manager/actions?query=workflow%3Arelease)
+[![GitHub Actions Build Status](https://img.shields.io/github/workflow/status/somnambulist-tech/project-manager/release?logo=github)](https://github.com/somnambulist-tech/project-manager/actions?query=workflow%3Arelease)
+[![Issues](https://img.shields.io/github/issues/somnambulist-tech/project-manager?logo=github)](https://github.com/somnambulist-tech/project-manager/issues)
+[![License](https://img.shields.io/github/license/somnambulist-tech/project-manager?logo=github)](https://github.com/somnambulist-tech/project-manager/blob/master/LICENSE)
 
 Project Manager is designed to help organise micro-services based PHP projects. It
 incorporates commands for creating new services, libraries, and managing them.
