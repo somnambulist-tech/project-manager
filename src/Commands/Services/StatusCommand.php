@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use function array_key_exists;
+use function array_map;
 use function explode;
 use function implode;
 use function parse_url;
@@ -181,7 +182,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
                 }
             }
 
-            $ports = implode("\n", $tmp);
+            $ports = implode("\n", array_filter(array_map('trim', $tmp)));
         }
 
         return $ports;
