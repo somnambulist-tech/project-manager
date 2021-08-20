@@ -168,7 +168,11 @@ HLP)
             $deps = 'n';
         }
         if (!$deps) {
-            $deps = $this->tools()->ask('Service <info>%s</info> has dependencies, do you want these to be started? (y/n) ', false, $service->name());
+            $deps = $this->tools()->ask(
+                'Service <info>%s</info> depends on <comment>%s</comment>, do you want these to be started? (y/n) ', false,
+                $service->name(),
+                $service->dependencies()->implode(', ')
+            );
 
             $this->tools()->input()->setOption('with-deps', $deps);
         }
