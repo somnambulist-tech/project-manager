@@ -10,13 +10,16 @@ use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
 use Symfony\Component\Dotenv\Dotenv;
 use function array_combine;
 use function array_filter;
+use function array_shift;
 use function count;
 use function exec;
 use function explode;
 use function file_get_contents;
 use function implode;
+use function preg_match;
 use function sprintf;
 use function trim;
+use function version_compare;
 
 /**
  * Class DockerManager
@@ -53,6 +56,11 @@ class DockerManager
     private $helper;
 
     /**
+     * @var string
+     */
+    private $version;
+
+    /**
      * An array of ENV names that must not be passed through to other commands
      *
      * @var array
@@ -63,9 +71,18 @@ class DockerManager
         'SYMFONY_DOTENV_VARS'  => false,
     ];
 
+    private function detectVersion(): void
+    {
+        $matches = [];
+        preg_match('/(\d+.\d+.\d+)$/', $this->helper->run('docker-compose -v'), $matches);
+
+        $this->version = $matches[1] ?? '0.0.0';
+    }
+
     public function bindConsoleHelper(ConsoleHelper $helper): void
     {
         $this->helper = $helper;
+        $this->detectVersion();
     }
 
     public function resolve(Service $service): void
@@ -74,8 +91,9 @@ class DockerManager
             return;
         }
 
+        $sep = version_compare($this->version, '2.0.0', '>=') ? '-' : '_';
         $env = (new Dotenv())->parse(file_get_contents($service->envFile()));
-        $name = implode('_', array_filter([$env['COMPOSE_PROJECT_NAME'] ?? '', $service->appContainer()]));
+        $name = implode($sep, array_filter([$env['COMPOSE_PROJECT_NAME'] ?? '', $service->appContainer()]));
 
         try {
             $command = sprintf('docker ps --no-trunc --format="{{.ID}}" --filter=name="%s"', $name);
@@ -167,6 +185,17 @@ class DockerManager
 
         if ($service->isRunning()) {
             return true;
+        }
+        // hack for docker-compose v2.0 that doesn't work properly with local contexts
+        if (version_compare($this->version, '2.0.0', '>=')) {
+            $ret = array_filter(explode("\n", $this->helper->run(sprintf('docker images "%s*/*"', $service->name()))));
+            array_shift($ret);
+
+            if (count($ret) < 1) {
+                // pre-build images before attempting to run
+                // https://github.com/docker/compose/issues/8723
+                $this->runCommand($service, 'docker-compose build');
+            }
         }
 
         return $this->runCommand($service, 'docker-compose up -d');

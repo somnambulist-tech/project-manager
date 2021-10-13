@@ -70,7 +70,7 @@ Now you can run `spm services:create` or `spm libraries:create` to create one of
 Once completed the library will be automatically registered in the project config and it will be
 updated.
 
-By default a new git repository is initialised in the library folder and all files committed to
+By default, a new git repository is initialised in the library folder and all files committed to
 the master branch.
 
 If you have existing libraries, manually configure them in the `project.yaml` file or, you can
