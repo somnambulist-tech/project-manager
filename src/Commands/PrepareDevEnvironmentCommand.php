@@ -29,7 +29,7 @@ class PrepareDevEnvironmentCommand extends AbstractCommand implements ProjectCon
     use GetCurrentActiveProject;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('setup:env')
@@ -41,9 +41,9 @@ class PrepareDevEnvironmentCommand extends AbstractCommand implements ProjectCon
             ->addOption('bash', 'b', InputOption::VALUE_NONE, 'Output commands on each line without comments; runs as test')
             ->setHelp(<<<HLP
 Various commands can be provided in an YAML file for setting up a dev machine
-with various applications, configuration defaults for faster dev setup. Typically
+with various applications, configuration defaults for faster dev setup. Typically,
 these will be for installing company preferred apps, default configuration or
-hosts entries, VPN configuration etc etc.
+hosts entries, VPN configuration etc.
 
 By default, this command will attempt to run the <info>mac</info> config options.
 You should specify the alternative setup file using the second argument, or use
@@ -58,7 +58,7 @@ HLP)
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -97,15 +97,13 @@ HLP)
         $i    = 0;
         $skip = $input->getOption('step');
 
-        foreach ($steps['steps'] as $step => $instructions) {
+        foreach ($steps['steps'] as $instructions) {
             $this->tools()
                 ->step(++$i, sprintf('%s (<info>%d</info> commands)', $instructions['message'], count($instructions['commands'])))
             ;
 
             if ($i >= $skip) {
                 foreach ($instructions['commands'] as $command) {
-                    $args = null;
-
                     $toRun = $command['run'];
                     $file  = $command['file'] ?? null;
 

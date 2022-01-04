@@ -25,7 +25,7 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
     use GetCurrentActiveProject;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setAliases(['libraries'])
@@ -34,7 +34,7 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -51,16 +51,8 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
         $project
             ->libraries()
             ->list()
-            ->sort(function (Library $a, Library $b) {
-                return $a->name() <=> $b->name();
-            })
-            ->each(function (Library $service) use ($table) {
-                $table->addRow([
-                    $service->name(),
-                    $service->installPath(),
-                    $service->isInstalled() ? 'yes' : 'no',
-                ]);
-            })
+            ->sort(fn (Library $a, Library $b) => $a->name() <=> $b->name())
+            ->each(fn (Library $s) => $table->addRow([$s->name(), $s->installPath(), $s->isInstalled() ? 'yes' : 'no',]))
         ;
 
         $table->addRows([

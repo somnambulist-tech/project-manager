@@ -24,7 +24,7 @@ class InitCommand extends AbstractCommand
 
     use UseEnvironmentTemplate;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('init')
@@ -33,7 +33,7 @@ class InitCommand extends AbstractCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -66,7 +66,7 @@ class InitCommand extends AbstractCommand
         return 0;
     }
 
-    private function config()
+    private function config(): false|string
     {
         return file_get_contents(dirname(__DIR__, 2) . '/config/project_manager.yaml');
     }

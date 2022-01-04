@@ -10,18 +10,12 @@ namespace Somnambulist\ProjectManager\Commands\Config;
  */
 final class CommandOptionResult
 {
-
-    private $result;
-    private $success;
-    private $error;
-    private $info;
-
-    public function __construct(int $result, string $success, string $error, string $info)
-    {
-        $this->result  = $result;
-        $this->success = $success;
-        $this->error   = $error;
-        $this->info    = $info;
+    public function __construct(
+        private int $result,
+        private string $success,
+        private string $error,
+        private string $info
+    ) {
     }
 
     public static function ok(string $message = ''): CommandOptionResult

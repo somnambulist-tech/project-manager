@@ -12,11 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 trait IsRunningInDebugMode
 {
-
-    /**
-     * @var bool
-     */
-    protected $debug = false;
+    protected bool $debug = false;
 
     protected function setIsDebugging(InputInterface $input): bool
     {

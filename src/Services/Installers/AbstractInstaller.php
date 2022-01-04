@@ -19,21 +19,13 @@ use const DIRECTORY_SEPARATOR;
  */
 abstract class AbstractInstaller
 {
-
     use CanCreateLibraryOrServicesFolder;
     use CanCopyFromConfigTemplates;
     use CanInitialiseGitRepository;
     use CanUpdateProjectConfiguration;
 
-    /**
-     * @var ConsoleHelper
-     */
-    protected $consoleHelper;
-
-    /**
-     * @var string
-     */
-    protected $type;
+    protected ConsoleHelper $consoleHelper;
+    protected string $type;
 
     public function __construct(ConsoleHelper $helper, string $type)
     {

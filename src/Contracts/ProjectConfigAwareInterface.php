@@ -12,6 +12,5 @@ use Somnambulist\ProjectManager\Models\Config;
  */
 interface ProjectConfigAwareInterface
 {
-
     public function bindConfiguration(Config $config): void;
 }

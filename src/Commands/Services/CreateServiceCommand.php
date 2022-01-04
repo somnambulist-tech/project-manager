@@ -35,7 +35,7 @@ class CreateServiceCommand extends AbstractCommand implements ProjectConfigAware
     use CanInitialiseGitRepository;
     use CanCreateLibraryOrServicesFolder;
 
-    protected function configure()
+    protected function configure(): void
     {
         $default = $_SERVER['PROJECT_SERVICES_DIR'];
 
@@ -71,7 +71,7 @@ HLP
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -100,18 +100,11 @@ HLP
 
         $project->services()->add(new Service($name, $name, null, null, $container, $dependencies));
 
-        switch (true):
-            case $template->isGitResource():
-                return (new GitInstaller($this->tools(), 'service'))->installInto($project, $template, $name, $cwd);
-
-            case $template->isComposerResource():
-                return (new ComposerInstaller($this->tools(), 'service'))->installInto($project, $template, $name, $cwd);
-
-            case $template->hasResource():
-                return (new ConfigTemplateInstaller($this->tools(), 'service'))->installInto($project, $template, $name, $cwd);
-
-            default:
-                return (new EmptyServiceInstaller($this->tools(), 'service'))->installInto($project, $name, $cwd);
-        endswitch;
+        return match (true) {
+            $template->isGitResource() => (new GitInstaller($this->tools(), 'service'))->installInto($project, $template, $name, $cwd),
+            $template->isComposerResource() => (new ComposerInstaller($this->tools(), 'service'))->installInto($project, $template, $name, $cwd),
+            $template->hasResource() => (new ConfigTemplateInstaller($this->tools(), 'service'))->installInto($project, $template, $name, $cwd),
+            default => (new EmptyServiceInstaller($this->tools(), 'service'))->installInto($project, $name, $cwd),
+        };
     }
 }

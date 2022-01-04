@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Contracts;
 
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 
 /**
  * Interface InstallableResourcesCollection
@@ -12,7 +12,6 @@ use Somnambulist\Collection\MutableCollection;
  */
 interface InstallableResourcesCollection
 {
-
     public function list(): MutableCollection;
 
     public function add(InstallableResource $resource);

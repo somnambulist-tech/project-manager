@@ -17,13 +17,7 @@ use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
  */
 trait GetTemplateFromProjectOrConfig
 {
-
-    /**
-     * @param string $template
-     *
-     * @return int|Template
-     */
-    protected function getTemplate(string $template)
+    protected function getTemplate(string $template): int|Template
     {
         if (null === $temp = $this->config->projects()->active()->templates()->get($template)) {
             if (null === $temp = $this->config->templates()->get($template)) {

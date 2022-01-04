@@ -12,7 +12,6 @@ namespace Somnambulist\ProjectManager\Models;
  */
 final class Library extends AbstractLibrary
 {
-
     public function installPath(): string
     {
         return sprintf('%s/%s', $_SERVER['PROJECT_LIBRARIES_DIR'], $this->directoryName());

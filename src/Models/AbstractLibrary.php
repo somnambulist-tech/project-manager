@@ -14,33 +14,12 @@ use function sprintf;
  */
 abstract class AbstractLibrary implements InstallableResource
 {
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $directoryName;
-
-    /**
-     * @var string|null
-     */
-    private $repository;
-
-    /**
-     * @var string|null
-     */
-    private $branch;
-
-    public function __construct(string $name, string $dirname, string $repository = null, string $branch = null)
-    {
-        $this->name          = $name;
-        $this->directoryName = $dirname;
-        $this->repository    = $repository;
-        $this->branch        = $branch;
+    public function __construct(
+        private string $name,
+        private string $directoryName,
+        private ?string $repository = null,
+        private ?string $branch = null
+    ) {
     }
 
     public function __toString()

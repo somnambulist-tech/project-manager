@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Models;
 
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Contracts\RunnableResource;
 use function sprintf;
 
@@ -14,26 +14,10 @@ use function sprintf;
  */
 final class Service extends AbstractLibrary implements RunnableResource
 {
-
-    /**
-     * @var string
-     */
-    private $appContainer;
-
-    /**
-     * @var MutableCollection|string[]
-     */
-    private $dependencies = [];
-
-    /**
-     * @var bool
-     */
-    private $running = false;
-
-    /**
-     * @var null|string
-     */
-    private $runningContainerId;
+    private string $appContainer;
+    private MutableCollection $dependencies;
+    private bool $running = false;
+    private ?string $runningContainerId  = null;
 
     public function __construct(string $name, string $dirname, ?string $repository, ?string $branch, ?string $appContainer, array $dependencies = [])
     {

@@ -21,7 +21,7 @@ class EditProjectCommand extends AbstractCommand implements ProjectConfigAwareIn
     use GetCurrentActiveProject;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('project:edit')
@@ -30,7 +30,7 @@ class EditProjectCommand extends AbstractCommand implements ProjectConfigAwareIn
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 

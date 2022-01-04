@@ -2,8 +2,6 @@
 
 namespace Somnambulist\ProjectManager\Models;
 
-use function strpos;
-
 /**
  * Class Template
  *
@@ -12,27 +10,8 @@ use function strpos;
  */
 final class Template
 {
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string|null
-     */
-    private $source;
-
-    public function __construct(string $name, string $type, string $source = null)
+    public function __construct(private string $name, private string $type, private ?string $source = null)
     {
-        $this->name   = $name;
-        $this->type   = $type;
-        $this->source = $source;
     }
 
     public function name(): string
@@ -62,11 +41,11 @@ final class Template
 
     public function isComposerResource(): bool
     {
-        return $this->hasResource() && 0 === strpos($this->source, 'composer:');
+        return $this->hasResource() && str_starts_with($this->source, 'composer:');
     }
 
     public function isGitResource(): bool
     {
-        return $this->hasResource() && 0 === strpos($this->source, 'git:');
+        return $this->hasResource() && str_starts_with($this->source, 'git:');
     }
 }

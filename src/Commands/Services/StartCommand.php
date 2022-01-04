@@ -32,7 +32,7 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
     use DockerAwareCommand;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('services:start')
@@ -50,7 +50,7 @@ class StartCommand extends AbstractCommand implements DockerAwareInterface, Proj
 Start services from the currently active project from anywhere by specifying
 the service names to start. e.g.: <info>%command.full_name% service1 service2</info>
 
-If the command is run without any arguments and you are in a runnable service
+If the command is run without any arguments, and you are in a runnable service,
 that service will be started, otherwise the available services will be listed.
 
 All services can be started by using: <info>%command.full_name% all</info>
@@ -76,7 +76,7 @@ HLP)
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setIsDebugging($input);
         $this->setupConsoleHelper($input, $output);
@@ -178,9 +178,7 @@ HLP)
         }
 
         if (strtolower(trim($deps)) === 'y') {
-            $service->dependencies()->each(function ($name) {
-                $this->startService($name);
-            });
+            $service->dependencies()->each(fn ($name) => $this->startService($name));
         }
     }
 

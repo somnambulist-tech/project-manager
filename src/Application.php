@@ -32,9 +32,9 @@ use Throwable;
  */
 class Application extends BaseApplication
 {
-    private $kernel;
-    private $commandsRegistered = false;
-    private $registrationErrors = [];
+    private KernelInterface $kernel;
+    private bool $commandsRegistered = false;
+    private array $registrationErrors = [];
 
     public function __construct(KernelInterface $kernel, string $version)
     {
@@ -43,7 +43,7 @@ class Application extends BaseApplication
         parent::__construct('Somnambulist Project Manager', $version);
     }
 
-    public function getLongVersion()
+    public function getLongVersion(): string
     {
         return trim(parent::getLongVersion()) . sprintf(' (project: <comment>%s</>)', $_SERVER['SOMNAMBULIST_ACTIVE_PROJECT'] ?: '-');
     }
@@ -53,15 +53,12 @@ class Application extends BaseApplication
      *
      * @return KernelInterface A KernelInterface instance
      */
-    public function getKernel()
+    public function getKernel(): KernelInterface
     {
         return $this->kernel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reset()
+    public function reset(): void
     {
 
     }
@@ -75,7 +72,7 @@ class Application extends BaseApplication
      * @return int 0 if everything went fine, or an error code
      * @throws Throwable
      */
-    public function doRun(InputInterface $input, OutputInterface $output)
+    public function doRun(InputInterface $input, OutputInterface $output): int
     {
         $this->registerCommands();
 
@@ -88,10 +85,7 @@ class Application extends BaseApplication
         return parent::doRun($input, $output);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doRunCommand(Command $command, InputInterface $input, OutputInterface $output)
+    protected function doRunCommand(Command $command, InputInterface $input, OutputInterface $output): int
     {
         $helper = new ConsoleHelper($input, $output);
 
@@ -132,20 +126,14 @@ class Application extends BaseApplication
         return $returnCode;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function find($name)
+    public function find($name): Command
     {
         $this->registerCommands();
 
         return parent::find($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($name)
+    public function get($name): Command
     {
         $this->registerCommands();
 
@@ -158,24 +146,21 @@ class Application extends BaseApplication
         return $command;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function all($namespace = null)
+    public function all($namespace = null): array
     {
         $this->registerCommands();
 
         return parent::all($namespace);
     }
 
-    public function add(Command $command)
+    public function add(Command $command): Command
     {
         $this->registerCommands();
 
         return parent::add($command);
     }
 
-    protected function registerCommands()
+    protected function registerCommands(): void
     {
         if ($this->commandsRegistered) {
             return;
@@ -205,7 +190,7 @@ class Application extends BaseApplication
         }
     }
 
-    private function renderRegistrationErrors(InputInterface $input, OutputInterface $output)
+    private function renderRegistrationErrors(InputInterface $input, OutputInterface $output): void
     {
         if ($output instanceof ConsoleOutputInterface) {
             $output = $output->getErrorOutput();

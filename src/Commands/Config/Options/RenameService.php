@@ -28,7 +28,7 @@ class RenameService extends AbstractCommandOption
 
     public function run(Project $project, string $library, array $options): CommandOptionResult
     {
-        if (!isset($options['name']) || empty($options['name'])) {
+        if (empty($options['name'])) {
             return CommandOptionResult::error('missing a value for <info>name</info>');
         }
 

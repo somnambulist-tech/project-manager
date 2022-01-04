@@ -12,6 +12,5 @@ use Somnambulist\ProjectManager\Services\SyncItManager;
  */
 interface SyncItAwareInterface
 {
-
     public function bindSyncItManager(SyncItManager $syncIt): void;
 }

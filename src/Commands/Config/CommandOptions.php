@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Commands\Config;
 
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Models\Project;
 use function sprintf;
 
@@ -14,11 +14,7 @@ use function sprintf;
  */
 class CommandOptions
 {
-
-    /**
-     * @var MutableCollection
-     */
-    private $options;
+    private MutableCollection $options;
 
     public function __construct()
     {
@@ -56,9 +52,7 @@ class CommandOptions
     {
         return $this
             ->options
-            ->map(function (AbstractCommandOption $o) {
-                return sprintf("<info>%- 25s</info> : %s\n", $o->getOption(), $o->getDescription());
-            })
+            ->map(fn(AbstractCommandOption $o) => sprintf("<info>%- 25s</info> : %s\n", $o->getOption(), $o->getDescription()))
             ->implode('')
         ;
     }

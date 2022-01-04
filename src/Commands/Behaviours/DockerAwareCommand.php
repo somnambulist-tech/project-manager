@@ -12,11 +12,7 @@ use Somnambulist\ProjectManager\Services\DockerManager;
  */
 trait DockerAwareCommand
 {
-
-    /**
-     * @var DockerManager
-     */
-    protected $docker;
+    protected ?DockerManager $docker = null;
 
     public function bindDockerManager(DockerManager $docker): void
     {

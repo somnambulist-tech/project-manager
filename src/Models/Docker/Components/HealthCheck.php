@@ -10,39 +10,13 @@ namespace Somnambulist\ProjectManager\Models\Docker\Components;
  */
 class HealthCheck
 {
-
-    /**
-     * @var array
-     */
-    private $test;
-
-    /**
-     * @var string
-     */
-    private $interval;
-
-    /**
-     * @var string
-     */
-    private $timeout;
-
-    /**
-     * @var int
-     */
-    private $retries;
-
-    /**
-     * @var string
-     */
-    private $startPeriod;
-
-    public function __construct(array $test, ?string $interval, ?string $timeout, ?int $retries, ?string $startPeriod)
-    {
-        $this->test        = $test;
-        $this->interval    = $interval;
-        $this->timeout     = $timeout;
-        $this->retries     = $retries;
-        $this->startPeriod = $startPeriod;
+    public function __construct(
+        private array $test,
+        private ?string $interval,
+        private ?string $timeout,
+        private ?int $retries,
+        private ?string $startPeriod
+    ) {
     }
 
     public static function from(array $data): ?HealthCheck

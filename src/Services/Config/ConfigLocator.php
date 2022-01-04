@@ -27,7 +27,7 @@ class ConfigLocator
         return realpath(dirname(__DIR__) . '/../../config/project_manager.yaml');
     }
 
-    private function tryLocations()
+    private function tryLocations(): false|string
     {
         if (getenv(static::ENV_NAME)) {
             return realpath(sprintf('%s/%s', getenv(static::ENV_NAME), static::FILE_NAME));

@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Commands\Behaviours;
 
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Models\Config;
 use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
 use Symfony\Component\Console\Input\InputInterface;

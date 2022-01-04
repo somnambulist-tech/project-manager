@@ -21,7 +21,6 @@ use function strtr;
  */
 class Compiler
 {
-
     private function basePath(): string
     {
         return __DIR__ . '/../..';
@@ -34,7 +33,7 @@ class Compiler
      *
      * @throws RuntimeException
      */
-    public function compile($pharFile = 'somnambulist-project-manager.phar')
+    public function compile(string $pharFile = 'somnambulist-project-manager.phar'): void
     {
         if (file_exists($pharFile)) {
             unlink($pharFile);
@@ -103,9 +102,7 @@ class Compiler
             ->in($basePath . '/vendor/somnambulist/')
             ->in($basePath . '/vendor/symfony/')
             ->in($basePath . '/vendor/voku/')
-            ->sort(function (SplFileInfo $a, SplFileInfo $b) {
-                return strcmp(strtr($a->getRealPath(), '\\', '/'), strtr($b->getRealPath(), '\\', '/'));
-            })
+            ->sort(fn (SplFileInfo $a, SplFileInfo $b) => strcmp(strtr($a->getRealPath(), '\\', '/'), strtr($b->getRealPath(), '\\', '/')))
         ;
 
         foreach ($finder as $file) {
@@ -121,9 +118,7 @@ class Compiler
             ->in($basePath . '/config/definitions/')
             ->name('*')
             ->ignoreVCS(true)
-            ->sort(function (SplFileInfo $a, SplFileInfo $b) {
-                return strcmp(strtr($a->getRealPath(), '\\', '/'), strtr($b->getRealPath(), '\\', '/'));
-            })
+            ->sort(fn (SplFileInfo $a, SplFileInfo $b) => strcmp(strtr($a->getRealPath(), '\\', '/'), strtr($b->getRealPath(), '\\', '/')))
         ;
 
         foreach ($finder as $file) {
@@ -131,21 +126,21 @@ class Compiler
         }
     }
 
-    private function addFile(Phar $phar, SplFileInfo $file, $strip = true): void
+    private function addFile(Phar $phar, SplFileInfo $file): void
     {
-        $path = strtr(str_replace(realpath($this->basePath()), '', $file->getRealPath()), '\\', '/');
-
+        $path    = strtr(str_replace(realpath($this->basePath()), '', $file->getRealPath()), '\\', '/');
         $content = file_get_contents($file->getRealPath());
-        if ($strip) {
-            $content = $this->stripWhitespace($content);
-        } elseif ('LICENSE' === basename($file)) {
+
+        if ('LICENSE' === $file->getBasename()) {
             $content = "\n" . $content . "\n";
+        } else {
+            $content = $this->stripWhitespace($content);
         }
 
         $phar->addFromString($path, $content);
     }
 
-    private function addBin(Phar $phar)
+    private function addBin(Phar $phar): void
     {
         $content = file_get_contents($this->basePath() . '/bin/console');
         $content = preg_replace('{^#!/usr/bin/env php\s*}', '', $content);
@@ -169,7 +164,7 @@ class Compiler
      *
      * @return string The PHP string with the whitespace removed
      */
-    private function stripWhitespace(string $source)
+    private function stripWhitespace(string $source): string
     {
         if (!function_exists('token_get_all')) {
             return $source;

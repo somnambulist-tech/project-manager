@@ -16,11 +16,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ComposeFileLoader
 {
-
-    /**
-     * @var ComposeServiceFactory
-     */
-    private $services;
+    private ComposeServiceFactory $services;
 
     public function __construct()
     {

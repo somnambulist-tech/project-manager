@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Tests\Services\Config;
 
-use Somnambulist\Collection\FrozenCollection;
+use Somnambulist\Components\Collection\FrozenCollection;
 use Somnambulist\ProjectManager\Models\Config;
 use PHPUnit\Framework\TestCase;
 use Somnambulist\ProjectManager\Models\Project;

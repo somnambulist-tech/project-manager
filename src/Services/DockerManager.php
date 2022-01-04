@@ -4,7 +4,7 @@ namespace Somnambulist\ProjectManager\Services;
 
 use Exception;
 use RuntimeException;
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Models\Service;
 use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
 use Symfony\Component\Dotenv\Dotenv;
@@ -49,23 +49,13 @@ use function version_compare;
  */
 class DockerManager
 {
-
-    /**
-     * @var ConsoleHelper
-     */
-    private $helper;
-
-    /**
-     * @var string
-     */
-    private $version;
+    private ?ConsoleHelper $helper = null;
+    private string $version;
 
     /**
      * An array of ENV names that must not be passed through to other commands
-     *
-     * @var array
      */
-    private $toRemove = [
+    private array $toRemove = [
         'APP_ENV'              => false,
         'COMPOSE_PROJECT_NAME' => false,
         'SYMFONY_DOTENV_VARS'  => false,
@@ -121,7 +111,7 @@ class DockerManager
             $container = trim($containers[0]);
 
             $service->start($container);
-        } catch (Exception $e) {
+        } catch (Exception) {
             $service->stop();
         }
     }
@@ -217,7 +207,7 @@ class DockerManager
             }
 
             return $res;
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         return false;
@@ -238,7 +228,7 @@ class DockerManager
 
                 return $res;
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         return false;

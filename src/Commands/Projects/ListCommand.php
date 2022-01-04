@@ -23,16 +23,16 @@ class ListCommand extends AbstractCommand implements ProjectConfigAwareInterface
 
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setAliases(['projects'])
+            ->setAliases(['projects', 'projects:list'])
             ->setName('project:list')
             ->setDescription('Lists all available, configured projects on this machine')
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 

@@ -36,7 +36,7 @@ class CreateLibraryCommand extends AbstractCommand implements ProjectConfigAware
     use CanCreateLibraryOrServicesFolder;
     use CanUpdateProjectConfiguration;
 
-    protected function configure()
+    protected function configure(): void
     {
         $default = $_SERVER['PROJECT_LIBRARIES_DIR'];
 
@@ -62,7 +62,7 @@ HLP
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -86,18 +86,11 @@ HLP
 
         $project->libraries()->add(new Library($name, $name));
 
-        switch (true):
-            case $template->isGitResource():
-                return (new GitInstaller($this->tools(), 'library'))->installInto($project, $template, $name, $cwd);
-
-            case $template->isComposerResource():
-                return (new ComposerInstaller($this->tools(), 'library'))->installInto($project, $template, $name, $cwd);
-
-            case $template->hasResource():
-                return (new ConfigTemplateInstaller($this->tools(), 'library'))->installInto($project, $template, $name, $cwd);
-
-            default:
-                return (new EmptyLibraryInstaller($this->tools(), 'library'))->installInto($project, $name, $cwd);
-        endswitch;
+        return match (true) {
+            $template->isGitResource() => (new GitInstaller($this->tools(), 'library'))->installInto($project, $template, $name, $cwd),
+            $template->isComposerResource() => (new ComposerInstaller($this->tools(), 'library'))->installInto($project, $template, $name, $cwd),
+            $template->hasResource() => (new ConfigTemplateInstaller($this->tools(), 'library'))->installInto($project, $template, $name, $cwd),
+            default => (new EmptyLibraryInstaller($this->tools(), 'library'))->installInto($project, $name, $cwd),
+        };
     }
 }

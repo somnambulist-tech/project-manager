@@ -19,8 +19,7 @@ use function str_replace;
  */
 class SetDockerProjectName extends AbstractCommandOption
 {
-
-    private $envs = ['.env', '.env.local', '.env.example', '.env.test', '.env.test.local', '.env.docker'];
+    private array $envs = ['.env', '.env.local', '.env.example', '.env.test', '.env.test.local', '.env.docker'];
 
     public function __construct()
     {
@@ -35,7 +34,7 @@ class SetDockerProjectName extends AbstractCommandOption
 
     public function run(Project $project, string $library, array $options): CommandOptionResult
     {
-        if (!isset($options['name']) || empty($options['name'])) {
+        if (empty($options['name'])) {
             return CommandOptionResult::error('missing a value for <info>name</info>');
         }
 

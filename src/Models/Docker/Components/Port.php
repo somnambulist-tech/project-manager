@@ -12,40 +12,18 @@ use InvalidArgumentException;
  */
 class Port
 {
-
-    /**
-     * @var int
-     */
-    private $local;
-
-    /**
-     * @var int
-     */
-    private $docker;
-
-    /**
-     * @var string
-     */
-    private $protocol;
-
-    /**
-     * @var string
-     */
-    private $mode;
-
-    public function __construct(int $local, int $docker, string $protocol = 'tcp', string $mode = 'host')
-    {
+    public function __construct(
+        private int $local,
+        private int $docker,
+        private string $protocol = 'tcp',
+        private string $mode = 'host'
+    ) {
         if (!in_array($protocol, ['tcp', 'udp'])) {
             throw new InvalidArgumentException('protocol can be one of: tcp, udp');
         }
         if (!in_array($mode, ['host', 'ingress'])) {
             throw new InvalidArgumentException('mode can be one of: host, ingress');
         }
-
-        $this->local    = $local;
-        $this->docker   = $docker;
-        $this->protocol = $protocol;
-        $this->mode      = $mode;
     }
 
     public static function from(array $data): Port
@@ -78,10 +56,7 @@ class Port
         return $this->mode;
     }
 
-    /**
-     * @return array|string
-     */
-    public function exportForYaml()
+    public function exportForYaml(): string|array
     {
         if ($this->mode === 'ingress') {
             return [

@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Services\Docker;
 
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Exceptions\DefinitionNotFound;
 use Somnambulist\ProjectManager\Models\Definitions\ServiceDefinition;
 use SplFileInfo;
@@ -56,9 +56,9 @@ class ServiceDefinitionLocator
 
         foreach ([$_SERVER['SOMNAMBULIST_ACTIVE_PROJECT'] . '/definitions', '/definitions'] as $path) {
             try {
-                $files->in($d = sprintf('%s/%s', $_SERVER['SOMNAMBULIST_PROJECTS_CONFIG_DIR'], $path));
+                $files->in(sprintf('%s/%s', $_SERVER['SOMNAMBULIST_PROJECTS_CONFIG_DIR'], $path));
                 $f = true;
-            } catch (DirectoryNotFoundException $e) {
+            } catch (DirectoryNotFoundException) {
                 // SF Finder throws exceptions if the dir does not exist
             }
         }
@@ -84,7 +84,7 @@ class ServiceDefinitionLocator
             foreach ($files as $f) {
                 $return[] = new ServiceDefinition(str_replace($path . '/', '', $f->getPathname()), $f->getContents());
             }
-        } catch (DirectoryNotFoundException $e) {
+        } catch (DirectoryNotFoundException) {
         }
 
         return $return;

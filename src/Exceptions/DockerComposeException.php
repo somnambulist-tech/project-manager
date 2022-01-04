@@ -10,7 +10,6 @@ namespace Somnambulist\ProjectManager\Exceptions;
  */
 class DockerComposeException extends ValidationException
 {
-
     public static function elementAlreadyDefined(string $type, string $name): self
     {
         return new self(sprintf('A "%s" named "%s" already exists', $type, $name));

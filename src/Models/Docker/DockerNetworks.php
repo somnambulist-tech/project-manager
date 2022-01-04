@@ -15,15 +15,12 @@ use Somnambulist\ProjectManager\Models\Docker\Components\ComposeNetwork;
  */
 class DockerNetworks extends AbstractElements
 {
-
-    protected $class = ComposeNetwork::class;
+    protected string $class = ComposeNetwork::class;
 
     public function exportForYaml(): array
     {
         return $this
-            ->map(function (ComposeNetwork $s) {
-                return $s->exportForYaml();
-            })
+            ->map(fn (ComposeNetwork $s) => $s->exportForYaml())
             ->all()
         ;
     }
@@ -31,9 +28,7 @@ class DockerNetworks extends AbstractElements
     public function getReferenceFromNetworkName(string $name)
     {
         return $this
-            ->filter(function (ComposeNetwork $n) use ($name) {
-                return $n->name() === $name;
-            })
+            ->filter(fn(ComposeNetwork $n)=> $n->name() === $name)
             ->keys()
             ->first()
         ;

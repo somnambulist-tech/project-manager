@@ -10,21 +10,8 @@ namespace Somnambulist\ProjectManager\Models\Docker\Components;
  */
 class ServiceNetwork
 {
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var array
-     */
-    private $aliases;
-
-    public function __construct(string $name, array $aliases = [])
+    public function __construct(private string $name, private array $aliases = [])
     {
-        $this->name    = $name;
-        $this->aliases = $aliases;
     }
 
     public function name(): string

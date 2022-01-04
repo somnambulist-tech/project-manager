@@ -6,6 +6,7 @@ use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use Traversable;
 use function array_filter;
 use function array_key_exists;
 use function array_map;
@@ -23,33 +24,26 @@ use const ARRAY_FILTER_USE_BOTH;
  */
 class Options implements ArrayAccess, Countable, IteratorAggregate
 {
-
-    /**
-     * @var array
-     */
-    private $items;
-
-    public function __construct(array $options = [])
+    public function __construct(private array $items = [])
     {
-        $this->items = $options;
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->items);
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->items);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->items[$offset] ?? null;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (null === $offset) {
             $this->items[] = $value;
@@ -58,12 +52,12 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         }
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->items[$offset]);
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->items);
     }
@@ -73,17 +67,17 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         return $this->items;
     }
 
-    public function first()
+    public function first(): mixed
     {
         return reset($this->items);
     }
 
-    public function last()
+    public function last(): mixed
     {
         return end($this->items);
     }
 
-    public function find(callable $func)
+    public function find(callable $func): mixed
     {
         return array_filter($this->items, $func, ARRAY_FILTER_USE_BOTH)[0] ?? null;
     }
@@ -144,7 +138,7 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         return $this->offsetExists($option);
     }
 
-    public function hasAllOf(...$option): bool
+    public function hasAllOf(string ...$option): bool
     {
         $ret = true;
 
@@ -155,7 +149,7 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         return $ret;
     }
 
-    public function hasAnyOf(...$option): bool
+    public function hasAnyOf(string ...$option): bool
     {
         foreach ($option as $opt) {
             if ($this->has($opt)) {
@@ -179,7 +173,7 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         return $ret;
     }
 
-    public function get($option, $default = null)
+    public function get(int|string $option, mixed $default = null)
     {
         if (null === $val = $this->offsetGet($option)) {
             return $default;
@@ -188,21 +182,21 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         return $val;
     }
 
-    public function add($value): self
+    public function add(mixed $value): self
     {
         $this->offsetSet(null, $value);
 
         return $this;
     }
 
-    public function set($option, $value): self
+    public function set(int|string $option, mixed $value): self
     {
         $this->offsetSet($option, $value);
 
         return $this;
     }
 
-    public function remove($value): self
+    public function remove(mixed $value): self
     {
         if (false !== $key = array_search($value, $this->items, true)) {
             $this->unset($key);
@@ -211,7 +205,7 @@ class Options implements ArrayAccess, Countable, IteratorAggregate
         return $this;
     }
 
-    public function unset($option): self
+    public function unset(int|string $option): self
     {
         $this->offsetUnset($option);
 

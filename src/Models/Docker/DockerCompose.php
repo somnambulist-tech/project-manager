@@ -17,30 +17,12 @@ use function array_key_exists;
  */
 class DockerCompose
 {
+    private DockerServices $services;
+    private DockerNetworks $networks;
+    private DockerVolumes $volumes;
 
-    /**
-     * @var string
-     */
-    private $version;
-
-    /**
-     * @var DockerServices
-     */
-    private $services;
-
-    /**
-     * @var DockerNetworks
-     */
-    private $networks;
-
-    /**
-     * @var DockerVolumes
-     */
-    private $volumes;
-
-    public function __construct(string $version)
+    public function __construct(private string $version)
     {
-        $this->version  = $version;
         $this->services = new DockerServices();
         $this->networks = new DockerNetworks();
         $this->volumes  = new DockerVolumes();
@@ -86,30 +68,13 @@ class DockerCompose
     public function validate()
     {
         $volumes = $this->services
-            ->map(function (ComposeService $s) {
-                return $s
-                    ->volumes()
-                    ->filter(function (ServiceVolume $v) {
-                        return $v->isVolume();
-                    })
-                    ->map(function (ServiceVolume $v) {
-                        return $v->source();
-                    })
-                    ->all()
-                ;
-            })
+            ->map(
+                fn(ComposeService $s) => $s->volumes()->filter(fn(ServiceVolume $v) => $v->isVolume())->map(fn(ServiceVolume $v) => $v->source())->all()
+            )
             ->flatten()
         ;
         $networks = $this->services
-            ->map(function (ComposeService $s) {
-                return $s
-                    ->networks()
-                    ->map(function (ServiceNetwork $n) {
-                        return $n->name();
-                    })
-                    ->all()
-                ;
-            })
+            ->map(fn(ComposeService $s) => $s->networks()->map(fn(ServiceNetwork $n) => $n->name())->all())
             ->flatten()
         ;
 

@@ -12,6 +12,5 @@ use Somnambulist\ProjectManager\Models\Templates;
  */
 interface TemplatableResource
 {
-
     public function templates(): Templates;
 }

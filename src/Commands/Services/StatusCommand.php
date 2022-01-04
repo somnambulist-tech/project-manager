@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Commands\Services;
 
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
@@ -26,7 +26,6 @@ use function parse_url;
 use function sprintf;
 use function str_replace;
 use function strlen;
-use function strpos;
 use function trim;
 use function ucfirst;
 use const PHP_URL_HOST;
@@ -45,7 +44,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
     use ProjectConfigAwareCommand;
     use SyncItAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('services:status')
@@ -56,7 +55,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -76,9 +75,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
         $this
             ->docker
             ->status($project->docker()->get('compose_project_name'))
-            ->sort(function ($r1, $r2) {
-                return $r1['name'] <=> $r2['name'];
-            })
+            ->sort(fn($r1, $r2) => $r1['name'] <=> $r2['name'])
             ->each(function (array $row) use ($data, $project, $disableSyncit) {
                 $mounts = $this->getMountsFromString($row['mounts']);
                 $ports  = $this->getPortsFromString($row['ports']);
@@ -131,9 +128,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
     {
         $output->writeln('"container","container_status","container_host","container_port","container_mounts","syncit_status"');
 
-        $data->each(function ($row) use ($output) {
-            $output->writeln(str_replace(["\n"], ["|"], sprintf('"%s"', implode('","', $row))));
-        });
+        $data->each(fn ($row) => $output->writeln(str_replace(["\n"], ["|"], sprintf('"%s"', implode('","', $row)))));
 
         $this->tools()->newline();
     }
@@ -149,9 +144,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
     {
         $output->writeln('container|container_status|container_host|container_port|container_mounts|syncit_status');
 
-        $data->each(function ($row) use ($output) {
-            $output->writeln(str_replace(["\n"], [","], sprintf('%s', implode('|', $row))));
-        });
+        $data->each(fn ($row) => $output->writeln(str_replace(["\n"], [","], sprintf('%s', implode('|', $row)))));
 
         $this->tools()->newline();
     }
@@ -171,11 +164,11 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
     {
         $ports = '';
 
-        if (false !== strpos($string, '->')) {
+        if (str_contains($string, '->')) {
             $tmp = [];
 
             foreach (explode(', ', $string) as $port) {
-                if (false !== strpos($port, '->')) {
+                if (str_contains($port, '->')) {
                     [$forwarded, $internal] = explode('->', $port);
 
                     $tmp[] = explode(':', $forwarded)[1];
@@ -193,7 +186,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
         $labels = new MutableCollection();
 
         foreach (explode(',', $string) as $label) {
-            if (false !== strpos($label, '=')) {
+            if (str_contains($label, '=')) {
                 [$key, $value] = explode('=', $label);
 
                 $labels->set($key, $value);
@@ -205,7 +198,7 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
 
     private function getHostFromLabels(MutableCollection $labels): string
     {
-        if (strpos($labels->get('com.docker.compose.service', ''), 'db-') === 0) {
+        if (str_starts_with($labels->get('com.docker.compose.service', ''), 'db-')) {
             if (array_key_exists('DOCKER_HOST', $_SERVER)) {
                 return parse_url($_SERVER['DOCKER_HOST'], PHP_URL_HOST);
             }
@@ -219,8 +212,8 @@ class StatusCommand extends AbstractCommand implements DockerAwareInterface, Pro
 
         return
             $labels
-                ->filter(function ($value, $key) { return false !== strpos($key, '.rule'); })
-                ->map(function ($value) { return trim(str_replace(['Host', 'host', ':', '(', '`', ')'], '', $value)); })
+                ->filter(fn($value, $key) => str_contains($key, '.rule'))
+                ->map(fn ($value) => trim(str_replace(['Host', 'host', ':', '(', '`', ')'], '', $value)))
                 ->first() ?? ''
             ;
     }

@@ -3,7 +3,7 @@
 namespace Somnambulist\ProjectManager\Tests\Models;
 
 use PHPUnit\Framework\TestCase;
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Models\Service;
 
 /**

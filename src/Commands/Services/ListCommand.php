@@ -23,12 +23,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ListCommand extends AbstractCommand implements DockerAwareInterface, ProjectConfigAwareInterface
 {
-
     use GetCurrentActiveProject;
     use DockerAwareCommand;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setAliases(['services'])
@@ -37,7 +36,7 @@ class ListCommand extends AbstractCommand implements DockerAwareInterface, Proje
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -54,11 +53,9 @@ class ListCommand extends AbstractCommand implements DockerAwareInterface, Proje
         $project
             ->services()
             ->list()
-            ->sort(function (Service $a, Service $b) {
-                return $a->name() <=> $b->name();
-            })
+            ->sort(fn(Service $a, Service $b) => $a->name() <=> $b->name())
             ->each(function (Service $service) use ($table) {
-                $service->appContainer() ? $this->docker->resolve($service) : null;
+                $service->appContainer() ?? $this->docker->resolve($service);
 
                 $table->addRow([
                     $service->name(),

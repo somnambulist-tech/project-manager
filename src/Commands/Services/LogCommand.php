@@ -29,7 +29,7 @@ class LogCommand extends AbstractCommand implements DockerAwareInterface, Projec
     use GetCurrentActiveProject;
     use CanSelectServiceFromInput;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('services:log')
@@ -40,7 +40,7 @@ class LogCommand extends AbstractCommand implements DockerAwareInterface, Projec
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 

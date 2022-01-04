@@ -29,7 +29,7 @@ class RestartAppCommand extends AbstractCommand implements DockerAwareInterface,
     use DockerAwareCommand;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('services:restart')
@@ -40,7 +40,7 @@ class RestartAppCommand extends AbstractCommand implements DockerAwareInterface,
 Restart the application service from the currently active project by specifying
 the service names to start. e.g.: <info>%command.full_name% service1 service2</info>
 
-If the command is run without any arguments and you are in a runnable service
+If the command is run without any arguments, and you are in a runnable service,
 that app service will be restarted, otherwise the available services will be listed.
 
 All app services can be started by using: <info>%command.full_name% all</info>
@@ -54,7 +54,7 @@ HLP)
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setIsDebugging($input);
         $this->setupConsoleHelper($input, $output);

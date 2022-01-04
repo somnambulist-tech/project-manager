@@ -10,7 +10,6 @@ namespace Somnambulist\ProjectManager\Contracts;
  */
 interface InstallableResource
 {
-
     public function name(): string;
 
     public function directoryName(): string;

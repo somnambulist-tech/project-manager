@@ -23,7 +23,7 @@ class OpenLibraryCommand extends AbstractCommand implements ProjectConfigAwareIn
     use ProjectConfigAwareCommand;
     use CanSelectLibraryFromInput;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('open')
@@ -32,7 +32,7 @@ class OpenLibraryCommand extends AbstractCommand implements ProjectConfigAwareIn
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 

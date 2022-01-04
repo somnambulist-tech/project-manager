@@ -12,8 +12,7 @@ use InvalidArgumentException;
  */
 class DefinitionNotFound extends InvalidArgumentException
 {
-
-    public static function raise(string $name)
+    public static function raise(string $name): static
     {
         return new static(sprintf('Service definition <info>%s</info> was not found in available definitions', $name));
     }

@@ -16,17 +16,16 @@ use function explode;
  */
 abstract class AbstractCommandOption
 {
-
     const SCOPE_ALL_LIBRARIES = 'AllLibraries';
     const SCOPE_LIBRARIES     = 'Libraries';
     const SCOPE_SERVICES      = 'Services';
     const SCOPE_PROJECT       = 'Project';
 
-    protected $tools;
-    protected $option;
-    protected $description;
-    protected $scope = self::SCOPE_ALL_LIBRARIES;
-    protected $questions = [];
+    protected ConsoleHelper $tools;
+    protected string $option;
+    protected string $description;
+    protected string $scope = self::SCOPE_ALL_LIBRARIES;
+    protected array $questions = [];
 
     public function setConsoleHelper(ConsoleHelper $tools): void
     {

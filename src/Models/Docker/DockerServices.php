@@ -15,15 +15,12 @@ use Somnambulist\ProjectManager\Models\Docker\Components\ComposeService;
  */
 class DockerServices extends AbstractElements
 {
-
-    protected $class = ComposeService::class;
+    protected string $class = ComposeService::class;
 
     public function exportForYaml(): array
     {
         return $this
-            ->map(function (ComposeService $s) {
-                return $s->exportForYaml();
-            })
+            ->map(fn (ComposeService $s) => $s->exportForYaml())
             ->all()
         ;
     }

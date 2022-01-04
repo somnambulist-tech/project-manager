@@ -22,7 +22,7 @@ and continue on. There is no special configuration needed in any project.
 
 ## Installation
 
-Project Manager requires PHP 7.3+ to be installed and in your shell path.
+Project Manager requires PHP 8.0+ to be installed and in your shell path.
 
 Grab the phar archive and copy it to `/usr/local/bin` or add it to your path.
 Symlink the phar to `spm` or a.n.other name. Be sure to verify the SHA checksum with

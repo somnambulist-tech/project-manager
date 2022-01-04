@@ -19,7 +19,7 @@ class EnvParametersCommand extends AbstractCommand implements ProjectConfigAware
 
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('params')
@@ -28,14 +28,12 @@ class EnvParametersCommand extends AbstractCommand implements ProjectConfigAware
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $params = $this
             ->config
             ->parameters()
-            ->map(function ($value, $key) {
-                return [$key, $value];
-            })
+            ->map(fn ($value, $key) => [$key, $value])
             ->values()
             ->toArray()
         ;

@@ -37,7 +37,7 @@ class SwitchProjectCommand extends AbstractCommand implements DockerAwareInterfa
     use GetProjectFromInput;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('use')
@@ -47,7 +47,7 @@ class SwitchProjectCommand extends AbstractCommand implements DockerAwareInterfa
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -89,12 +89,8 @@ class SwitchProjectCommand extends AbstractCommand implements DockerAwareInterfa
         try {
             $project = $this->getActiveProject();
             $cnt     = $project->services()->list()
-                ->each(function (Service $s) {
-                    $this->docker->resolve($s);
-                })
-                ->filter(function (Service $s) {
-                    return $s->isRunning();
-                })
+                ->each(fn(Service $s) => $this->docker->resolve($s))
+                ->filter(fn(Service $s) => $s->isRunning())
                 ->count()
             ;
 
@@ -104,7 +100,7 @@ class SwitchProjectCommand extends AbstractCommand implements DockerAwareInterfa
                     $this->tools()->run('spm stop all');
                 }
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
 
         }
     }

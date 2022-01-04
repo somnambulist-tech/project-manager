@@ -3,7 +3,7 @@
 namespace Somnambulist\ProjectManager\Commands\Services;
 
 use LogicException;
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\GetCurrentActiveProject;
@@ -36,7 +36,7 @@ class StopCommand extends AbstractCommand implements DockerAwareInterface, Proje
     use ProjectConfigAwareCommand;
     use SyncItAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('services:stop')
@@ -52,7 +52,7 @@ dependent services will be calculated and added to the list to stop:
 
 All services can be stopped by using: <info>%command.full_name% all</info>
 
-If the command is run without arguments and you are in a runnable service
+If the command is run without arguments, and you are in a runnable service,
 for the current project, it will stop that service (and any dependent
 services), otherwise you will be given a list of services that can be
 stopped (or all).
@@ -61,7 +61,7 @@ HLP)
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
         $this->setIsDebugging($input);

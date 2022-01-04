@@ -28,7 +28,7 @@ class InstallLibraryCommand extends AbstractCommand implements ProjectConfigAwar
     use InstallableResourceSetupHelpers;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $default = $_SERVER['PROJECT_LIBRARIES_DIR'];
 
@@ -41,7 +41,7 @@ class InstallLibraryCommand extends AbstractCommand implements ProjectConfigAwar
 A library project is a set of shared code used between services, or a project
 that does not run in Docker.
 
-This command will checkout the specified library configured in the libraries
+This command will check out the specified library configured in the libraries
 definitions to the configured project directory. If the library is set as
 "all", then all libraries will be checked out into the specified project folder.
 
@@ -59,7 +59,7 @@ HLP
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 

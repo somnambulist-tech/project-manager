@@ -15,11 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 trait UseConsoleHelper
 {
-
-    /**
-     * @var ConsoleHelper
-     */
-    protected $consoleHelper;
+    protected ?ConsoleHelper $consoleHelper = null;
 
     protected function setupConsoleHelper(InputInterface $input, OutputInterface $output): void
     {

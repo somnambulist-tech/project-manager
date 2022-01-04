@@ -14,43 +14,22 @@ use function in_array;
  */
 class ComposeNetwork
 {
+    private Options $options;
+    private Options $labels;
 
-    /**
-     * @var string|null
-     */
-    private $name;
-
-    /**
-     * @var string|null
-     */
-    private $driver;
-
-    /**
-     * @var Options
-     */
-    private $options;
-
-    /**
-     * @var Options
-     */
-    private $labels;
-
-    /**
-     * @var bool
-     */
-    private $external;
-
-    public function __construct(?string $name, ?string $driver = 'bridge', array $options = [], array $labels = [], bool $external = false)
-    {
+    public function __construct(
+        private ?string $name,
+        private ?string $driver = 'bridge',
+        array $options = [],
+        array $labels = [],
+        private bool $external = false
+    ) {
         if (!is_null($driver) && !in_array($driver, $a = ['bridge', 'overlay', 'host', 'none'])) {
             throw new InvalidArgumentException(sprintf('Network driver must be one of: %s', implode(', ', $a)));
         }
 
-        $this->name     = $name;
-        $this->driver   = $driver;
         $this->options  = new Options($options);
         $this->labels   = new Options($labels);
-        $this->external = $external;
     }
 
     public function type(): string

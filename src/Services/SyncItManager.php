@@ -17,23 +17,13 @@ use function trim;
  */
 class SyncItManager
 {
-
-    /**
-     * @var bool
-     */
-    private $available = false;
-
-    /**
-     * @var ConsoleHelper
-     */
-    private $helper;
+    private bool $available;
+    private ConsoleHelper $helper;
 
     /**
      * An array of ENV names that must not be passed through to other commands
-     *
-     * @var array
      */
-    private $toRemove = [
+    private array $toRemove = [
         'APP_ENV'              => false,
         'COMPOSE_PROJECT_NAME' => false,
         'PROJECT_DIR'          => false,

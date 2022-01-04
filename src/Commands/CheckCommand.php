@@ -2,6 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Commands;
 
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\Behaviours\ProjectConfigAwareCommand;
 use Somnambulist\ProjectManager\Contracts\ProjectConfigAwareInterface;
 use Somnambulist\ProjectManager\Models\Template;
@@ -27,7 +28,7 @@ class CheckCommand extends AbstractCommand implements ProjectConfigAwareInterfac
 
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('check')
@@ -36,7 +37,7 @@ class CheckCommand extends AbstractCommand implements ProjectConfigAwareInterfac
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -79,9 +80,7 @@ class CheckCommand extends AbstractCommand implements ProjectConfigAwareInterfac
         $table = new Table($output);
         $table->setHeaders(['Name', 'Type', 'Source']);
 
-        $this->templates()->each(function (Template $template) use ($table) {
-            $table->addRow([$template->name(), $template->type(), $template->source() ?: '~']);
-        });
+        $this->templates()->each(fn(Template $template) => $table->addRow([$template->name(), $template->type(), $template->source() ?: '~']));
 
         $table->render();
         $this->tools()->newline();
@@ -89,7 +88,7 @@ class CheckCommand extends AbstractCommand implements ProjectConfigAwareInterfac
         return 0;
     }
 
-    private function templates()
+    private function templates(): MutableCollection
     {
         $items = $this->config->templates()->list();
 
@@ -97,9 +96,7 @@ class CheckCommand extends AbstractCommand implements ProjectConfigAwareInterfac
             $items->merge($project->templates()->list());
         }
 
-        $items->sort(function (Template $t1, Template $t2) {
-            return $t1->name() <=> $t2->name();
-        });
+        $items->sort(fn(Template $t1, Template $t2) => $t1->name() <=> $t2->name());
 
         return $items;
     }

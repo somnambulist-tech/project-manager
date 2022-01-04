@@ -24,7 +24,7 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
     use GetCurrentActiveProject;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('current')
@@ -34,7 +34,7 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -47,31 +47,23 @@ class CurrentProjectCommand extends AbstractCommand implements ProjectConfigAwar
         $this->tools()->newline();
 
         if ($input->getArgument('list')) {
-            $i = 0;
+            $counter = new class { public int $i = 0; public int $j = 0; };
+
             $this->tools()->info('available libraries');
             $project
                 ->libraries()
                 ->list()
-                ->sort(function (Library $a, Library $b) {
-                    return $a->name() <=> $b->name();
-                })
-                ->each(function (Library $lib, $key) use (&$i) {
-                    $this->tools()->step(++$i, $lib->name());
-                })
+                ->sort(fn(Library $a, Library $b) => $a->name() <=> $b->name())
+                ->each(fn(Library $lib, $key) => $this->tools()->step(++$counter->i, $lib->name()))
             ;
             $this->tools()->newline();
 
-            $i = 0;
             $this->tools()->info('available services');
             $project
                 ->services()
                 ->list()
-                ->sort(function (Service $a, Service $b) {
-                    return $a->name() <=> $b->name();
-                })
-                ->each(function (Service $lib, $key) use (&$i) {
-                    $this->tools()->step(++$i, $lib->name());
-                })
+                ->sort(fn (Service $a, Service $b) => $a->name() <=> $b->name())
+                ->each(fn (Service $lib, $key) => $this->tools()->step(++$counter->j, $lib->name()))
             ;
             $this->tools()->newline();
         }

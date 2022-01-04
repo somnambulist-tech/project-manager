@@ -20,21 +20,8 @@ use function trim;
  */
 class GitManager
 {
-
-    /**
-     * @var ProcessHelper|null
-     */
-    private $helper;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    public function __construct(ProcessHelper $helper = null, OutputInterface $output = null)
+    public function __construct(private ?ProcessHelper $helper = null, private ?OutputInterface $output = null)
     {
-        $this->helper = $helper;
-        $this->output = $output;
     }
 
     public function add(string $cwd): bool

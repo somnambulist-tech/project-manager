@@ -21,7 +21,7 @@ class PullProjectConfigCommand extends AbstractCommand implements ProjectConfigA
     use GetCurrentActiveProject;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('project:pull')
@@ -30,7 +30,7 @@ class PullProjectConfigCommand extends AbstractCommand implements ProjectConfigA
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 

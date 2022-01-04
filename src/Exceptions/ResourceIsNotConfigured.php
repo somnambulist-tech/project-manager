@@ -12,8 +12,7 @@ use InvalidArgumentException;
  */
 class ResourceIsNotConfigured extends InvalidArgumentException
 {
-
-    public static function raise(string $name)
+    public static function raise(string $name): static
     {
         return new static(sprintf('<error> ERR </error> Library <comment>%s</comment> not found!', $name));
     }

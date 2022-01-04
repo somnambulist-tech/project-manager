@@ -16,77 +16,19 @@ use function is_numeric;
  */
 class ComposeService
 {
-
-    /**
-     * @var string|null
-     */
-    private $name;
-
-    /**
-     * @var string|null
-     */
-    private $image;
-
-    /**
-     * @var Build|null
-     */
-    private $build;
-
-    /**
-     * @var string
-     */
-    private $restart;
-
-    /**
-     * @var Options
-     */
-    private $dependsOn;
-
-    /**
-     * @var Options
-     */
-    private $environment;
-
-    /**
-     * @var Options
-     */
-    private $command;
-
-    /**
-     * @var Options
-     */
-    private $ports;
-
-    /**
-     * @var Options
-     */
-    private $volumes;
-
-    /**
-     * @var Options
-     */
-    private $networks;
-
-    /**
-     * @var Options
-     */
-    private $labels;
-
-    /**
-     * @var HealthCheck|null
-     */
-    private $healthcheck;
-
-    /**
-     * @var Logging|null
-     */
-    private $logging;
+    private Options $dependsOn;
+    private Options $environment;
+    private Options $command;
+    private Options $ports;
+    private Options $volumes;
+    private Options $networks;
+    private Options $labels;
 
     public function __construct(
-        ?string $name,
-        ?string $image = null,
-        ?Build $build = null,
-        string $restart = 'no',
+        private ?string $name,
+        private ?string $image = null,
+        private ?Build $build = null,
+        private string $restart = 'no',
         array $dependsOn = [],
         array $environment = [],
         array $command = [],
@@ -94,8 +36,8 @@ class ComposeService
         array $volumes = [],
         array $networks = [],
         array $labels = [],
-        ?HealthCheck $healthcheck = null,
-        ?Logging $logging = null
+        private ?HealthCheck $healthcheck = null,
+        private ?Logging $logging = null
     ) {
         if (is_numeric($image) && is_null($build)) {
             throw new InvalidArgumentException('The image or build must be specified');
@@ -104,10 +46,6 @@ class ComposeService
             throw new InvalidArgumentException(sprintf('Restart must be one of: %s', implode(', ', $r)));
         }
 
-        $this->name        = $name;
-        $this->image       = $image;
-        $this->build       = $build;
-        $this->restart     = $restart;
         $this->dependsOn   = new Options($dependsOn);
         $this->environment = new Options($environment);
         $this->command     = new Options($command);
@@ -115,8 +53,6 @@ class ComposeService
         $this->volumes     = new Options($volumes);
         $this->networks    = new Options($networks);
         $this->labels      = new Options($labels);
-        $this->healthcheck = $healthcheck;
-        $this->logging     = $logging;
     }
 
     public function type(): string
@@ -214,25 +150,19 @@ class ComposeService
 
         if ($this->volumes->count()) {
             $ret['volumes'] = $this->volumes
-                ->map(function (ServiceVolume $v) {
-                    return $v->exportForYaml();
-                })
+                ->map(fn(ServiceVolume $v) => $v->exportForYaml())
                 ->all()
             ;
         }
         if ($this->ports->count()) {
             $ret['ports'] = $this->ports
-                ->map(function (Port $v) {
-                    return $v->exportForYaml();
-                })
+                ->map(fn(Port $v) => $v->exportForYaml())
                 ->all()
             ;
         }
         if ($this->networks->count()) {
             $ret['networks'] = $this->networks
-                ->map(function (ServiceNetwork $value, $key) {
-                    return $value->exportForYaml();
-                })
+                ->map(fn(ServiceNetwork $value) => $value->exportForYaml())
                 ->all()
             ;
         }

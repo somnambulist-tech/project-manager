@@ -16,7 +16,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function sprintf;
-use function strpos;
 
 /**
  * Class CopyToContainerCommand
@@ -32,7 +31,7 @@ class CopyToContainerCommand extends AbstractCommand implements DockerAwareInter
     use GetCurrentActiveProject;
     use CanSelectServiceFromInput;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('services:copy')
@@ -59,7 +58,7 @@ For example, to copy the file <comment>test.txt</comment> from the service named
  * %command.full_name% users:/app/var/tmp/test.txt ~/Downloads/test.txt
 
 <i> Note: </i> unlike most commands, the copy is executed in the current working
-directory scope not the services installation path. The current working directory:
+directory scope not the service installation path. The current working directory:
 
  * <info>{$_SERVER['PWD']}</info>
 
@@ -67,7 +66,7 @@ HLP)
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -104,7 +103,7 @@ HLP)
     private function resolveContainer(Project $project, $string): ?array
     {
         /** @var Service $service */
-        if (false !== strpos($string, ':')) {
+        if (str_contains($string, ':')) {
             if (null !== $service = $project->services()->get(Str::before($string, ':'))) {
                 $this->docker->resolve($service);
 

@@ -15,7 +15,6 @@ use function sprintf;
  */
 class GitInstaller extends AbstractInstaller
 {
-
     public function installInto(Project $project, Template $template, string $name, string $cwd): int
     {
         $step = 0;

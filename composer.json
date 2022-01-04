@@ -4,24 +4,24 @@
     "description": "A CLI utility for helping manage a micro-services project",
     "license": "MIT",
     "require": {
-        "php": ">=7.4",
+        "php": "^8.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
         "pragmarx/ia-str": "~7.3",
-        "somnambulist/collection": "~4.0.1",
-        "symfony/config": "5.2.*",
-        "symfony/console": "5.2.*",
-        "symfony/dependency-injection": "5.2.*",
-        "symfony/dotenv": "5.2.*",
-        "symfony/finder": "5.2.*",
-        "symfony/http-kernel": "5.2.*",
-        "symfony/process": "5.2.*",
-        "symfony/yaml": "5.2.*"
+        "somnambulist/collection": "^5.2",
+        "symfony/config": "5.4.*",
+        "symfony/console": "5.4.*",
+        "symfony/dependency-injection": "5.4.*",
+        "symfony/dotenv": "5.4.*",
+        "symfony/finder": "5.4.*",
+        "symfony/http-kernel": "5.4.*",
+        "symfony/process": "5.4.*",
+        "symfony/yaml": "5.4.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "~9",
-        "symfony/var-dumper": "5.2.*"
+        "phpunit/phpunit": "~9.5",
+        "symfony/var-dumper": "5.4.*"
     },
     "config": {
         "preferred-install": {

@@ -19,7 +19,6 @@ use function file_exists;
 use function glob;
 use function reset;
 use function str_replace;
-use function strpos;
 use const DIRECTORY_SEPARATOR;
 use const GLOB_ONLYDIR;
 
@@ -36,7 +35,7 @@ class ImportExistingLibrariesCommand extends AbstractCommand implements ProjectC
     use ProjectConfigAwareCommand;
     use CanUpdateProjectConfiguration;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('project:import')
@@ -45,7 +44,7 @@ class ImportExistingLibrariesCommand extends AbstractCommand implements ProjectC
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -79,7 +78,6 @@ class ImportExistingLibrariesCommand extends AbstractCommand implements ProjectC
             }
             if (file_exists($entry . DIRECTORY_SEPARATOR . 'composer.json')) {
                 $this->importLibrary($project, $entry, ++$step);
-                continue;
             }
         }
 
@@ -131,7 +129,7 @@ class ImportExistingLibrariesCommand extends AbstractCommand implements ProjectC
 
         foreach ($config->services() as $key => $service) {
             /** @var ComposeService $service */
-            if (false !== strpos($key, '-app')) {
+            if (str_contains($key, '-app')) {
                 return $key;
             }
 

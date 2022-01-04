@@ -30,7 +30,7 @@ class SetGitDefaultBranch extends AbstractCommandOption
     {
         $resource = 'project' === $library ? $project : null;
 
-        if (!isset($options['branch']) || empty($options['branch'])) {
+        if (empty($options['branch'])) {
             return CommandOptionResult::error('missing a value for <info>branch</info>');
         }
 

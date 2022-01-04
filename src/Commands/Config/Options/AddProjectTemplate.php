@@ -33,10 +33,10 @@ class AddProjectTemplate extends AbstractCommandOption
         if (!isset($options['type']) || !in_array($options['type'], ['library', 'service'])) {
             return CommandOptionResult::error('<info>type</info> must be either: <info>library</info> or <info>service</info>');
         }
-        if (!isset($options['name']) || empty($options['name'])) {
+        if (empty($options['name'])) {
             return CommandOptionResult::error('missing a value for <info>name</info>');
         }
-        if (!isset($options['source']) || empty($options['source'])) {
+        if (empty($options['source'])) {
             return CommandOptionResult::error('missing a value for <info>source</info>');
         }
 

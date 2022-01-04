@@ -22,7 +22,7 @@ class DeleteProjectConfigCommand extends AbstractCommand implements ProjectConfi
     use GetProjectFromInput;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('project:delete')
@@ -31,7 +31,7 @@ class DeleteProjectConfigCommand extends AbstractCommand implements ProjectConfi
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 

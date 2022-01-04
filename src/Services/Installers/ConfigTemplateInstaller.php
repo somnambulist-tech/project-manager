@@ -74,7 +74,7 @@ class ConfigTemplateInstaller extends AbstractInstaller
                 return;
             }
 
-            foreach ($tmp as $arg => $prompt) {
+            foreach ($tmp as $prompt) {
                 $args[] = $this->tools()->ask($prompt);
             }
         }

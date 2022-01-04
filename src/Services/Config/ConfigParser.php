@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Services\Config;
 
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Models\Config;
 use Somnambulist\ProjectManager\Models\Library;
 use Somnambulist\ProjectManager\Models\Project;
@@ -155,11 +155,11 @@ class ConfigParser
 
         $params = array_merge(
             array_combine(
-                $pEnv->keys()->map(function ($value) {return sprintf('${%s}', strtoupper($value)); })->toArray(),
+                $pEnv->keys()->map(fn ($value) => sprintf('${%s}', strtoupper($value)))->toArray(),
                 $pEnv->values()->toArray()
             ),
             array_combine(
-                $gEnv->keys()->map(function ($value) {return sprintf('${%s}', strtoupper($value)); })->toArray(),
+                $gEnv->keys()->map(fn ($value) => sprintf('${%s}', strtoupper($value)))->toArray(),
                 $gEnv->values()->toArray()
             )
         );

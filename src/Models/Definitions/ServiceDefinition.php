@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Models\Definitions;
 
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use function preg_match_all;
 use function strtr;
 
@@ -14,27 +14,11 @@ use function strtr;
  */
 class ServiceDefinition
 {
+    private MutableCollection $files;
 
-    /**
-     * @var string
-     */
-    private $service;
-
-    /**
-     * @var string
-     */
-    private $template;
-
-    /**
-     * @var MutableCollection|ServiceDefinition[]
-     */
-    private $files;
-
-    public function __construct(string $service, string $template, array $files = [])
+    public function __construct(private string $service, private string $template, array $files = [])
     {
-        $this->service  = $service;
-        $this->template = $template;
-        $this->files    = new MutableCollection($files);
+        $this->files = new MutableCollection($files);
     }
 
     public function name(): string

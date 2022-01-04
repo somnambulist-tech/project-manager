@@ -12,11 +12,7 @@ use Somnambulist\ProjectManager\Models\Config;
  */
 trait ProjectConfigAwareCommand
 {
-
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected ?Config $config = null;
 
     public function bindConfiguration(Config $config): void
     {

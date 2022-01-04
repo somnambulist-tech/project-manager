@@ -23,7 +23,7 @@ class UpdateLibraryCommand extends AbstractCommand implements ProjectConfigAware
     use GetCurrentActiveProject;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('update')
@@ -56,7 +56,7 @@ HLP)
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -114,7 +114,7 @@ HLP)
 
             $this->tools()->info('<step> %s </step> switching to <info>%s</info>', $lib->name(), $branch);
             if (!$this->tools()->git()->checkout($lib->installPath(), 'origin', $branch)) {
-                $this->tools()->error('<step> %s </step> failed to checkout branch; does it exist?', $lib->name());
+                $this->tools()->error('<step> %s </step> failed to check out branch; does it exist?', $lib->name());
                 $this->tools()->newline();
                 continue;
             }
@@ -123,7 +123,6 @@ HLP)
             if (!$this->tools()->git()->pull($lib->installPath(), 'origin', $branch)) {
                 $this->tools()->error('<step> %s </step> failed to pull remote branch', $lib->name());
                 $this->tools()->newline();
-                continue;
             }
         }
 

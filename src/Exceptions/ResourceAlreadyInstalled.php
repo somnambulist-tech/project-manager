@@ -12,8 +12,7 @@ use InvalidArgumentException;
  */
 class ResourceAlreadyInstalled extends InvalidArgumentException
 {
-
-    public static function raise(string $name)
+    public static function raise(string $name): static
     {
         return new static(sprintf('Library <info>%s</info> is already installed', $name));
     }

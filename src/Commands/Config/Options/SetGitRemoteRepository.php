@@ -30,7 +30,7 @@ class SetGitRemoteRepository extends AbstractCommandOption
     {
         $cwd = $resource = null;
 
-        if (!isset($options['repo']) || empty($options['repo'])) {
+        if (empty($options['repo'])) {
             return CommandOptionResult::error('missing a value for <info>repo</info>');
         }
 
@@ -61,7 +61,7 @@ class SetGitRemoteRepository extends AbstractCommandOption
             $result  = 0;
         } else {
             $error = sprintf('failed to set <info>origin</info> to <info>%s</info>', $options['repo']);
-            $info  = sprintf('if you did not use <info>origin</info> as the remote name, manually change it');
+            $info  = 'if you did not use <info>origin</info> as the remote name, manually change it';
         }
 
         return new CommandOptionResult($result, $success, $error, $info);

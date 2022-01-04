@@ -10,8 +10,7 @@ namespace Somnambulist\ProjectManager\Commands\Behaviours;
  */
 trait UseEnvironmentTemplate
 {
-
-    protected function environmentTemplate(string $project = null, string $dir = null, string $libraries = null, string $services = null)
+    protected function environmentTemplate(string $project = null, string $dir = null, string $libraries = null, string $services = null): string
     {
         return <<<ENV
 

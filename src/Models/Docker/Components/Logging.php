@@ -12,20 +12,10 @@ use Somnambulist\ProjectManager\Models\Options;
  */
 class Logging
 {
+    private Options $options;
 
-    /**
-     * @var string|null
-     */
-    private $driver;
-
-    /**
-     * @var Options
-     */
-    private $options;
-
-    public function __construct(?string $driver = null, array $options = [])
+    public function __construct(private ?string $driver = null, array $options = [])
     {
-        $this->driver  = $driver;
         $this->options = new Options($options);
     }
 

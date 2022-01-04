@@ -4,9 +4,10 @@ namespace Somnambulist\ProjectManager\Models;
 
 use Countable;
 use IteratorAggregate;
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Contracts\InstallableResource;
 use Somnambulist\ProjectManager\Contracts\InstallableResourcesCollection;
+use Traversable;
 
 /**
 * Class AbstractLibraryCollection
@@ -16,23 +17,19 @@ use Somnambulist\ProjectManager\Contracts\InstallableResourcesCollection;
  */
 abstract class AbstractLibraryCollection implements InstallableResourcesCollection, Countable, IteratorAggregate
 {
-
-    /**
-     * @var MutableCollection
-     */
-    private $items;
+    private MutableCollection $items;
 
     public function __construct()
     {
         $this->items = new MutableCollection();
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->items;
     }
 
-    public function count()
+    public function count(): int
     {
         return $this->items->count();
     }
@@ -42,7 +39,7 @@ abstract class AbstractLibraryCollection implements InstallableResourcesCollecti
         return $this->items;
     }
 
-    public function add(InstallableResource $resource)
+    public function add(InstallableResource $resource): static
     {
         $this->items->set($resource->name(), $resource);
 

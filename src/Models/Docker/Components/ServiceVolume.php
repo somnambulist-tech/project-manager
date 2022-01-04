@@ -14,52 +14,23 @@ use Somnambulist\ProjectManager\Models\Options;
  */
 class ServiceVolume
 {
+    private Options $bind;
+    private Options $volume;
+    private Options $tmpfs;
 
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string|null
-     */
-    private $source;
-
-    /**
-     * @var string
-     */
-    private $target;
-
-    /**
-     * @var bool
-     */
-    private $readOnly;
-
-    /**
-     * @var Options
-     */
-    private $bind;
-
-    /**
-     * @var Options
-     */
-    private $volume;
-
-    /**
-     * @var Options
-     */
-    private $tmpfs;
-
-    public function __construct(string $type, ?string $source, string $target, bool $readOnly = false, array $bind = [], array $volume = [], array $tmpfs = [])
-    {
+    public function __construct(
+        private string $type,
+        private ?string $source,
+        private string $target,
+        private bool $readOnly = false,
+        array $bind = [],
+        array $volume = [],
+        array $tmpfs = []
+    ) {
         if (!in_array($type, $t = ['volume', 'bind', 'tmpfs', 'npipe'])) {
             throw new InvalidArgumentException(sprintf('Type must be one of: %s', implode(', ', $t)));
         }
 
-        $this->type     = $type;
-        $this->source   = $source;
-        $this->target   = $target;
-        $this->readOnly = $readOnly;
         $this->bind     = new Options($bind);
         $this->volume   = new Options($volume);
         $this->tmpfs    = new Options($tmpfs);
@@ -130,10 +101,7 @@ class ServiceVolume
         return $this->tmpfs;
     }
 
-    /**
-     * @return array|string
-     */
-    public function exportForYaml()
+    public function exportForYaml(): array|string
     {
         if (!$this->bind->count() && !$this->volume->count() && !$this->tmpfs->count()) {
             return sprintf('%s:%s', $this->source, $this->target) . ($this->readOnly ? ':ro' : '');

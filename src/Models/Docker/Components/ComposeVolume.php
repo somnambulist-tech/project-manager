@@ -12,39 +12,18 @@ use Somnambulist\ProjectManager\Models\Options;
  */
 class ComposeVolume
 {
+    private Options $options;
+    private Options $labels;
 
-    /**
-     * @var string|null
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $driver;
-
-    /**
-     * @var Options
-     */
-    private $options;
-
-    /**
-     * @var Options
-     */
-    private $labels;
-
-    /**
-     * @var bool
-     */
-    private $external;
-
-    public function __construct(?string $name, string $driver = null, array $options = [], array $labels = [], bool $external = false)
+    public function __construct(
+        private ?string $name,
+        private ?string $driver = null,
+        array $options = [],
+        array $labels = [],
+        private bool $external = false)
     {
-        $this->name     = $name;
-        $this->driver   = $driver;
         $this->options  = new Options($options);
         $this->labels   = new Options($labels);
-        $this->external = $external;
     }
 
     public function type(): string

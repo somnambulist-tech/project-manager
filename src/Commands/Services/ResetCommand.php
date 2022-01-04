@@ -19,7 +19,7 @@ class ResetCommand extends AbstractCommand implements DockerAwareInterface
 
     use DockerAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('services:reset')
@@ -27,7 +27,7 @@ class ResetCommand extends AbstractCommand implements DockerAwareInterface
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 

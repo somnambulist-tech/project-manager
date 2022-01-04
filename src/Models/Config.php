@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Models;
 
-use Somnambulist\Collection\FrozenCollection;
+use Somnambulist\Components\Collection\FrozenCollection;
 use Somnambulist\ProjectManager\Contracts\TemplatableResource;
 use function array_unique;
 use function sort;
@@ -15,26 +15,10 @@ use function sort;
  */
 class Config implements TemplatableResource
 {
-
-    /**
-     * @var FrozenCollection
-     */
-    private $config;
-
-    /**
-     * @var FrozenCollection
-     */
-    private $parameters;
-
-    /**
-     * @var Projects
-     */
-    private $projects;
-
-    /**
-     * @var Templates
-     */
-    private $templates;
+    private FrozenCollection $config;
+    private FrozenCollection $parameters;
+    private Projects $projects;
+    private Templates $templates;
 
     public function __construct(array $config = [], array $parameters = [])
     {

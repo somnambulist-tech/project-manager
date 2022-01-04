@@ -15,15 +15,12 @@ use Somnambulist\ProjectManager\Models\Docker\Components\ComposeVolume;
  */
 class DockerVolumes extends AbstractElements
 {
-
-    protected $class = ComposeVolume::class;
+    protected string $class = ComposeVolume::class;
 
     public function exportForYaml(): array
     {
         return $this
-            ->map(function (ComposeVolume $s) {
-                return $s->exportForYaml();
-            })
+            ->map(fn (ComposeVolume $s) => $s->exportForYaml())
             ->all()
         ;
     }
@@ -31,9 +28,7 @@ class DockerVolumes extends AbstractElements
     public function hasNamedVolumeOf(string $name): bool
     {
         return $this
-            ->filter(function (ComposeVolume $v) use ($name) {
-                return $v->name() === $name;
-            })
+            ->filter(fn (ComposeVolume $v) => $v->name() === $name)
             ->count() > 0
         ;
     }

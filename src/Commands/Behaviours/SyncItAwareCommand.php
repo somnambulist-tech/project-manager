@@ -12,11 +12,7 @@ use Somnambulist\ProjectManager\Services\SyncItManager;
  */
 trait SyncItAwareCommand
 {
-
-    /**
-     * @var SyncItManager
-     */
-    protected $syncit;
+    protected ?SyncItManager $syncit = null;
 
     public function bindSyncItManager(SyncItManager $syncit): void
     {

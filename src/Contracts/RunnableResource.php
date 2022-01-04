@@ -2,7 +2,7 @@
 
 namespace Somnambulist\ProjectManager\Contracts;
 
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 
 /**
  * Interface RunnableService

@@ -32,7 +32,7 @@ class InstallServiceCommand extends AbstractCommand implements DockerAwareInterf
     use InstallableResourceSetupHelpers;
     use ProjectConfigAwareCommand;
 
-    protected function configure()
+    protected function configure(): void
     {
         $default = $_SERVER['PROJECT_SERVICES_DIR'];
 
@@ -44,7 +44,7 @@ class InstallServiceCommand extends AbstractCommand implements DockerAwareInterf
 
 A service is a project that runs in Docker and provides assorted runtime services.
 
-This command will checkout the specified service configured in the services
+This command will check out the specified service configured in the services
 definitions to the configured project directory. If the service is set as
 "all", then all services will be checked out into the specified project folder.
 
@@ -62,7 +62,7 @@ HLP
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 

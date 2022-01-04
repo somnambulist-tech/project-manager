@@ -4,7 +4,8 @@ namespace Somnambulist\ProjectManager\Models;
 
 use Countable;
 use IteratorAggregate;
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
+use Traversable;
 
 /**
  * Class Projects
@@ -14,23 +15,19 @@ use Somnambulist\Collection\MutableCollection;
  */
 final class Projects implements Countable, IteratorAggregate
 {
-
-    /**
-     * @var MutableCollection
-     */
-    private $items;
+    private MutableCollection $items;
 
     public function __construct()
     {
         $this->items = new MutableCollection();
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->items;
     }
 
-    public function count()
+    public function count(): int
     {
         return $this->items->count();
     }

@@ -12,57 +12,23 @@ use Somnambulist\ProjectManager\Models\Options;
  */
 class Build
 {
+    private Options $args;
+    private Options $cacheFrom;
+    private Options $labels;
 
-    /**
-     * @var string
-     */
-    private $context;
-
-    /**
-     * @var string
-     */
-    private $dockerfile;
-
-    /**
-     * @var Options
-     */
-    private $args;
-
-    /**
-     * @var Options
-     */
-    private $cacheFrom;
-
-    /**
-     * @var Options
-     */
-    private $labels;
-
-    /**
-     * @var null|string
-     */
-    private $network;
-
-    /**
-     * @var null|string
-     */
-    private $shmSize;
-
-    /**
-     * @var null|string
-     */
-    private $target;
-
-    public function __construct(string $context, string $dockerfile, array $args = [], array $cacheFrom = [], array $labels = [], ?string $network = null, ?string $shmSize = null, ?string $target = null)
-    {
-        $this->context    = $context;
-        $this->dockerfile = $dockerfile;
+    public function __construct(
+        private string $context,
+        private string $dockerfile,
+        array $args = [],
+        array $cacheFrom = [],
+        array $labels = [],
+        private ?string $network = null,
+        private ?string $shmSize = null,
+        private ?string $target = null
+    ) {
         $this->args       = new Options($args);
         $this->cacheFrom  = new Options($cacheFrom);
         $this->labels     = new Options($labels);
-        $this->network    = $network;
-        $this->shmSize    = $shmSize;
-        $this->target     = $target;
     }
 
     public static function from(array $data): ?Build

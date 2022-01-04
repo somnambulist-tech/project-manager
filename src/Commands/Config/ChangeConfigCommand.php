@@ -3,7 +3,7 @@
 namespace Somnambulist\ProjectManager\Commands\Config;
 
 use Exception;
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\CanSelectLibraryFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\CanUpdateProjectConfiguration;
@@ -24,18 +24,14 @@ use function str_replace;
  */
 class ChangeConfigCommand extends AbstractCommand implements ProjectConfigAwareInterface
 {
-
     use ProjectConfigAwareCommand;
     use CanUpdateProjectConfiguration;
     use CanSelectLibraryFromInput;
     use GetCurrentActiveProject;
 
-    /**
-     * @var CommandOptions
-     */
-    private $options;
+    private ?CommandOptions $options = null;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->options = new CommandOptions();
 
@@ -56,7 +52,7 @@ HLP
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -148,9 +144,7 @@ HLP
     {
         return $project
             ->libraries()->list()->keys()
-            ->map(function ($value) {
-                return $value . ' (lib)';
-            })
+            ->map(fn ($value) => $value . ' (lib)')
             ->sortBy('value')
             ->values()
         ;
@@ -160,9 +154,7 @@ HLP
     {
         return $project
             ->services()->list()->keys()
-            ->map(function ($value) {
-                return $value . ' (service)';
-            })
+            ->map(fn ($value) => $value . ' (service)')
             ->sortBy('value')
             ->values()
         ;

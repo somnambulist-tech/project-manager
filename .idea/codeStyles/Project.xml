@@ -34,13 +34,10 @@
       <option name="MULTILINE_CHAINED_CALLS_SEMICOLON_ON_NEW_LINE" value="true" />
       <option name="NAMESPACE_BRACE_STYLE" value="2" />
     </PHPCodeStyleSettings>
-    <PostgresCodeStyleSettings version="5">
+    <PostgresCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
     </PostgresCodeStyleSettings>
-    <XML>
-      <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
-    </XML>
     <yaml>
       <option name="ALIGN_VALUES_PROPERTIES" value="1" />
       <option name="SEQUENCE_ON_NEW_LINE" value="true" />

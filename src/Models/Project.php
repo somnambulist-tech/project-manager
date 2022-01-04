@@ -3,7 +3,7 @@
 namespace Somnambulist\ProjectManager\Models;
 
 use IlluminateAgnostic\Str\Support\Str;
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Contracts\InstallableResource;
 use Somnambulist\ProjectManager\Contracts\TemplatableResource;
 use function sprintf;
@@ -16,72 +16,22 @@ use function sprintf;
  */
 final class Project implements TemplatableResource
 {
+    private MutableCollection $docker;
+    private Libraries $libraries;
+    private Services $services;
+    private Templates $templates;
 
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $configPath;
-
-    /**
-     * @var string
-     */
-    private $workingPath;
-
-    /**
-     * @var string|null
-     */
-    private $servicesName;
-
-    /**
-     * @var string|null
-     */
-    private $librariesName;
-
-    /**
-     * @var string|null
-     */
-    private $repository;
-
-    /**
-     * @var string|null
-     */
-    private $branch;
-
-    /**
-     * @var MutableCollection
-     */
-    private $docker;
-
-    /**
-     * @var Libraries
-     */
-    private $libraries;
-
-    /**
-     * @var Services
-     */
-    private $services;
-
-    /**
-     * @var Templates
-     */
-    private $templates;
-
-    public function __construct(string $name, string $configPath, string $workingPath, ?string $servicesName, ?string $librariesName, ?string $repository, ?string $branch, array $docker = [])
-    {
-        $this->name          = $name;
-        $this->configPath    = $configPath;
-        $this->workingPath   = $workingPath;
-        $this->servicesName  = $servicesName;
-        $this->librariesName = $librariesName;
-        $this->repository    = $repository;
-        $this->branch        = $branch;
-        $this->docker        = new MutableCollection($docker);
+    public function __construct(
+        private string $name,
+        private string $configPath,
+        private string $workingPath,
+        private ?string $servicesName,
+        private ?string $librariesName,
+        private ?string $repository,
+        private ?string $branch,
+        array $docker = []
+    ) {
+        $this->docker = new MutableCollection($docker);
 
         $this->libraries = new Libraries();
         $this->services  = new Services();
@@ -159,8 +109,8 @@ final class Project implements TemplatableResource
     {
         return $this
             ->libraries()->list()->keys()
-            ->map(function ($value) { return $value . ' (lib)';})
-            ->merge($this->services()->list()->keys()->map(function ($value) { return $value . ' (service)';}))
+            ->map(fn($value) => $value . ' (lib)')
+            ->merge($this->services()->list()->keys()->map(fn($value) => $value . ' (service)'))
             ->sortBy('value')
             ->values()
         ;
@@ -169,9 +119,7 @@ final class Project implements TemplatableResource
     public function getServiceByPath(string $path): ?Service
     {
         return $this
-            ->services()->list()->filter(function (Service $service) use ($path) {
-                return $service->installPath() === $path;
-            })
+            ->services()->list()->filter(fn(Service $service) => $service->installPath() === $path)
             ->first()
         ;
     }
@@ -179,9 +127,7 @@ final class Project implements TemplatableResource
     public function getServiceByContainerName(string $container): ?Service
     {
         return $this
-            ->services()->list()->filter(function (Service $service) use ($container) {
-                return Str::contains($container, $service->appContainer());
-            })
+            ->services()->list()->filter(fn(Service $service) => Str::contains($container, $service->appContainer()))
             ->first()
         ;
     }

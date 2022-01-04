@@ -28,7 +28,7 @@ class CreateCommand extends AbstractCommand implements ProjectConfigAwareInterfa
     use ProjectConfigAwareCommand;
     use CanInitialiseGitRepository;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('project:create')
@@ -40,7 +40,7 @@ class CreateCommand extends AbstractCommand implements ProjectConfigAwareInterfa
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setupConsoleHelper($input, $output);
 
@@ -77,7 +77,7 @@ class CreateCommand extends AbstractCommand implements ProjectConfigAwareInterfa
         return $ret;
     }
 
-    private function config($dir, $name, $docker, $git)
+    private function config($dir, $name, $docker, $git): string
     {
         $git = $git ?: '~';
 

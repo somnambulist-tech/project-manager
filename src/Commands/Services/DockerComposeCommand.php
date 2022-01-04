@@ -3,7 +3,7 @@
 namespace Somnambulist\ProjectManager\Commands\Services;
 
 use IlluminateAgnostic\Str\Support\Str;
-use Somnambulist\Collection\MutableCollection;
+use Somnambulist\Components\Collection\MutableCollection;
 use Somnambulist\ProjectManager\Commands\AbstractCommand;
 use Somnambulist\ProjectManager\Commands\Behaviours\CanSelectServiceFromInput;
 use Somnambulist\ProjectManager\Commands\Behaviours\DockerAwareCommand;
@@ -45,16 +45,12 @@ use function str_replace;
  */
 class DockerComposeCommand extends AbstractCommand implements DockerAwareInterface, ProjectConfigAwareInterface
 {
-
     use CanSelectServiceFromInput;
     use GetCurrentActiveProject;
     use DockerAwareCommand;
     use ProjectConfigAwareCommand;
 
-    /**
-     * @var ServiceDefinitionLocator
-     */
-    private $locator;
+    private ServiceDefinitionLocator $locator;
 
     public function __construct(ServiceDefinitionLocator $locator)
     {
@@ -63,10 +59,10 @@ class DockerComposeCommand extends AbstractCommand implements DockerAwareInterfa
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $available = $this->locator->findAll()
-            ->map(function (ServiceDefinition $d) { return sprintf('<comment>%s</comment>', $d->name());})
+            ->map(fn(ServiceDefinition $d) => sprintf('<comment>%s</comment>', $d->name()))
             ->implode("\n")
         ;
 
@@ -99,8 +95,8 @@ The following are pre-set with appropriate questions:
 <comment>{SPM::SERVICE_HOST}</> the host name that the container will resolve to (for traefik / proxies)
 <comment>{SPM::SERVICE_PORT}</> the internal port the container will run on e.g.: 8080, 3306, 5432
 
-By default the additional files will be written to <info>config/docker/dev</info> in the
-services folder. The container name will be used within this folder. This can be defined
+By default, the additional files will be written to <info>config/docker/dev</info> in the
+service folder. The container name will be used within this folder. This can be defined
 by adding <info>--config=</info> relative to the service folder. Any sub-folders will be
 preserved and used in the config folder e.g. conf.d/file.conf would be created as
 <info>config/docker/dev/NAME/conf.d/file.conf</info>.
@@ -114,7 +110,7 @@ HLP
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setIsDebugging($input);
         $this->setupConsoleHelper($input, $output);
@@ -133,9 +129,7 @@ HLP
 
         $this->tools()->info('adding the following containers: <info>%s</info>', implode(', ', $containers));
 
-        $defs = $this->locator->findAll()->filter(function (ServiceDefinition $def) use ($containers) {
-            return in_array($def->name(), $containers);
-        });
+        $defs = $this->locator->findAll()->filter(fn(ServiceDefinition $def) => in_array($def->name(), $containers));
 
         if (!$defs->count()) {
             $this->tools()->error('No containers specified; select at least one container to add');
@@ -197,13 +191,7 @@ YML
             $this->tools()->error($e->getMessage());
             $this->tools()->info('changes aborted');
 
-            if ($files->count() > 0) {
-                $files->each(function ($file) {
-                    if (file_exists($file)) {
-                        unlink($file);
-                    }
-                });
-            }
+            $files->filter(fn ($f) => file_exists($f))->each(fn($f) => unlink($f));
 
             return 1;
         }

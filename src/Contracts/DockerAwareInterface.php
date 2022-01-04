@@ -12,6 +12,5 @@ use Somnambulist\ProjectManager\Services\DockerManager;
  */
 interface DockerAwareInterface
 {
-
     public function bindDockerManager(DockerManager $docker): void;
 }

@@ -13,11 +13,7 @@ use Somnambulist\ProjectManager\Exceptions\DockerComposeException;
  */
 class AbstractElements extends Options
 {
-
-    /**
-     * @var string
-     */
-    protected $class;
+    protected string $class;
 
     public function __construct(array $values = [])
     {
@@ -28,7 +24,7 @@ class AbstractElements extends Options
         }
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (!$value instanceof $this->class) {
             throw new InvalidArgumentException(sprintf('Only instances of %s can be added', $this->class));
@@ -37,6 +33,9 @@ class AbstractElements extends Options
         parent::offsetSet($offset, $value);
     }
 
+    /**
+     * @throws DockerComposeException
+     */
     public function register(string $name, $value): AbstractElements
     {
         if ($this->has($name)) {

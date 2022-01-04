@@ -15,7 +15,6 @@ use Somnambulist\ProjectManager\Services\Console\ConsoleHelper;
  */
 trait CanUpdateGitRemoteRepository
 {
-
     protected function changeGitOrigin(Project $project, $cwd, $repo): int
     {
         $com = 'addRemote';

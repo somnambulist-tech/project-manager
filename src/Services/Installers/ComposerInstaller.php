@@ -16,7 +16,6 @@ use function sprintf;
  */
 class ComposerInstaller extends AbstractInstaller
 {
-
     public function installInto(Project $project, Template $template, string $name, string $cwd): int
     {
         $step = 0;
