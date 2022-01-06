@@ -177,7 +177,7 @@ HLP)
             $this->tools()->input()->setOption('with-deps', $deps);
         }
 
-        if (strtolower(trim($deps)) === 'y') {
+        if (!is_null($deps) && strtolower(trim($deps)) === 'y') {
             $service->dependencies()->each(fn ($name) => $this->startService($name));
         }
     }
