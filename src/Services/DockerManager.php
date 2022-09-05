@@ -80,6 +80,9 @@ class DockerManager
         if (!$service->isInstalled()) {
             return;
         }
+        if (!$service->appContainer()) {
+            return;
+        }
 
         $sep = version_compare($this->version, '2.0.0', '>=') ? '-' : '_';
         $env = (new Dotenv())->parse(file_get_contents($service->envFile()));
